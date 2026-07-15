@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null)
 
   useEffect(() => {
-    if (user?.role === 'manager' || user?.role === 'finance') {
+    if (user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance') {
       getDashboardMetrics().then(setMetrics)
     } else if (user?.role === 'patient') {
       getPatientProfile(user.id).then(setProfile)
@@ -121,7 +121,9 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      {user?.role === 'manager' || user?.role === 'finance' ? renderAdminDash() : null}
+      {user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance'
+        ? renderAdminDash()
+        : null}
       {user?.role === 'patient' ? renderPatientDash() : null}
       {user?.role === 'dentist' ? renderDentistDash() : null}
       {user?.role === 'lab' ? (
