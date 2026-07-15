@@ -1,18 +1,11 @@
-import { Outlet, Navigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { Sidebar, BottomNav } from './Navigation'
 import { Button } from './ui/button'
 import { LogOut } from 'lucide-react'
 
 export default function Layout() {
-  const { isAuthenticated, user, signOut, loading } = useAuth()
-
-  if (loading) return <div className="h-screen flex items-center justify-center">Carregando...</div>
-
-  if (!isAuthenticated) {
-    return <Outlet />
-  }
-
+  const { user, signOut } = useAuth()
   const role = user?.role || 'patient'
 
   return (

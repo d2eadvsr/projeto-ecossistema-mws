@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T02:37:36.189Z",
+  "generatedAt": "2026-07-15T03:44:56.637Z",
   "collections": [
     {
       "name": "users",
@@ -37,6 +37,32 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "admin",
+            "manager",
+            "operator",
+            "patient",
+            "dentist",
+            "assistant",
+            "finance",
+            "support",
+            "lab",
+            "fintech",
+            "juridico"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["active", "suspended"]
         }
       ],
       "indexes": [

@@ -7,10 +7,12 @@ migrate(
         new SelectField({
           name: 'role',
           values: [
+            'admin',
+            'manager',
+            'operator',
             'patient',
             'dentist',
             'assistant',
-            'manager',
             'finance',
             'support',
             'lab',

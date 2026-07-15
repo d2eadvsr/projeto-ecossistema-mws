@@ -1,15 +1,19 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthProvider } from '@/hooks/use-auth'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 import Index from './pages/Index'
+import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import Cases from './pages/Cases'
 import Lab from './pages/Lab'
 import Marketing from './pages/Marketing'
 import Financing from './pages/Financing'
+import Unauthorized from './pages/Unauthorized'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 
@@ -20,16 +24,19 @@ const App = () => (
         <Toaster />
         <Sonner />
         <Routes>
-          {/* Public / Auth */}
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Protected Routes */}
-          <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/cases" element={<Cases />} />
-            <Route path="/lab" element={<Lab />} />
-            <Route path="/marketing" element={<Marketing />} />
-            <Route path="/financing" element={<Financing />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/cases" element={<Cases />} />
+              <Route path="/lab" element={<Lab />} />
+              <Route path="/marketing" element={<Marketing />} />
+              <Route path="/financing" element={<Financing />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFound />} />
