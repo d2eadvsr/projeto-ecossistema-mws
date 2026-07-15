@@ -1,22 +1,26 @@
 import { useState } from 'react'
 import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom'
+import { ClientResponseError } from 'pocketbase'
 import { useAuth } from '@/hooks/use-auth'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function Login() {
   const { isAuthenticated, signIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const { toast } = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
-  const [generalError, setGeneralError] = useState('')
+  const [error, setError] = useState('')
 
   const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/dashboard'
 
@@ -24,21 +28,38 @@ export default function Login() {
     return <Navigate to="/dashboard" replace />
   }
 
+  const isEmailValid = EMAIL_REGEX.test(email)
+  const isFormValid = isEmailValid && password.length > 0
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    setFieldErrors({})
-    setGeneralError('')
+    if (!isFormValid) return
 
-    const { error } = await signIn(email, password)
+    setIsLoading(true)
+    setError('')
+
+    const { error: signInError } = await signIn(email, password)
     setIsLoading(false)
 
-    if (error) {
-      const errors = extractFieldErrors(error)
-      if (Object.keys(errors).length > 0) {
-        setFieldErrors(errors)
+    if (signInError) {
+      if (signInError instanceof ClientResponseError) {
+        if (signInError.status === 0) {
+          setError('Erro de conexão. Tente novamente mais tarde.')
+        } else if (signInError.status === 400 || signInError.status === 401) {
+          setError('E-mail ou senha inválidos')
+        } else {
+          toast({
+            title: 'Erro',
+            description: signInError.message || 'Ocorreu um erro inesperado.',
+            variant: 'destructive',
+          })
+        }
       } else {
-        setGeneralError(getErrorMessage(error))
+        toast({
+          title: 'Erro',
+          description: 'Ocorreu um erro inesperado.',
+          variant: 'destructive',
+        })
       }
       return
     }
@@ -58,41 +79,63 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-            {generalError && (
+            {error && (
               <div className="flex items-center gap-2 p-3 rounded-md bg-destructive/10 text-destructive text-sm animate-fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{generalError}</span>
+                <span>{error}</span>
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="nome@exemplo.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  setError('')
+                }}
                 required
-                aria-invalid={!!fieldErrors.email}
+                aria-invalid={email.length > 0 && !isEmailValid}
               />
-              {fieldErrors.email && <p className="text-sm text-destructive">{fieldErrors.email}</p>}
+              {email.length > 0 && !isEmailValid && (
+                <p className="text-sm text-destructive">Formato de e-mail inválido.</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                aria-invalid={!!fieldErrors.password}
-              />
-              {fieldErrors.password && (
-                <p className="text-sm text-destructive">{fieldErrors.password}</p>
-              )}
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    setError('')
+                  }}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Entrando...' : 'Entrar na Plataforma'}
+            <Button type="submit" className="w-full" disabled={isLoading || !isFormValid}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Entrando...
+                </>
+              ) : (
+                'Entrar'
+              )}
             </Button>
           </form>
 
