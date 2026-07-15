@@ -3,6 +3,12 @@ import pb from '@/lib/pocketbase/client'
 export const getCases = (filter?: string, expand?: string) =>
   pb.collection('clinical_cases').getFullList({ filter, expand })
 
+export const getDentistCases = (dentistId: string) =>
+  pb.collection('clinical_cases').getFullList({
+    filter: `dentist = "${dentistId}"`,
+    expand: 'patient',
+  })
+
 export const getCase = (id: string, expand?: string) =>
   pb.collection('clinical_cases').getOne(id, { expand })
 

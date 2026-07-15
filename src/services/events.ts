@@ -4,3 +4,6 @@ export const getEvents = (filter?: string) => pb.collection('events').getFullLis
 
 export const createEvent = (data: { event_name: string; payload?: any; source?: string }) =>
   pb.collection('events').create(data)
+
+export const logEvent = (eventName: string, payload?: any, source?: string) =>
+  pb.collection('events').create({ event_name: eventName, payload, source })

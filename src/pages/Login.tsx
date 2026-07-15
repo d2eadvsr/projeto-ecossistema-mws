@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom'
 import { ClientResponseError } from 'pocketbase'
 import { useAuth } from '@/hooks/use-auth'
+import pb from '@/lib/pocketbase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -48,7 +49,14 @@ export default function Login() {
       return
     }
 
-    navigate(from, { replace: true })
+    const role = pb.authStore.record?.['role']
+    if (role === 'dentist') {
+      navigate('/dashboard/dentist', { replace: true })
+    } else if (role === 'patient') {
+      navigate('/dashboard/patient', { replace: true })
+    } else {
+      navigate(from, { replace: true })
+    }
   }
 
   return (

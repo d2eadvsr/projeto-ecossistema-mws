@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -19,6 +20,9 @@ export default function Dashboard() {
       getDentistProfile(user.id).then(setProfile)
     }
   }, [user])
+
+  if (user?.role === 'dentist') return <Navigate to="/dashboard/dentist" replace />
+  if (user?.role === 'patient') return <Navigate to="/dashboard/patient" replace />
 
   const renderAdminDash = () => (
     <div className="space-y-6 animate-fade-in-up">

@@ -16,6 +16,15 @@ import Financing from './pages/Financing'
 import Unauthorized from './pages/Unauthorized'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
+import DentistDashboard from './pages/Dentist/Dashboard'
+import DentistAgenda from './pages/Dentist/Agenda'
+import DentistPatients from './pages/Dentist/Patients'
+import DentistSettings from './pages/Dentist/Settings'
+import PatientDashboard from './pages/Patient/Dashboard'
+import PatientTreatment from './pages/Patient/Treatment'
+import PatientAppointments from './pages/Patient/Appointments'
+import PatientPayments from './pages/Patient/Payments'
+import PatientProfile from './pages/Patient/Profile'
 
 const App = () => (
   <AuthProvider>
@@ -36,6 +45,25 @@ const App = () => (
               <Route path="/lab" element={<Lab />} />
               <Route path="/marketing" element={<Marketing />} />
               <Route path="/financing" element={<Financing />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['dentist']} />}>
+            <Route element={<Layout />}>
+              <Route path="/dashboard/dentist" element={<DentistDashboard />} />
+              <Route path="/dentist/agenda" element={<DentistAgenda />} />
+              <Route path="/dentist/patients" element={<DentistPatients />} />
+              <Route path="/dentist/settings" element={<DentistSettings />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['patient']} />}>
+            <Route element={<Layout />}>
+              <Route path="/dashboard/patient" element={<PatientDashboard />} />
+              <Route path="/patient/treatment" element={<PatientTreatment />} />
+              <Route path="/patient/appointments" element={<PatientAppointments />} />
+              <Route path="/patient/payments" element={<PatientPayments />} />
+              <Route path="/patient/profile" element={<PatientProfile />} />
             </Route>
           </Route>
 

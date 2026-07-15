@@ -1,159 +1,154 @@
 import { useAuth } from '@/hooks/use-auth'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { FileText, Users, Star, ArrowRight } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Users, FolderOpen, CalendarClock, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { getDentistByUserId } from '@/services/dentists'
-import { getDentistCases } from '@/services/cases'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+
+const mockPatients = [
+  { id: '1', name: 'Maria Silva', status: 'Em Tratamento', progress: 60 },
+  { id: '2', name: 'João Santos', status: 'Em Análise', progress: 10 },
+  { id: '3', name: 'Ana Costa', status: 'Finalizado', progress: 100 },
+  { id: '4', name: 'Pedro Lima', status: 'Em Tratamento', progress: 45 },
+]
+
+const mockAppointments = [
+  { time: '09:00', patient: 'Maria Silva', type: 'Acompanhamento' },
+  { time: '10:30', patient: 'João Santos', type: 'Instalação de Alinhador' },
+  { time: '14:00', patient: 'Ana Costa', type: 'Consulta Final' },
+]
 
 export default function DentistDashboard() {
   const { user } = useAuth()
-  const [dentist, setDentist] = useState<any>(null)
-  const [cases, setCases] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user) {
-        try {
-          const d = await getDentistByUserId(user.id)
-          setDentist(d)
-          const c = await getDentistCases(d.id)
-          setCases(c)
-        } catch (error) {
-          console.error(error)
-        } finally {
-          setLoading(false)
-        }
-      }
-    }
-    fetchData()
-  }, [user])
+  const avatarUrl = user?.avatar
+    ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/${user.collectionId || '_pb_users_auth_'}/${user.id}/${user.avatar}`
+    : undefined
 
-  if (loading) {
-    return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <div className="grid gap-4 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  const activeCases = cases.filter((c) => c.status !== 'delivered').length
+  const pendingCases = mockPatients.filter((p) => p.status !== 'Finalizado').length
 
   return (
-    <div className="p-6 md:p-8 space-y-8 animate-fade-in-up">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-8 space-y-6 max-w-6xl mx-auto animate-fade-in-up">
+      <div className="flex items-center gap-4">
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={avatarUrl} />
+          <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xl font-bold">
+            {user?.name?.charAt(0) || 'D'}
+          </AvatarFallback>
+        </Avatar>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Olá, {user?.name}</h1>
-          <p className="text-slate-500 mt-1">Acompanhe sua produção e avaliações.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
+            Olá, {user?.name || 'Dentista'}
+          </h1>
+          <p className="text-slate-500">Bem-vindo ao seu painel clínico.</p>
         </div>
       </div>
 
-      {dentist?.license_status === 'pending' && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardHeader>
-            <CardTitle className="text-amber-800 text-lg flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Onboarding Pendente
-            </CardTitle>
-            <CardDescription className="text-amber-700">
-              Complete seu cadastro para assinar o contrato e começar a abrir casos clínicos. SLA:
-              48h.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="bg-amber-600 hover:bg-amber-700 text-white">
-              <Link to="/dentist/onboarding">
-                Completar Cadastro <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Casos Ativos</CardTitle>
-            <Users className="h-4 w-4 text-slate-400" />
+            <CardTitle className="text-sm font-medium text-slate-600">Total de Pacientes</CardTitle>
+            <Users className="h-5 w-5 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{activeCases}</div>
-            <p className="text-xs text-slate-500 mt-1">Em planejamento ou produção</p>
+            <div className="text-3xl font-bold text-slate-900">{mockPatients.length}</div>
+            <p className="text-xs text-slate-500 mt-1">Pacientes ativos</p>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">NPS da Clínica</CardTitle>
-            <Star className="h-4 w-4 text-slate-400" />
+            <CardTitle className="text-sm font-medium text-slate-600">Casos Pendentes</CardTitle>
+            <FolderOpen className="h-5 w-5 text-amber-600" />
           </CardHeader>
           <CardContent>
-            <div className="flex items-baseline gap-2">
-              <div className="text-3xl font-bold text-slate-900">{dentist?.nps_score || 0}</div>
-              <Badge
-                variant={dentist?.nps_score >= 70 ? 'default' : 'destructive'}
-                className={dentist?.nps_score >= 70 ? 'bg-emerald-500' : ''}
-              >
-                {dentist?.nps_score >= 70 ? 'Excelente' : 'Atenção'}
-              </Badge>
-            </div>
-            <p className="text-xs text-slate-500 mt-1">Baseado nos últimos 30 dias</p>
+            <div className="text-3xl font-bold text-slate-900">{pendingCases}</div>
+            <p className="text-xs text-slate-500 mt-1">Em análise ou tratamento</p>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Status da Licença</CardTitle>
-            <FileText className="h-4 w-4 text-slate-400" />
+            <CardTitle className="text-sm font-medium text-slate-600">Consultas Hoje</CardTitle>
+            <CalendarClock className="h-5 w-5 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold capitalize text-slate-900">
-              {dentist?.license_status}
-            </div>
-            <p className="text-xs text-slate-500 mt-1">Renovação em 90 dias</p>
+            <div className="text-3xl font-bold text-slate-900">{mockAppointments.length}</div>
+            <p className="text-xs text-slate-500 mt-1">Agendadas para hoje</p>
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Agenda de Hoje</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {mockAppointments.map((apt, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-sm font-bold text-emerald-600 w-12">{apt.time}</div>
+                <div>
+                  <p className="font-medium text-slate-900">{apt.patient}</p>
+                  <p className="text-sm text-slate-500">{apt.type}</p>
+                </div>
+              </div>
+              <Link
+                to="/dentist/agenda"
+                className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+              >
+                Detalhes
+              </Link>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-900">Casos Recentes</h2>
-          <Button variant="ghost" asChild>
-            <Link to="/dentist/cases">Ver todos</Link>
-          </Button>
+          <h2 className="text-xl font-bold text-slate-900">Pacientes Recentes</h2>
+          <Link
+            to="/dentist/patients"
+            className="text-sm font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+          >
+            Ver todos <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-        <div className="grid gap-4">
-          {cases.slice(0, 3).map((c) => (
-            <Card
-              key={c.id}
-              className="p-4 flex items-center justify-between hover:border-emerald-200 transition-colors cursor-pointer"
-            >
-              <div>
-                <h3 className="font-semibold text-slate-900">
-                  {c.expand?.patient?.name || 'Paciente MW'}
-                </h3>
-                <p className="text-sm text-slate-500">ID: {c.id}</p>
+        <Card>
+          <CardContent className="p-0">
+            {mockPatients.map((p, i) => (
+              <div
+                key={p.id}
+                className={cn(
+                  'flex items-center justify-between p-4',
+                  i !== mockPatients.length - 1 && 'border-b border-slate-100',
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-slate-200 text-slate-600">
+                      {p.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium text-slate-900">{p.name}</p>
+                    <p className="text-sm text-slate-500">{p.status}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-medium text-slate-700">{p.progress}%</div>
+                  <div className="w-24 h-1.5 bg-slate-200 rounded-full mt-1">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full transition-all"
+                      style={{ width: `${p.progress}%` }}
+                    />
+                  </div>
+                </div>
               </div>
-              <Badge variant="outline" className="capitalize bg-slate-50">
-                {c.status}
-              </Badge>
-            </Card>
-          ))}
-          {cases.length === 0 && (
-            <div className="text-center py-8 text-slate-500 bg-white rounded-xl border border-dashed border-slate-300">
-              Nenhum caso encontrado.
-            </div>
-          )}
-        </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

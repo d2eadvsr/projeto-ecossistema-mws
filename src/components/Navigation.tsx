@@ -5,30 +5,40 @@ import {
   Users,
   FolderOpen,
   FlaskConical,
-  Megaphone,
   CreditCard,
   LogOut,
+  Calendar,
+  Settings,
+  Activity,
+  CalendarCheck,
+  UserCircle,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 
 const getLinksForRole = (role: string) => {
-  const base = [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
-
   if (role === 'dentist') {
     return [
-      ...base,
+      { href: '/dashboard/dentist', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/dentist/agenda', label: 'Agenda', icon: Calendar },
+      { href: '/dentist/patients', label: 'Pacientes', icon: Users },
       { href: '/cases', label: 'Casos Clínicos', icon: FolderOpen },
-      { href: '/marketing', label: 'Marketing IA', icon: Megaphone },
+      { href: '/dentist/settings', label: 'Configurações', icon: Settings },
     ]
   }
   if (role === 'patient') {
-    return [...base, { href: '/financing', label: 'Financiamento', icon: CreditCard }]
+    return [
+      { href: '/dashboard/patient', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/patient/treatment', label: 'Meu Tratamento', icon: Activity },
+      { href: '/patient/appointments', label: 'Consultas', icon: CalendarCheck },
+      { href: '/patient/payments', label: 'Pagamentos', icon: CreditCard },
+      { href: '/patient/profile', label: 'Perfil', icon: UserCircle },
+    ]
   }
+  const base = [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
   if (role === 'lab') {
     return [...base, { href: '/lab', label: 'Produção Lab', icon: FlaskConical }]
   }
-  // Admins
   return [
     ...base,
     { href: '/cases', label: 'Todos os Casos', icon: FolderOpen },
@@ -90,7 +100,7 @@ export function BottomNav({ role }: { role: string }) {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around p-2 z-50">
-      {links.slice(0, 4).map((link) => {
+      {links.slice(0, 5).map((link) => {
         const Icon = link.icon
         const isActive = location.pathname === link.href
         return (

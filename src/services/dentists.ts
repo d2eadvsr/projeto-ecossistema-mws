@@ -2,6 +2,9 @@ import pb from '@/lib/pocketbase/client'
 
 export const getDentists = (filter?: string) => pb.collection('dentists').getFullList({ filter })
 
+export const getDentistByUserId = (userId: string) =>
+  pb.collection('dentists').getFirstListItem(`user = "${userId}"`)
+
 export const getDentist = (id: string) => pb.collection('dentists').getOne(id)
 
 export const createDentist = (data: {
