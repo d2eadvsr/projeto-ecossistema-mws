@@ -1,11 +1,6 @@
 migrate(
   (app) => {
-    let users
-    try {
-      users = app.findCollectionByNameOrId('_pb_users_auth_')
-    } catch {
-      users = app.findCollectionByNameOrId('_pb_Users_Auth_')
-    }
+    const users = app.findCollectionByNameOrId('_pb_users_auth_')
 
     if (!users.fields.getByName('role')) {
       users.fields.add(
@@ -40,12 +35,7 @@ migrate(
     app.save(users)
   },
   (app) => {
-    let users
-    try {
-      users = app.findCollectionByNameOrId('_pb_users_auth_')
-    } catch {
-      users = app.findCollectionByNameOrId('_pb_Users_Auth_')
-    }
+    const users = app.findCollectionByNameOrId('_pb_users_auth_')
     users.fields.removeByName('role')
     users.fields.removeByName('status')
     app.save(users)

@@ -1,11 +1,6 @@
 migrate(
   (app) => {
-    let users
-    try {
-      users = app.findCollectionByNameOrId('_pb_users_auth_')
-    } catch {
-      users = app.findCollectionByNameOrId('_pb_Users_Auth_')
-    }
+    const users = app.findCollectionByNameOrId('_pb_users_auth_')
     const dentists = app.findCollectionByNameOrId('dentists')
     const patients = app.findCollectionByNameOrId('patients')
     const cases = app.findCollectionByNameOrId('clinical_cases')
@@ -14,19 +9,15 @@ migrate(
       try {
         return app.findAuthRecordByEmail('_pb_users_auth_', email)
       } catch (_) {
-        try {
-          return app.findAuthRecordByEmail('_pb_Users_Auth_', email)
-        } catch (_) {
-          const record = new Record(users)
-          record.setEmail(email)
-          record.setPassword('Skip@Pass')
-          record.setVerified(true)
-          record.set('name', name)
-          record.set('role', role)
-          record.set('status', 'active')
-          app.save(record)
-          return record
-        }
+        const record = new Record(users)
+        record.setEmail(email)
+        record.setPassword('Skip@Pass')
+        record.setVerified(true)
+        record.set('name', name)
+        record.set('role', role)
+        record.set('status', 'active')
+        app.save(record)
+        return record
       }
     }
 
