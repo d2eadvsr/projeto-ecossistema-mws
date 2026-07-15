@@ -1,33 +1,23 @@
 routerAdd(
   'POST',
-  '/backend/v1/mkt-generate',
+  '/backend/v1/generate-mkt',
   (e) => {
-    try {
-      const body = e.requestInfo().body || {}
-      const topic = body.topic || 'dicas de ortodontia'
+    const body = e.requestInfo().body || {}
+    const topic = body.topic
+    if (!topic) return e.badRequestError('missing topic')
 
-      // Using Skip AI Gateway via Agent
-      const result = $ai.agent('magic-helper').chat({
-        user_id: e.auth?.id || 'anonymous',
-        message: `Crie um post curto para Instagram sobre: ${topic}`,
-      })
-
-      try {
-        const events = $app.findCollectionByNameOrId('events')
-        const ev = new Record(events)
-        ev.set('event_name', 'content.generated')
-        ev.set('payload', { topic })
-        ev.set('source', 'mkt_tool')
-        $app.save(ev)
-      } catch (err) {
-        console.log('Event log failed', err.message)
-      }
-
-      return e.json(200, { content: result.content })
-    } catch (err) {
-      console.log('MKT generation error:', err.message)
-      return e.internalServerError('Falha ao gerar conteúdo')
-    }
+    const reply = $ai.chat({
+      model: 'fast',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a marketing assistant for dentists. Generate social media posts in Portuguese.',
+        },
+        { role: 'user', content: `Generate a post about: ${topic}` },
+      ],
+    })
+    return e.json(200, { content: reply.choices[0].message.content })
   },
   $apis.requireAuth(),
 )

@@ -1,18 +1,12 @@
 onRecordAfterUpdateSuccess((e) => {
-  const newStatus = e.record.getString('status')
-  const oldStatus = e.record.original().getString('status')
-
-  if (newStatus === 'delivered' && oldStatus !== 'delivered') {
+  const statusChanged = e.record.getString('status') !== e.record.original().getString('status')
+  if (statusChanged && e.record.getString('status') === 'delivered') {
     const events = $app.findCollectionByNameOrId('events')
     const event = new Record(events)
     event.set('event_name', 'case.delivered')
-    event.set('payload', { case_id: e.record.id })
-    event.set('source', 'system')
+    event.set('payload', { caseId: e.record.id, patient: e.record.getString('patient') })
+    event.set('source', 'nps_trigger')
     $app.save(event)
-
-    $app
-      .logger()
-      .info('NPS trigger: Case delivered, patient should be notified.', 'case_id', e.record.id)
   }
-  e.next()
+  return e.next()
 }, 'clinical_cases')

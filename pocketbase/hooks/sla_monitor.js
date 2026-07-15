@@ -1,12 +1,10 @@
-cronAdd('sla_monitor', '0 8 * * *', () => {
-  const cases = $app.findRecordsByFilter(
-    'clinical_cases',
-    "sla_deadline < @now && status != 'delivered'",
-    '',
-    100,
-    0,
-  )
-  for (const c of cases) {
-    $app.logger().warn('SLA breached for case', 'case_id', c.id)
+onRecordAfterUpdateSuccess((e) => {
+  const slaDeadlineStr = e.record.getString('sla_deadline')
+  if (slaDeadlineStr) {
+    const slaDeadline = new Date(slaDeadlineStr)
+    if (slaDeadline < new Date() && e.record.getString('status') !== 'delivered') {
+      console.log(`SLA breached for case ${e.record.id}`)
+    }
   }
-})
+  return e.next()
+}, 'clinical_cases')

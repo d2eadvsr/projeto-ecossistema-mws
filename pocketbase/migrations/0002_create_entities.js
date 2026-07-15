@@ -1,129 +1,165 @@
 migrate(
   (app) => {
     // 1. Dentists
-    const dentists = new Collection({
-      name: 'dentists',
-      type: 'base',
-      listRule: '',
-      viewRule: '',
-      createRule: '',
-      updateRule: '',
-      deleteRule: '',
-      fields: [
-        {
-          name: 'user_id',
-          type: 'relation',
-          required: true,
-          collectionId: '_pb_users_auth_',
-          maxSelect: 1,
-        },
-        { name: 'cro', type: 'text' },
-        { name: 'specialization', type: 'text' },
-        { name: 'nps_score', type: 'number' },
-        {
-          name: 'license_status',
-          type: 'select',
-          values: ['active', 'pending', 'suspended'],
-          maxSelect: 1,
-        },
-        { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
-        { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
-      ],
-    })
-    app.save(dentists)
+    let dentists
+    try {
+      dentists = app.findCollectionByNameOrId('dentists')
+    } catch {
+      try {
+        dentists = app.findCollectionByNameOrId('Dentists')
+      } catch {
+        dentists = new Collection({
+          name: 'dentists',
+          type: 'base',
+          listRule: '',
+          viewRule: '',
+          createRule: '',
+          updateRule: '',
+          deleteRule: '',
+          fields: [
+            {
+              name: 'user',
+              type: 'relation',
+              required: true,
+              collectionId: '_pb_users_auth_',
+              maxSelect: 1,
+            },
+            { name: 'cro', type: 'text' },
+            { name: 'specialization', type: 'text' },
+            { name: 'nps_score', type: 'number' },
+            {
+              name: 'license_status',
+              type: 'select',
+              values: ['pending', 'active', 'suspended'],
+              maxSelect: 1,
+            },
+          ],
+        })
+        app.save(dentists)
+      }
+    }
 
     // 2. Patients
-    const patients = new Collection({
-      name: 'patients',
-      type: 'base',
-      listRule: '',
-      viewRule: '',
-      createRule: '',
-      updateRule: '',
-      deleteRule: '',
-      fields: [
-        {
-          name: 'user_id',
-          type: 'relation',
-          required: true,
-          collectionId: '_pb_users_auth_',
-          maxSelect: 1,
-        },
-        { name: 'document_id', type: 'text' },
-        {
-          name: 'credit_status',
-          type: 'select',
-          values: ['approved', 'pending', 'rejected'],
-          maxSelect: 1,
-        },
-        { name: 'treatment_progress', type: 'number' },
-        { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
-        { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
-      ],
-    })
-    app.save(patients)
+    let patients
+    try {
+      patients = app.findCollectionByNameOrId('patients')
+    } catch {
+      try {
+        patients = app.findCollectionByNameOrId('Patients')
+      } catch {
+        patients = new Collection({
+          name: 'patients',
+          type: 'base',
+          listRule: '',
+          viewRule: '',
+          createRule: '',
+          updateRule: '',
+          deleteRule: '',
+          fields: [
+            {
+              name: 'user',
+              type: 'relation',
+              required: true,
+              collectionId: '_pb_users_auth_',
+              maxSelect: 1,
+            },
+            { name: 'document_id', type: 'text' },
+            {
+              name: 'credit_status',
+              type: 'select',
+              values: ['pending', 'approved', 'rejected'],
+              maxSelect: 1,
+            },
+            { name: 'treatment_progress', type: 'number' },
+          ],
+        })
+        app.save(patients)
+      }
+    }
 
     // 3. Clinical Cases
-    const cases = new Collection({
-      name: 'clinical_cases',
-      type: 'base',
-      listRule: '',
-      viewRule: '',
-      createRule: '',
-      updateRule: '',
-      deleteRule: '',
-      fields: [
-        {
-          name: 'dentist_id',
-          type: 'relation',
-          required: true,
-          collectionId: dentists.id,
-          maxSelect: 1,
-        },
-        {
-          name: 'patient_id',
-          type: 'relation',
-          required: true,
-          collectionId: patients.id,
-          maxSelect: 1,
-        },
-        {
-          name: 'status',
-          type: 'select',
-          values: ['analyzing', 'in_production', 'delivered'],
-          maxSelect: 1,
-        },
-        { name: 'notes', type: 'text' },
-        { name: 'sla_deadline', type: 'date' },
-        { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
-        { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
-      ],
-    })
-    app.save(cases)
+    let cases
+    try {
+      cases = app.findCollectionByNameOrId('clinical_cases')
+    } catch {
+      try {
+        cases = app.findCollectionByNameOrId('Clinical_Cases')
+      } catch {
+        cases = new Collection({
+          name: 'clinical_cases',
+          type: 'base',
+          listRule: '',
+          viewRule: '',
+          createRule: '',
+          updateRule: '',
+          deleteRule: '',
+          fields: [
+            {
+              name: 'dentist',
+              type: 'relation',
+              required: true,
+              collectionId: dentists.id,
+              maxSelect: 1,
+            },
+            {
+              name: 'patient',
+              type: 'relation',
+              required: true,
+              collectionId: patients.id,
+              maxSelect: 1,
+            },
+            {
+              name: 'status',
+              type: 'select',
+              values: ['analyzing', 'production', 'delivered'],
+              maxSelect: 1,
+            },
+            { name: 'sla_deadline', type: 'date' },
+          ],
+        })
+        app.save(cases)
+      }
+    }
+
+    // Add missing notes field to clinical_cases
+    if (!cases.fields.getByName('notes')) {
+      cases.fields.add(new TextField({ name: 'notes' }))
+      app.save(cases)
+    }
 
     // 4. Events
-    const events = new Collection({
-      name: 'events',
-      type: 'base',
-      listRule: '',
-      viewRule: '',
-      createRule: '',
-      updateRule: '',
-      deleteRule: '',
-      fields: [
-        { name: 'event_name', type: 'text', required: true },
-        { name: 'payload', type: 'json' },
-        { name: 'source', type: 'text' },
-        { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
-        { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
-      ],
-    })
-    app.save(events)
+    let events
+    try {
+      events = app.findCollectionByNameOrId('events')
+    } catch {
+      try {
+        events = app.findCollectionByNameOrId('Events')
+      } catch {
+        events = new Collection({
+          name: 'events',
+          type: 'base',
+          listRule: '',
+          viewRule: '',
+          createRule: '',
+          updateRule: '',
+          deleteRule: '',
+          fields: [
+            { name: 'event_name', type: 'text', required: true },
+            { name: 'payload', type: 'json' },
+            { name: 'source', type: 'text' },
+          ],
+        })
+        app.save(events)
+      }
+    }
   },
   (app) => {
-    app.delete(app.findCollectionByNameOrId('events'))
-    app.delete(app.findCollectionByNameOrId('clinical_cases'))
-    app.delete(app.findCollectionByNameOrId('patients'))
-    app.delete(app.findCollectionByNameOrId('dentists'))
+    try {
+      const cases = app.findCollectionByNameOrId('clinical_cases')
+      if (cases.fields.getByName('notes')) {
+        cases.fields.removeByName('notes')
+        app.save(cases)
+      }
+    } catch (_) {}
   },
 )

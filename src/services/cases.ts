@@ -1,32 +1,28 @@
 import pb from '@/lib/pocketbase/client'
 
-export const getCases = async () => {
-  return await pb.collection('clinical_cases').getFullList({
-    expand: 'dentist,patient',
-    sort: '-created',
-  })
-}
+export const getCases = (filter?: string, expand?: string) =>
+  pb.collection('clinical_cases').getFullList({ filter, expand })
 
-export const getDentistCases = async (dentistId: string) => {
-  return await pb.collection('clinical_cases').getFullList({
-    filter: `dentist = "${dentistId}"`,
-    expand: 'patient',
-    sort: '-created',
-  })
-}
+export const getCase = (id: string, expand?: string) =>
+  pb.collection('clinical_cases').getOne(id, { expand })
 
-export const getPatientCases = async (patientId: string) => {
-  return await pb.collection('clinical_cases').getFullList({
-    filter: `patient = "${patientId}"`,
-    expand: 'dentist',
-    sort: '-created',
-  })
-}
+export const createCase = (data: {
+  dentist: string
+  patient: string
+  status: 'analyzing' | 'production' | 'delivered'
+  notes?: string
+  sla_deadline?: string
+}) => pb.collection('clinical_cases').create(data)
 
-export const createCase = async (data: any) => {
-  return await pb.collection('clinical_cases').create(data)
-}
+export const updateCase = (
+  id: string,
+  data: Partial<{
+    dentist: string
+    patient: string
+    status: 'analyzing' | 'production' | 'delivered'
+    notes: string
+    sla_deadline: string
+  }>,
+) => pb.collection('clinical_cases').update(id, data)
 
-export const updateCaseStatus = async (id: string, status: string) => {
-  return await pb.collection('clinical_cases').update(id, { status })
-}
+export const deleteCase = (id: string) => pb.collection('clinical_cases').delete(id)
