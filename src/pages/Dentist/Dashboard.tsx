@@ -77,34 +77,6 @@ export default function DentistDashboard() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Agenda de Hoje</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {mockAppointments.map((apt, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="text-sm font-bold text-emerald-600 w-12">{apt.time}</div>
-                <div>
-                  <p className="font-medium text-slate-900">{apt.patient}</p>
-                  <p className="text-sm text-slate-500">{apt.type}</p>
-                </div>
-              </div>
-              <Link
-                to="/dentist/agenda"
-                className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
-              >
-                Detalhes
-              </Link>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-slate-900">Pacientes Recentes</h2>
