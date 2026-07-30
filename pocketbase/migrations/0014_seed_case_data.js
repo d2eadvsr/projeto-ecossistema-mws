@@ -1,6 +1,10 @@
 migrate(
   (app) => {
-    let dentistUser
+    if (!app.hasTable('clinical_cases')) return
+    if (!app.hasTable('dentists')) return
+    if (!app.hasTable('patients')) return
+
+    var dentistUser
     try {
       dentistUser = app.findAuthRecordByEmail('_pb_users_auth_', 'daniel.elias@d2eadvisory.com.br')
     } catch (_) {
@@ -12,11 +16,11 @@ migrate(
       app.save(dentistUser)
     }
 
-    let dentist
+    var dentist
     try {
       dentist = app.findFirstRecordByData('dentists', 'user', dentistUser.id)
     } catch (_) {
-      const dc = app.findCollectionByNameOrId('dentists')
+      var dc = app.findCollectionByNameOrId('dentists')
       dentist = new Record(dc)
       dentist.set('user', dentistUser.id)
       dentist.set('license_status', 'active')
@@ -140,6 +144,7 @@ migrate(
     })
   },
   (app) => {
+    if (!app.hasTable('clinical_cases')) return
     var notes = [
       'Maria-Plan',
       'Joao-Plan',

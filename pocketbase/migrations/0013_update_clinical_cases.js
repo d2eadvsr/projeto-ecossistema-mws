@@ -1,6 +1,67 @@
 migrate(
   (app) => {
-    const col = app.findCollectionByNameOrId('clinical_cases')
+    if (!app.hasTable('clinical_cases')) {
+      var dentistsId = null
+      var patientsId = null
+      try {
+        dentistsId = app.findCollectionByNameOrId('dentists').id
+      } catch (_) {}
+      try {
+        patientsId = app.findCollectionByNameOrId('patients').id
+      } catch (_) {}
+
+      var fields = [
+        {
+          name: 'status',
+          type: 'select',
+          values: ['sent_to_lab', 'lab_responded', 'in_treatment', 'concluded'],
+          maxSelect: 1,
+        },
+        { name: 'notes', type: 'text' },
+        { name: 'sla_deadline', type: 'date' },
+        { name: 'lab_response_date', type: 'date' },
+        { name: 'first_consultation_date', type: 'date' },
+        { name: 'last_consultation_date', type: 'date' },
+        { name: 'consultation_count', type: 'number' },
+        { name: 'created', type: 'autodate', onCreate: true, onUpdate: false },
+        { name: 'updated', type: 'autodate', onCreate: true, onUpdate: true },
+      ]
+
+      if (dentistsId) {
+        fields.push({
+          name: 'dentist',
+          type: 'relation',
+          collectionId: dentistsId,
+          cascadeDelete: false,
+          maxSelect: 1,
+        })
+      }
+      if (patientsId) {
+        fields.push({
+          name: 'patient',
+          type: 'relation',
+          collectionId: patientsId,
+          cascadeDelete: false,
+          maxSelect: 1,
+        })
+      }
+
+      var collection = new Collection({
+        name: 'clinical_cases',
+        type: 'base',
+        listRule: "@request.auth.id != ''",
+        viewRule: "@request.auth.id != ''",
+        createRule: "@request.auth.id != ''",
+        updateRule: "@request.auth.id != ''",
+        deleteRule: "@request.auth.id != ''",
+        fields: fields,
+        indexes: [],
+      })
+      app.save(collection)
+      return
+    }
+
+    var col = app.findCollectionByNameOrId('clinical_cases')
 
     if (col.fields.getByName('status')) {
       col.fields.removeByName('status')
@@ -35,15 +96,17 @@ migrate(
     app.save(col)
   },
   (app) => {
-    const col = app.findCollectionByNameOrId('clinical_cases')
-    ;[
-      'lab_response_date',
-      'first_consultation_date',
-      'last_consultation_date',
-      'consultation_count',
-    ].forEach(function (f) {
-      if (col.fields.getByName(f)) col.fields.removeByName(f)
-    })
+    if (!app.hasTable('clinical_cases')) return
+    var col = app
+      .findCollectionByNameOrId('clinical_cases')
+      [
+        ('lab_response_date',
+        'first_consultation_date',
+        'last_consultation_date',
+        'consultation_count')
+      ].forEach(function (f) {
+        if (col.fields.getByName(f)) col.fields.removeByName(f)
+      })
     app.save(col)
   },
 )
