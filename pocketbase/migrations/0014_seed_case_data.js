@@ -4,6 +4,10 @@ migrate(
     if (!app.hasTable('dentists')) return
     if (!app.hasTable('patients')) return
 
+    var ccCol = app.findCollectionByNameOrId('clinical_cases')
+    var hasDentistField = !!ccCol.fields.getByName('dentist')
+    var hasPatientField = !!ccCol.fields.getByName('patient')
+
     var dentistUser
     try {
       dentistUser = app.findAuthRecordByEmail('_pb_users_auth_', 'daniel.elias@d2eadvisory.com.br')
@@ -130,8 +134,8 @@ migrate(
         app.findFirstRecordByData('clinical_cases', 'notes', c.n)
       } catch (_) {
         var r = new Record(cc)
-        r.set('dentist', dentist.id)
-        r.set('patient', pids[c.p])
+        if (hasDentistField) r.set('dentist', dentist.id)
+        if (hasPatientField) r.set('patient', pids[c.p])
         r.set('status', c.s)
         r.set('notes', c.n)
         r.set('sla_deadline', c.sd)
