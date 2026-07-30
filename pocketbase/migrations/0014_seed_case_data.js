@@ -1,73 +1,75 @@
 migrate(
   (app) => {
     if (!app.hasTable('clinical_cases')) return
-    if (!app.hasTable('dentists')) return
-    if (!app.hasTable('patients')) return
 
     var ccCol = app.findCollectionByNameOrId('clinical_cases')
     var hasDentistField = !!ccCol.fields.getByName('dentist')
     var hasPatientField = !!ccCol.fields.getByName('patient')
 
-    var dentistUser
-    try {
-      dentistUser = app.findAuthRecordByEmail('_pb_users_auth_', 'daniel.elias@d2eadvisory.com.br')
-    } catch (_) {
-      return
-    }
-
-    if (dentistUser.getString('role') !== 'dentist') {
-      dentistUser.set('role', 'dentist')
-      app.save(dentistUser)
-    }
-
-    var dentist
-    try {
-      dentist = app.findFirstRecordByData('dentists', 'user', dentistUser.id)
-    } catch (_) {
-      var dc = app.findCollectionByNameOrId('dentists')
-      dentist = new Record(dc)
-      dentist.set('user', dentistUser.id)
-      dentist.set('license_status', 'active')
-      dentist.set('cro', '12345')
-      app.save(dentist)
-    }
-
-    var testPatients = [
-      { email: 'maria.silva@test.com', name: 'Maria Silva', doc: '12345678901' },
-      { email: 'joao.santos@test.com', name: 'João Santos', doc: '23456789012' },
-      { email: 'ana.costa@test.com', name: 'Ana Costa', doc: '34567890123' },
-      { email: 'pedro.lima@test.com', name: 'Pedro Lima', doc: '45678901234' },
-    ]
-
-    var pids = []
-    testPatients.forEach(function (tp) {
-      var pu
+    var dentistId = null
+    if (hasDentistField && app.hasTable('dentists')) {
       try {
-        pu = app.findAuthRecordByEmail('_pb_users_auth_', tp.email)
-      } catch (_) {
-        var uc = app.findCollectionByNameOrId('_pb_users_auth_')
-        pu = new Record(uc)
-        pu.setEmail(tp.email)
-        pu.setPassword('Skip@Pass')
-        pu.setVerified(true)
-        pu.set('name', tp.name)
-        pu.set('role', 'patient')
-        pu.set('status', 'active')
-        app.save(pu)
-      }
-      var pr
-      try {
-        pr = app.findFirstRecordByData('patients', 'user', pu.id)
-      } catch (_) {
-        var pc = app.findCollectionByNameOrId('patients')
-        pr = new Record(pc)
-        pr.set('user', pu.id)
-        pr.set('document_id', tp.doc)
-        pr.set('credit_status', 'approved')
-        app.save(pr)
-      }
-      pids.push(pr.id)
-    })
+        var dentistUser = app.findAuthRecordByEmail(
+          '_pb_users_auth_',
+          'daniel.elias@d2eadvisory.com.br',
+        )
+        if (dentistUser.getString('role') !== 'dentist') {
+          dentistUser.set('role', 'dentist')
+          app.save(dentistUser)
+        }
+        try {
+          var dentist = app.findFirstRecordByData('dentists', 'user', dentistUser.id)
+          dentistId = dentist.id
+        } catch (_) {
+          var dc = app.findCollectionByNameOrId('dentists')
+          dentist = new Record(dc)
+          dentist.set('user', dentistUser.id)
+          dentist.set('license_status', 'active')
+          dentist.set('cro', '12345')
+          app.save(dentist)
+          dentistId = dentist.id
+        }
+      } catch (_) {}
+    }
+
+    var patientIds = []
+    if (hasPatientField && app.hasTable('patients')) {
+      var testPatients = [
+        { email: 'maria.silva@test.com', name: 'Maria Silva', doc: '12345678901' },
+        { email: 'joao.santos@test.com', name: 'João Santos', doc: '23456789012' },
+        { email: 'ana.costa@test.com', name: 'Ana Costa', doc: '34567890123' },
+        { email: 'pedro.lima@test.com', name: 'Pedro Lima', doc: '45678901234' },
+      ]
+
+      testPatients.forEach(function (tp) {
+        var pu
+        try {
+          pu = app.findAuthRecordByEmail('_pb_users_auth_', tp.email)
+        } catch (_) {
+          var uc = app.findCollectionByNameOrId('_pb_users_auth_')
+          pu = new Record(uc)
+          pu.setEmail(tp.email)
+          pu.setPassword('Skip@Pass')
+          pu.setVerified(true)
+          pu.set('name', tp.name)
+          pu.set('role', 'patient')
+          pu.set('status', 'active')
+          app.save(pu)
+        }
+        var pr
+        try {
+          pr = app.findFirstRecordByData('patients', 'user', pu.id)
+        } catch (_) {
+          var pc = app.findCollectionByNameOrId('patients')
+          pr = new Record(pc)
+          pr.set('user', pu.id)
+          pr.set('document_id', tp.doc)
+          pr.set('credit_status', 'approved')
+          app.save(pr)
+        }
+        patientIds.push(pr.id)
+      })
+    }
 
     var cc = app.findCollectionByNameOrId('clinical_cases')
     var now = Date.now()
@@ -134,8 +136,8 @@ migrate(
         app.findFirstRecordByData('clinical_cases', 'notes', c.n)
       } catch (_) {
         var r = new Record(cc)
-        if (hasDentistField) r.set('dentist', dentist.id)
-        if (hasPatientField) r.set('patient', pids[c.p])
+        if (hasDentistField && dentistId) r.set('dentist', dentistId)
+        if (hasPatientField && patientIds[c.p]) r.set('patient', patientIds[c.p])
         r.set('status', c.s)
         r.set('notes', c.n)
         r.set('sla_deadline', c.sd)

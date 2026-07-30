@@ -62,34 +62,6 @@ migrate(
       col.fields.add(new AutodateField({ name: 'updated', onCreate: true, onUpdate: true }))
     }
 
-    if (!col.fields.getByName('dentist')) {
-      try {
-        var dId = app.findCollectionByNameOrId('dentists').id
-        col.fields.add(
-          new RelationField({
-            name: 'dentist',
-            collectionId: dId,
-            cascadeDelete: false,
-            maxSelect: 1,
-          }),
-        )
-      } catch (_) {}
-    }
-
-    if (!col.fields.getByName('patient')) {
-      try {
-        var pId = app.findCollectionByNameOrId('patients').id
-        col.fields.add(
-          new RelationField({
-            name: 'patient',
-            collectionId: pId,
-            cascadeDelete: false,
-            maxSelect: 1,
-          }),
-        )
-      } catch (_) {}
-    }
-
     app.save(col)
   },
   (app) => {
