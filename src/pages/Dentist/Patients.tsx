@@ -1,11 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/hooks/use-auth'
-import { Card, CardContent } from '@/components/ui/card'
 import { Users, Activity, CheckCircle2, FileText, Wrench, Calendar } from 'lucide-react'
-import { getDentistByUserId } from '@/services/dentists'
-import { getCaseCounts, type CaseCounts } from '@/services/cases'
-import { useRealtime } from '@/hooks/use-realtime'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent } from '@/components/ui/card'
 
 const MANUTENCAO_LABELS = [
   '1ª Manutenção',
@@ -16,52 +10,113 @@ const MANUTENCAO_LABELS = [
   '6ª Manutenção',
 ]
 
+interface MockPatient {
+  id: string
+  name: string
+  lab_response_date: string | null
+  first_consultation_date: string | null
+  last_consultation_date: string | null
+  consultation_count: number
+}
+
+// Backend integration will replace this mock data later.
+const MOCK_PATIENTS: MockPatient[] = [
+  {
+    id: '1',
+    name: 'Maria Silva',
+    lab_response_date: null,
+    first_consultation_date: null,
+    last_consultation_date: null,
+    consultation_count: 0,
+  },
+  {
+    id: '2',
+    name: 'João Santos',
+    lab_response_date: null,
+    first_consultation_date: null,
+    last_consultation_date: null,
+    consultation_count: 0,
+  },
+  {
+    id: '3',
+    name: 'Ana Costa',
+    lab_response_date: '2026-01-15',
+    first_consultation_date: null,
+    last_consultation_date: null,
+    consultation_count: 0,
+  },
+  {
+    id: '4',
+    name: 'Pedro Lima',
+    lab_response_date: '2026-01-20',
+    first_consultation_date: null,
+    last_consultation_date: null,
+    consultation_count: 0,
+  },
+  {
+    id: '5',
+    name: 'Carla Mendes',
+    lab_response_date: '2025-12-10',
+    first_consultation_date: '2026-01-05',
+    last_consultation_date: null,
+    consultation_count: 0,
+  },
+  {
+    id: '6',
+    name: 'Bruno Almeida',
+    lab_response_date: '2025-11-01',
+    first_consultation_date: '2025-11-15',
+    last_consultation_date: '2025-12-01',
+    consultation_count: 1,
+  },
+  {
+    id: '7',
+    name: 'Fernanda Rocha',
+    lab_response_date: '2025-09-15',
+    first_consultation_date: '2025-10-01',
+    last_consultation_date: '2025-12-20',
+    consultation_count: 2,
+  },
+  {
+    id: '8',
+    name: 'Ricardo Tavares',
+    lab_response_date: '2025-07-01',
+    first_consultation_date: '2025-07-15',
+    last_consultation_date: '2026-01-10',
+    consultation_count: 5,
+  },
+]
+
+function computeCounts(patients: MockPatient[]) {
+  const totalPatients = patients.length
+
+  const emPlanejamento = patients.filter((p) => !p.lab_response_date).length
+  const planejados = patients.filter(
+    (p) => p.lab_response_date && !p.first_consultation_date,
+  ).length
+  const emTratamento = patients.filter(
+    (p) => p.first_consultation_date && !p.last_consultation_date,
+  ).length
+
+  const concluidos = patients.filter((p) => p.last_consultation_date)
+  const aparelhoColocado = patients.filter((p) => p.first_consultation_date).length
+  const manutencoesProgramadas = [1, 2, 3, 4, 5, 6].map(
+    (n) => concluidos.filter((p) => p.consultation_count === n).length,
+  )
+
+  return {
+    totalPatients,
+    emAndamento: { emPlanejamento, planejados, emTratamento },
+    concluidos: {
+      total: concluidos.length,
+      aparelhoColocado,
+      manutencoesProgramadas,
+    },
+  }
+}
+
 export default function DentistPatients() {
-  const { user } = useAuth()
-  const [counts, setCounts] = useState<CaseCounts | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  const loadData = async () => {
-    if (!user) return
-    try {
-      const dentist = await getDentistByUserId(user.id)
-      const c = await getCaseCounts(dentist.id)
-      setCounts(c)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadData()
-  }, [user])
-
-  useRealtime('clinical_cases', () => {
-    loadData()
-  })
-
-  if (loading) {
-    return (
-      <div className="p-4 md:p-8 space-y-6 max-w-5xl mx-auto">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-28 w-full" />
-        <Skeleton className="h-28 w-full" />
-        <Skeleton className="h-48 w-full" />
-      </div>
-    )
-  }
-
-  if (!counts) {
-    return (
-      <div className="p-4 md:p-8 text-center text-slate-500 max-w-md mx-auto mt-20">
-        <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-        <p>Não foi possível carregar os dados dos pacientes.</p>
-        <p className="text-sm mt-2">Verifique se seu perfil de dentista está configurado.</p>
-      </div>
-    )
-  }
+  const counts = computeCounts(MOCK_PATIENTS)
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-5xl mx-auto animate-fade-in-up">
