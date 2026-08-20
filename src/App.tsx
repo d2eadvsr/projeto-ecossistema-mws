@@ -19,6 +19,17 @@ import Layout from './components/Layout'
 import DentistDashboard from './pages/Dentist/Dashboard'
 import DentistAgenda from './pages/Dentist/Agenda'
 import DentistPatients from './pages/Dentist/Patients'
+import DentistCases from './pages/Dentist/Cases'
+import DentistFinancing from './pages/Dentist/Financing'
+import DentistMedicalRecord from './pages/Dentist/MedicalRecord'
+import DentistChatLab from './pages/Dentist/ChatLab'
+import DentistSchool from './pages/Dentist/School'
+import DentistCommunity from './pages/Dentist/Community'
+import DentistQuality from './pages/Dentist/Quality'
+import DentistPrograms from './pages/Dentist/Programs'
+import DentistReferrals from './pages/Dentist/Referrals'
+import DentistPublicProfile from './pages/Dentist/PublicProfile'
+import DentistOnboarding from './pages/Dentist/Onboarding'
 import DentistSettings from './pages/Dentist/Settings'
 import PatientDashboard from './pages/Patient/Dashboard'
 import PatientTreatment from './pages/Patient/Treatment'
@@ -53,6 +64,17 @@ const App = () => (
               <Route path="/dashboard/dentist" element={<DentistDashboard />} />
               <Route path="/dentist/agenda" element={<DentistAgenda />} />
               <Route path="/dentist/patients" element={<DentistPatients />} />
+              <Route path="/dentist/cases" element={<DentistCases />} />
+              <Route path="/dentist/financing" element={<DentistFinancing />} />
+              <Route path="/dentist/medical-record" element={<DentistMedicalRecord />} />
+              <Route path="/dentist/chat-lab" element={<DentistChatLab />} />
+              <Route path="/dentist/school" element={<DentistSchool />} />
+              <Route path="/dentist/community" element={<DentistCommunity />} />
+              <Route path="/dentist/quality" element={<DentistQuality />} />
+              <Route path="/dentist/programs" element={<DentistPrograms />} />
+              <Route path="/dentist/referrals" element={<DentistReferrals />} />
+              <Route path="/dentist/public-profile" element={<DentistPublicProfile />} />
+              <Route path="/dentist/onboarding" element={<DentistOnboarding />} />
               <Route path="/dentist/settings" element={<DentistSettings />} />
             </Route>
           </Route>

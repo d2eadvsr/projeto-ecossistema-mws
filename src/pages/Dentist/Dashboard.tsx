@@ -44,7 +44,7 @@ export default function DentistDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">Total de Pacientes</CardTitle>
@@ -52,7 +52,7 @@ export default function DentistDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-slate-900">{mockPatients.length}</div>
-            <p className="text-xs text-slate-500 mt-1">Pacientes ativos</p>
+            <p className="text-xs text-slate-500 mt-1">Pacientes cadastrados na sua base</p>
           </CardContent>
         </Card>
         <Card>
@@ -62,17 +62,7 @@ export default function DentistDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-slate-900">{pendingCases}</div>
-            <p className="text-xs text-slate-500 mt-1">Em análise ou tratamento</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Consultas Hoje</CardTitle>
-            <CalendarClock className="h-5 w-5 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{mockAppointments.length}</div>
-            <p className="text-xs text-slate-500 mt-1">Agendadas para hoje</p>
+            <p className="text-xs text-slate-500 mt-1">Em análise ou tratamento ativo</p>
           </CardContent>
         </Card>
       </div>

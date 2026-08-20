@@ -20,20 +20,61 @@ const statusMap: Record<string, { label: string; variant: 'default' | 'secondary
   delivered: { label: 'Entregue', variant: 'outline' },
 }
 
-export default function Cases() {
-  const [cases, setCases] = useState<any[]>([])
-  const { user } = useAuth()
+interface GeneralCase {
+  id: string
+  dentistName: string
+  patientName: string
+  status: 'analyzing' | 'in_production' | 'delivered'
+  sla_deadline: string
+  notes: string
+}
 
-  useEffect(() => {
-    getCases().then((data) => {
-      // Filter for demo purposes if it's a dentist
-      if (user?.role === 'dentist') {
-        setCases(data.filter((c) => c.expand?.dentist_id?.user_id === user.id))
-      } else {
-        setCases(data)
-      }
-    })
-  }, [user])
+const MOCK_GENERAL_CASES: GeneralCase[] = [
+  {
+    id: 'CAS-2026-001',
+    dentistName: 'Dr. Roberto Fernandes',
+    patientName: 'Maria Silva',
+    status: 'in_production',
+    sla_deadline: '2026-02-28',
+    notes: 'Prioridade no fechamento de diastema superior.',
+  },
+  {
+    id: 'CAS-2026-002',
+    dentistName: 'Dr. Roberto Fernandes',
+    patientName: 'João Santos',
+    status: 'analyzing',
+    sla_deadline: '2026-03-01',
+    notes: 'Avaliar desgastes IPR recomendados nos dentes 31-41.',
+  },
+  {
+    id: 'CAS-2026-003',
+    dentistName: 'Dr. Roberto Fernandes',
+    patientName: 'Ana Costa',
+    status: 'delivered',
+    sla_deadline: '2026-02-24',
+    notes: 'Inclui kit de attachments e gabarito.',
+  },
+  {
+    id: 'CAS-2026-004',
+    dentistName: 'Dra. Juliana Mendes',
+    patientName: 'Pedro Lima',
+    status: 'analyzing',
+    sla_deadline: '2026-03-03',
+    notes: 'Paciente em fase final de dentição mista.',
+  },
+  {
+    id: 'CAS-2026-005',
+    dentistName: 'Dr. Carlos Eduardo',
+    patientName: 'Carla Souza',
+    status: 'in_production',
+    sla_deadline: '2026-03-05',
+    notes: 'Fotos extras anexadas no prontuário.',
+  },
+]
+
+export default function Cases() {
+  const [cases] = useState<GeneralCase[]>(MOCK_GENERAL_CASES)
+  const { user } = useAuth()
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto animate-fade-in-up">

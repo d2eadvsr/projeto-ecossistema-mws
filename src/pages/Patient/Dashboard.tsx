@@ -73,11 +73,7 @@ export default function PatientDashboard() {
             <span>Fase 2 de 5</span>
             <span>{progress}%</span>
           </div>
-          <Progress
-            value={progress}
-            className="h-3 bg-emerald-200"
-            indicatorClassName="bg-emerald-600"
-          />
+          <Progress value={progress} className="h-3 bg-emerald-200 [&>div]:bg-emerald-600" />
           <div className="flex justify-between items-start pt-2">
             {treatmentPhases.map((phase, i) => (
               <div key={i} className="flex flex-col items-center gap-1 flex-1">

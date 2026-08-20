@@ -12,6 +12,14 @@ import {
   Activity,
   CalendarCheck,
   UserCircle,
+  FileText,
+  MessageSquare,
+  GraduationCap,
+  MessagesSquare,
+  ShieldCheck,
+  Megaphone,
+  UserCheck,
+  UserCheck2,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
@@ -22,7 +30,16 @@ const getLinksForRole = (role: string) => {
       { href: '/dashboard/dentist', label: 'Dashboard', icon: LayoutDashboard },
       { href: '/dentist/agenda', label: 'Agenda', icon: Calendar },
       { href: '/dentist/patients', label: 'Pacientes', icon: Users },
-      { href: '/cases', label: 'Casos Clínicos', icon: FolderOpen },
+      { href: '/dentist/cases', label: 'Casos Clínicos', icon: FolderOpen },
+      { href: '/dentist/financing', label: 'Financeiro', icon: CreditCard },
+      { href: '/dentist/medical-record', label: 'Prontuário Digital', icon: FileText },
+      { href: '/dentist/chat-lab', label: 'Chat Laboratório', icon: MessageSquare },
+      { href: '/dentist/school', label: 'Escola MWS', icon: GraduationCap },
+      { href: '/dentist/community', label: 'Comunidade', icon: MessagesSquare },
+      { href: '/dentist/quality', label: 'Qualidade', icon: ShieldCheck },
+      { href: '/dentist/programs', label: 'Programas', icon: Megaphone },
+      { href: '/dentist/referrals', label: 'Indicação de Pacientes', icon: UserCheck },
+      { href: '/dentist/public-profile', label: 'Perfil Público', icon: UserCircle },
       { href: '/dentist/settings', label: 'Configurações', icon: Settings },
     ]
   }
@@ -53,14 +70,16 @@ export function Sidebar({ role }: { role: string }) {
   const { signOut } = useAuth()
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-secondary text-secondary-foreground min-h-screen">
-      <div className="p-6">
+    <div className="hidden md:flex flex-col w-64 bg-secondary text-secondary-foreground h-screen border-r border-secondary-foreground/10 flex-shrink-0">
+      <div className="p-6 pb-4 flex-shrink-0">
         <h1 className="text-2xl font-bold text-primary-foreground flex items-center gap-2">
-          <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">M</div>
+          <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-bold text-white shadow-sm">
+            M
+          </div>
           Magic Wire
         </h1>
       </div>
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex-1 px-3 space-y-1 overflow-y-auto py-2">
         {links.map((link) => {
           const Icon = link.icon
           const isActive = location.pathname === link.href
@@ -69,25 +88,25 @@ export function Sidebar({ role }: { role: string }) {
               key={link.href}
               to={link.href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
+                'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-xs font-medium',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-secondary-foreground/10 text-muted',
+                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                  : 'hover:bg-secondary-foreground/10 text-slate-300 hover:text-white',
               )}
             >
-              <Icon className="w-5 h-5" />
-              {link.label}
+              <Icon className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate">{link.label}</span>
             </Link>
           )
         })}
       </nav>
-      <div className="p-4 border-t border-secondary-foreground/10">
+      <div className="p-4 border-t border-secondary-foreground/10 flex-shrink-0">
         <Button
           variant="ghost"
-          className="w-full justify-start text-muted hover:text-white"
+          className="w-full justify-start text-slate-400 hover:text-white hover:bg-white/5 text-xs font-medium"
           onClick={signOut}
         >
-          <LogOut className="w-5 h-5 mr-3" /> Sair
+          <LogOut className="w-4 h-4 mr-3" /> Sair
         </Button>
       </div>
     </div>
@@ -99,7 +118,7 @@ export function BottomNav({ role }: { role: string }) {
   const location = useLocation()
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around p-2 z-50">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around p-1.5 z-50 shadow-lg">
       {links.slice(0, 5).map((link) => {
         const Icon = link.icon
         const isActive = location.pathname === link.href
@@ -108,12 +127,12 @@ export function BottomNav({ role }: { role: string }) {
             key={link.href}
             to={link.href}
             className={cn(
-              'flex flex-col items-center p-2 text-xs',
-              isActive ? 'text-primary' : 'text-muted-foreground',
+              'flex flex-col items-center p-1.5 text-[10px] font-medium transition-colors',
+              isActive ? 'text-primary font-bold' : 'text-muted-foreground hover:text-slate-900',
             )}
           >
-            <Icon className="w-6 h-6 mb-1" />
-            <span className="truncate max-w-[60px]">{link.label}</span>
+            <Icon className="w-5 h-5 mb-0.5" />
+            <span className="truncate max-w-[58px]">{link.label}</span>
           </Link>
         )
       })}
