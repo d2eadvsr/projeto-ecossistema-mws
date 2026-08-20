@@ -79,7 +79,7 @@ export function Sidebar({ role }: { role: string }) {
           Magic Wire
         </h1>
       </div>
-      <nav className="flex-1 px-3 space-y-1 overflow-y-auto py-2">
+      <nav className="flex-1 min-h-0 px-3 space-y-0.5 overflow-y-auto py-2 custom-scrollbar focus:outline-none">
         {links.map((link) => {
           const Icon = link.icon
           const isActive = location.pathname === link.href
@@ -87,14 +87,20 @@ export function Sidebar({ role }: { role: string }) {
             <Link
               key={link.href}
               to={link.href}
+              title={link.label}
               className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-xs font-medium',
+                'flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors text-xs font-medium group',
                 isActive
                   ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                  : 'hover:bg-secondary-foreground/10 text-slate-300 hover:text-white',
+                  : 'hover:bg-white/10 text-slate-300 hover:text-white',
               )}
             >
-              <Icon className="w-4 h-4 flex-shrink-0" />
+              <Icon
+                className={cn(
+                  'w-4 h-4 flex-shrink-0',
+                  isActive ? 'text-primary-foreground' : 'text-slate-400 group-hover:text-white',
+                )}
+              />
               <span className="truncate">{link.label}</span>
             </Link>
           )
