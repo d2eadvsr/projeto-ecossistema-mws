@@ -9,103 +9,114 @@ import {
   CreditCard,
   PieChart as PieChartIcon,
   ArrowUpRight,
-  ArrowDownRight,
   Download,
-  Filter,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  FileSpreadsheet,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
-interface Transaction {
+interface FinancialRecord {
   id: string
   patientName: string
-  caseId: string
-  date: string
-  totalAmount: number
-  dentistShare: number
-  labShare: number
-  platformFee: number
+  classification: string
+  planning: string
+  treatmentDuration: string
   paymentMethod: string
+  suggestedPriceMWS: number
+  chargedPrice: number
+  closingMonth: string
   status: 'liquidado' | 'pendente' | 'processando'
-  installments?: string
 }
 
 const MOCK_METRICS = {
   totalGross: 48500.0,
   dentistNet: 31200.0,
   labCost: 12450.0,
-  pendingRelease: 4850.0,
   monthlyGrowth: '+18.4%',
 }
 
-const MOCK_TRANSACTIONS: Transaction[] = [
+const MOCK_RECORDS: FinancialRecord[] = [
   {
-    id: 'TRX-9821',
+    id: 'ORC-1001',
     patientName: 'Maria Silva',
-    caseId: 'CAS-2026-001',
-    date: '24/02/2026',
-    totalAmount: 6800.0,
-    dentistShare: 4420.0,
-    labShare: 1740.0,
-    platformFee: 640.0,
-    paymentMethod: 'Cartão 12x',
+    classification: 'Classe II div 1',
+    planning: 'Alinhador Completo + Mini-implante',
+    treatmentDuration: '14 meses',
+    paymentMethod: 'Cartão de Crédito (12x)',
+    suggestedPriceMWS: 7200.0,
+    chargedPrice: 7500.0,
+    closingMonth: 'Fevereiro/2026',
     status: 'liquidado',
-    installments: '12x de R$ 566,66',
   },
   {
-    id: 'TRX-9822',
+    id: 'ORC-1002',
     patientName: 'João Santos',
-    caseId: 'CAS-2026-002',
-    date: '22/02/2026',
-    totalAmount: 4900.0,
-    dentistShare: 3185.0,
-    labShare: 1250.0,
-    platformFee: 465.0,
+    classification: 'Classe I com Apinhamento',
+    planning: 'Magic Wire Premium Dual Arch',
+    treatmentDuration: '10 meses',
     paymentMethod: 'Pix à Vista',
+    suggestedPriceMWS: 5400.0,
+    chargedPrice: 5200.0,
+    closingMonth: 'Fevereiro/2026',
     status: 'liquidado',
-    installments: 'À vista com desconto',
   },
   {
-    id: 'TRX-9823',
+    id: 'ORC-1003',
     patientName: 'Ana Costa',
-    caseId: 'CAS-2026-003',
-    date: '20/02/2026',
-    totalAmount: 5500.0,
-    dentistShare: 3575.0,
-    labShare: 1400.0,
-    platformFee: 525.0,
-    paymentMethod: 'Fintech Parceira (Split)',
+    classification: 'Classe III Leve',
+    planning: 'Expansão Guiada + Alinhadores',
+    treatmentDuration: '18 meses',
+    paymentMethod: 'Financiamento Parcelado (24x)',
+    suggestedPriceMWS: 8900.0,
+    chargedPrice: 9200.0,
+    closingMonth: 'Fevereiro/2026',
     status: 'liquidado',
-    installments: '24x Financiado',
   },
   {
-    id: 'TRX-9824',
+    id: 'ORC-1004',
     patientName: 'Pedro Lima',
-    caseId: 'CAS-2026-004',
-    date: '18/02/2026',
-    totalAmount: 6200.0,
-    dentistShare: 4030.0,
-    labShare: 1580.0,
-    platformFee: 590.0,
-    paymentMethod: 'Cartão 6x',
+    classification: 'Mordida Cruzada Posterior',
+    planning: 'Disjuntor Híbrido + Magic Wire',
+    treatmentDuration: '12 meses',
+    paymentMethod: 'Cartão de Crédito (6x)',
+    suggestedPriceMWS: 6500.0,
+    chargedPrice: 6500.0,
+    closingMonth: 'Janeiro/2026',
     status: 'pendente',
-    installments: '6x de R$ 1.033,33',
   },
   {
-    id: 'TRX-9825',
+    id: 'ORC-1005',
     patientName: 'Carla Souza',
-    caseId: 'CAS-2026-005',
-    date: '15/02/2026',
-    totalAmount: 7100.0,
-    dentistShare: 4615.0,
-    labShare: 1810.0,
-    platformFee: 675.0,
-    paymentMethod: 'Boleto Bancário',
+    classification: 'Classe II div 2',
+    planning: 'Alinhamento 3D Sequenciado',
+    treatmentDuration: '16 meses',
+    paymentMethod: 'Boleto Bancário (1+5x)',
+    suggestedPriceMWS: 7800.0,
+    chargedPrice: 8100.0,
+    closingMonth: 'Janeiro/2026',
     status: 'processando',
-    installments: 'Entrada + 5 boletos',
+  },
+  {
+    id: 'ORC-1006',
+    patientName: 'Lucas Ferreira',
+    classification: 'Mordida Aberta Anterior',
+    planning: 'Intrusão Posterior + Alinhadores MWS',
+    treatmentDuration: '15 meses',
+    paymentMethod: 'Cartão de Crédito (10x)',
+    suggestedPriceMWS: 7600.0,
+    chargedPrice: 7800.0,
+    closingMonth: 'Dezembro/2025',
+    status: 'liquidado',
+  },
+  {
+    id: 'ORC-1007',
+    patientName: 'Beatriz Almeida',
+    classification: 'Classe I com Diastemas',
+    planning: 'Fechamento Estético Magic Wire Light',
+    treatmentDuration: '8 meses',
+    paymentMethod: 'Pix Parcelado (4x)',
+    suggestedPriceMWS: 4200.0,
+    chargedPrice: 4200.0,
+    closingMonth: 'Dezembro/2025',
+    status: 'liquidado',
   },
 ]
 
@@ -114,19 +125,24 @@ export default function DentistFinancing() {
   const [statusFilter, setStatusFilter] = useState('all')
   const { toast } = useToast()
 
-  const filteredTransactions = MOCK_TRANSACTIONS.filter((trx) => {
+  const grossMonthlyResult = MOCK_METRICS.totalGross - MOCK_METRICS.labCost
+
+  const filteredRecords = MOCK_RECORDS.filter((rec) => {
     const matchesSearch =
-      trx.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trx.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trx.caseId.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || trx.status === statusFilter
+      rec.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rec.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rec.classification.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rec.planning.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rec.paymentMethod.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rec.closingMonth.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === 'all' || rec.status === statusFilter
     return matchesSearch && matchesStatus
   })
 
   const handleExport = () => {
     toast({
       title: 'Relatório exportado',
-      description: 'O arquivo CSV do split financeiro foi gerado com sucesso.',
+      description: 'O arquivo CSV do relatório financeiro foi gerado com sucesso.',
     })
   }
 
@@ -144,10 +160,11 @@ export default function DentistFinancing() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
-            Painel Financeiro & Split Automático
+            Painel Financeiro
           </h1>
           <p className="text-slate-500 mt-1">
-            Controle de orçamentos, faturamento líquido, repasses ao laboratório e split bancário.
+            Controle financeiro de orçamentos, faturamento bruto e custos de tratamentos
+            ortodônticos.
           </p>
         </div>
 
@@ -165,7 +182,9 @@ export default function DentistFinancing() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border-slate-200 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">Faturamento Bruto</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">
+              Faturamento Bruto Mensal
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-slate-600" />
           </CardHeader>
           <CardContent>
@@ -217,58 +236,24 @@ export default function DentistFinancing() {
 
         <Card className="border-slate-200 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">A Liberar / Futuro</CardTitle>
-            <Clock className="h-4 w-4 text-amber-600" />
+            <CardTitle className="text-sm font-medium text-slate-600">
+              Resultado Mensal Bruto
+            </CardTitle>
+            <PieChartIcon className="h-4 w-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900">
-              {MOCK_METRICS.pendingRelease.toLocaleString('pt-BR', {
+              {grossMonthlyResult.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
               })}
             </div>
-            <p className="text-xs text-amber-700 mt-1 font-medium">
-              Parcelas e liquidações pendentes
+            <p className="text-xs text-slate-500 mt-1 font-medium">
+              Faturamento bruto menos custos de laboratório
             </p>
           </CardContent>
         </Card>
       </div>
-
-      {/* Regra de Split Visual */}
-      <Card className="border-slate-200 bg-slate-50 shadow-sm">
-        <CardContent className="p-4 sm:p-5">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
-                %
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-slate-900">
-                  Como funciona o Split Magic Wire?
-                </h4>
-                <p className="text-xs text-slate-500">
-                  O paciente paga pelo app ou link e cada parte recebe direto na sua conta PJ/PF.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 text-xs font-medium w-full md:w-auto justify-between md:justify-end">
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                <span>Dentista (~65%)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-blue-500" />
-                <span>Lab 3D (~25%)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-slate-400" />
-                <span>Taxa Tech/Fin (~10%)</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Tabela de Transações / Orçamentos */}
       <Card className="border-slate-200 shadow-sm">
@@ -279,13 +264,13 @@ export default function DentistFinancing() {
                 Histórico de Transações & Orçamentos
               </CardTitle>
               <CardDescription>
-                Detalhamento de cada tratamento e divisão de valores
+                Detalhamento dos orçamentos, planejamentos e valores cobrados
               </CardDescription>
             </div>
 
             <div className="flex items-center gap-2">
               <Input
-                placeholder="Buscar paciente ou ID..."
+                placeholder="Buscar paciente, classificação..."
                 className="w-48 sm:w-64 text-xs h-9"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -305,58 +290,72 @@ export default function DentistFinancing() {
         </CardHeader>
 
         <CardContent className="p-0 overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-sm min-w-[850px]">
             <thead className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-600">
               <tr>
-                <th className="p-3.5 pl-6">Paciente / Caso</th>
-                <th className="p-3.5">Data & Forma</th>
-                <th className="p-3.5">Valor Total</th>
-                <th className="p-3.5 text-emerald-700">Seu Líquido</th>
-                <th className="p-3.5 text-slate-500">Custo Lab</th>
-                <th className="p-3.5">Status</th>
+                <th className="p-3.5 pl-6">Paciente</th>
+                <th className="p-3.5">Classificação</th>
+                <th className="p-3.5">Planejamento</th>
+                <th className="p-3.5 whitespace-nowrap">Tempo de Tratamento</th>
+                <th className="p-3.5">Forma de Pagamento</th>
+                <th className="p-3.5 text-right whitespace-nowrap">Preço Sugerido MWS</th>
+                <th className="p-3.5 text-right whitespace-nowrap text-emerald-800">
+                  Preço Cobrado
+                </th>
+                <th className="p-3.5 whitespace-nowrap">Mês de Fechamento</th>
+                <th className="p-3.5 pr-6 text-center">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredTransactions.map((trx) => (
-                <tr key={trx.id} className="hover:bg-slate-50/80 transition-colors">
+              {filteredRecords.map((rec) => (
+                <tr key={rec.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="p-3.5 pl-6">
-                    <p className="font-semibold text-slate-900">{trx.patientName}</p>
-                    <p className="text-xs text-slate-400 font-mono">
-                      {trx.id} • {trx.caseId}
-                    </p>
+                    <p className="font-semibold text-slate-900">{rec.patientName}</p>
+                    <p className="text-xs text-slate-400 font-mono">{rec.id}</p>
                   </td>
-                  <td className="p-3.5">
-                    <p className="font-medium text-slate-800">{trx.paymentMethod}</p>
-                    <p className="text-xs text-slate-400">{trx.installments || trx.date}</p>
+                  <td className="p-3.5 font-medium text-slate-800">
+                    <Badge
+                      variant="outline"
+                      className="bg-slate-50 text-slate-700 font-normal text-xs"
+                    >
+                      {rec.classification}
+                    </Badge>
                   </td>
-                  <td className="p-3.5 font-semibold text-slate-900">
-                    {trx.totalAmount.toLocaleString('pt-BR', {
+                  <td className="p-3.5 text-slate-700 text-xs font-medium max-w-[220px]">
+                    {rec.planning}
+                  </td>
+                  <td className="p-3.5 text-slate-600 text-xs whitespace-nowrap">
+                    {rec.treatmentDuration}
+                  </td>
+                  <td className="p-3.5 text-slate-700 text-xs">{rec.paymentMethod}</td>
+                  <td className="p-3.5 text-right text-slate-600 font-medium whitespace-nowrap">
+                    {rec.suggestedPriceMWS.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
                   </td>
-                  <td className="p-3.5 font-bold text-emerald-700">
-                    {trx.dentistShare.toLocaleString('pt-BR', {
+                  <td className="p-3.5 text-right font-bold text-emerald-700 whitespace-nowrap">
+                    {rec.chargedPrice.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
                   </td>
-                  <td className="p-3.5 text-xs text-slate-600 font-medium">
-                    {trx.labShare.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  <td className="p-3.5 text-slate-600 text-xs whitespace-nowrap">
+                    {rec.closingMonth}
                   </td>
-                  <td className="p-3.5">
+                  <td className="p-3.5 pr-6 text-center">
                     <Badge
                       className={
-                        trx.status === 'liquidado'
+                        rec.status === 'liquidado'
                           ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100'
-                          : trx.status === 'pendente'
+                          : rec.status === 'pendente'
                             ? 'bg-amber-100 text-amber-800 hover:bg-amber-100'
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-100'
                       }
                     >
-                      {trx.status === 'liquidado'
+                      {rec.status === 'liquidado'
                         ? 'Liquidado'
-                        : trx.status === 'pendente'
+                        : rec.status === 'pendente'
                           ? 'Pendente'
                           : 'Processando'}
                     </Badge>
@@ -366,9 +365,9 @@ export default function DentistFinancing() {
             </tbody>
           </table>
 
-          {filteredTransactions.length === 0 && (
+          {filteredRecords.length === 0 && (
             <div className="text-center py-8 text-slate-500 text-sm">
-              Nenhuma transação encontrada para os filtros aplicados.
+              Nenhum registro encontrado para os filtros aplicados.
             </div>
           )}
         </CardContent>
