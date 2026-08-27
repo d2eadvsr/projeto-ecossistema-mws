@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Plus,
@@ -12,8 +12,7 @@ import {
   Send,
   MessageSquare,
   Sparkles,
-  ArrowRight,
-  Filter,
+  UserCheck,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -28,21 +27,23 @@ import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { Link } from 'react-router-dom'
 
+export type CaseStage =
+  | 'aguardando_analise_tecnica'
+  | 'em_analise_tecnica'
+  | 'planejamento_elaborado'
+  | 'planejamento_entregue'
+
+export type MWSProtocol = 'Classe I' | 'Classe II' | 'Classe III' | 'Classe IV' | 'Classe V'
+
 interface ClinicalCase {
   id: string
   patientName: string
-  protocol: string
-  stage:
-    | 'enviado_lab'
-    | 'analise_lab'
-    | 'planejamento_pronto'
-    | 'em_producao'
-    | 'enviado_clinica'
-    | 'entregue'
+  protocol: MWSProtocol
+  stage: CaseStage
   slaDeadline: string
   submissionDate: string
   labFeedback?: string
-  alignerCount?: number
+  mentorClinicalNote?: string
   currentStep?: string
   notes?: string
 }
@@ -51,113 +52,112 @@ const MOCK_CLINICAL_CASES: ClinicalCase[] = [
   {
     id: 'CAS-2026-001',
     patientName: 'Maria Silva',
-    protocol: 'Protocolo Avançado (Classe II)',
-    stage: 'em_producao',
+    protocol: 'Classe II',
+    stage: 'planejamento_elaborado',
     slaDeadline: '28/02/2026',
     submissionDate: '15/02/2026',
-    labFeedback: 'Setup 3D aprovado. 18 alinhadores superiores e 14 inferiores em termoformagem.',
-    alignerCount: 18,
-    currentStep: 'Termoformagem e recorte a laser',
-    notes: 'Prioridade no fechamento de diastema superior.',
+    labFeedback:
+      'Prezado Dr., o planejamento deste caso foi elaborado considerando a necessidade de retração anterior. Sugiro iniciar pela arcada superior com o fio MWS de calibre 0.014. Acompanharei a evolução e estarei à disposição para quaisquer dúvidas.',
+    mentorClinicalNote:
+      'Recomendo atenção especial à região dos pré-molares inferiores durante a ativação. O paciente relatou sensibilidade nesta área — considerar ajuste de força nos primeiros 30 dias.',
+    currentStep: 'Aguardando Devolução / Validação do Ortodontista',
+    notes: 'Prioridade no fechamento de diastema superior e correção de sobremordida.',
   },
   {
     id: 'CAS-2026-002',
     patientName: 'João Santos',
-    protocol: 'Protocolo Standard (Leve Apinhamento)',
-    stage: 'planejamento_pronto',
+    protocol: 'Classe I',
+    stage: 'planejamento_elaborado',
     slaDeadline: '01/03/2026',
     submissionDate: '20/02/2026',
     labFeedback:
-      'Planejamento digital finalizado pelo técnico Dr. Alexandre. Aguardando sua validação 3D.',
-    alignerCount: 10,
-    currentStep: 'Aguardando Aprovação do Dentista',
-    notes: 'Avaliar desgastes IPR recomendados nos dentes 31-41.',
+      'Prezado Dr., o planejamento deste caso foi elaborado considerando o alinhamento e nivelamento com ancoragem lingual MWS. Sequência sugerida de arcos internos anexada na documentação técnica.',
+    mentorClinicalNote:
+      'Verificar a colagem dos stops linguais nos molares superiores antes da inserção do primeiro arco.',
+    currentStep: 'Aguardando Devolução / Validação do Ortodontista',
+    notes: 'Leve apinhamento ântero-inferior com queixa estética.',
   },
   {
     id: 'CAS-2026-003',
     patientName: 'Ana Costa',
-    protocol: 'Protocolo Standard',
-    stage: 'enviado_clinica',
+    protocol: 'Classe III',
+    stage: 'planejamento_entregue',
     slaDeadline: '24/02/2026',
     submissionDate: '08/02/2026',
     labFeedback:
-      'Kit completo despachado via transportadora parceira. Código de rastreio: MWS-998273.',
-    alignerCount: 12,
-    currentStep: 'Em Trânsito para o Consultório',
-    notes: 'Inclui kit de attachments e gabarito.',
+      'Planejamento concluído e entregue com orientações completas de instalação do sistema de fios linguais customizados MWS.',
+    mentorClinicalNote: 'Acompanhar torque dos incisivos superiores nas consultas de 45 e 90 dias.',
+    currentStep: 'Planejamento Finalizado e Entregue',
+    notes: 'Mordida cruzada anterior compensada com mecânica lingual.',
   },
   {
     id: 'CAS-2026-004',
     patientName: 'Pedro Lima',
-    protocol: 'Protocolo Estético Teens',
-    stage: 'analise_lab',
+    protocol: 'Classe IV',
+    stage: 'em_analise_tecnica',
     slaDeadline: '03/03/2026',
     submissionDate: '22/02/2026',
     labFeedback:
-      'Escaneamento intraoral recebido com ótima definição. Segmentação de arcada em andamento.',
-    currentStep: 'Segmentação e Limpeza de STL',
-    notes: 'Paciente em fase final de dentição mista.',
+      'Escaneamento intraoral e telerradiografia sob análise da equipe técnica e do Mentor responsável.',
+    mentorClinicalNote:
+      'Em fase de avaliação da relação oclusal posterior para definição do diagrama de dobras do fio.',
+    currentStep: 'Análise Cefalométrica e Diagramação Lingual',
+    notes: 'Paciente busca discrição total no tratamento com tecnologia por trás dos dentes.',
   },
   {
     id: 'CAS-2026-005',
     patientName: 'Carla Souza',
-    protocol: 'Protocolo Avançado (Mordida Aberta)',
-    stage: 'enviado_lab',
+    protocol: 'Classe V',
+    stage: 'aguardando_analise_tecnica',
     slaDeadline: '05/03/2026',
     submissionDate: '24/02/2026',
-    labFeedback: 'Caso recebido na fila de triagem técnica do laboratório MWS.',
-    currentStep: 'Triagem e Checagem de Fotos',
-    notes: 'Fotos extras anexadas no prontuário.',
+    labFeedback:
+      'Caso recebido e aguardando alocação do técnico/mentor para início da elaboração do plano de tratamento.',
+    mentorClinicalNote: 'Mentor será designado assim que a triagem de documentação for concluída.',
+    currentStep: 'Triagem Inicial de Arquivos STL e Fotos',
+    notes: 'Assimetria de arco e queixa na mastigação unilateral.',
   },
   {
     id: 'CAS-2026-006',
     patientName: 'Bruno Almeida',
-    protocol: 'Protocolo Standard',
-    stage: 'entregue',
+    protocol: 'Classe II',
+    stage: 'planejamento_entregue',
     slaDeadline: '10/02/2026',
     submissionDate: '25/01/2026',
-    labFeedback: 'Caso recebido na clínica e primeira consulta já realizada.',
-    alignerCount: 14,
-    currentStep: 'Finalizado e em uso pelo paciente',
-    notes: 'Paciente muito satisfeito com a estética.',
+    labFeedback:
+      'Planejamento entregue e validado com sucesso. Protocolo de fios e acessórios MWS enviado ao consultório.',
+    mentorClinicalNote: 'Recomendo rever a guia canina após a terceira troca de arcos programada.',
+    currentStep: 'Planejamento Entregue e em Andamento Clínico',
+    notes: 'Correção de Classe II divisão 1 com expansão e retração lingual.',
   },
 ]
 
-const stageConfig: Record<
-  ClinicalCase['stage'],
-  { label: string; badgeClass: string; stepNumber: number }
-> = {
-  enviado_lab: {
-    label: 'Enviado ao Lab',
+const stageConfig: Record<CaseStage, { label: string; badgeClass: string }> = {
+  aguardando_analise_tecnica: {
+    label: 'Aguardando Análise Técnica',
     badgeClass: 'bg-slate-100 text-slate-800 border-slate-300',
-    stepNumber: 1,
   },
-  analise_lab: {
+  em_analise_tecnica: {
     label: 'Em Análise Técnica',
     badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-    stepNumber: 2,
   },
-  planejamento_pronto: {
-    label: 'Setup Pronto (Aprovar)',
-    badgeClass: 'bg-purple-100 text-purple-800 border-purple-300 animate-pulse',
-    stepNumber: 3,
+  planejamento_elaborado: {
+    label: 'Planejamento Elaborado',
+    badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
   },
-  em_producao: {
-    label: 'Em Produção 3D',
-    badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
-    stepNumber: 4,
-  },
-  enviado_clinica: {
-    label: 'Em Trânsito / Entrega',
-    badgeClass: 'bg-cyan-100 text-cyan-800 border-cyan-300',
-    stepNumber: 5,
-  },
-  entregue: {
-    label: 'Entregue / Concluído',
+  planejamento_entregue: {
+    label: 'Planejamento Entregue',
     badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    stepNumber: 6,
   },
 }
+
+const MWS_PROTOCOLS: MWSProtocol[] = [
+  'Classe I',
+  'Classe II',
+  'Classe III',
+  'Classe IV',
+  'Classe V',
+]
 
 export default function DentistCases() {
   const [cases, setCases] = useState<ClinicalCase[]>(MOCK_CLINICAL_CASES)
@@ -165,7 +165,7 @@ export default function DentistCases() {
   const [stageFilter, setStageFilter] = useState<string>('all')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [newPatientName, setNewPatientName] = useState('')
-  const [newProtocol, setNewProtocol] = useState('Protocolo Standard')
+  const [newProtocol, setNewProtocol] = useState<MWSProtocol>('Classe I')
   const [newNotes, setNewNotes] = useState('')
   const { toast } = useToast()
 
@@ -177,10 +177,12 @@ export default function DentistCases() {
       id: `CAS-2026-00${cases.length + 1}`,
       patientName: newPatientName,
       protocol: newProtocol,
-      stage: 'enviado_lab',
+      stage: 'aguardando_analise_tecnica',
       slaDeadline: '06/03/2026',
       submissionDate: new Date().toLocaleDateString('pt-BR'),
-      labFeedback: 'Demanda enviada com sucesso para o laboratório digital MWS.',
+      labFeedback:
+        'Caso recebido com sucesso na fila do laboratório MWS. Em breve o Mentor responsável iniciará a elaboração do plano de tratamento.',
+      mentorClinicalNote: 'Nota clínica do mentor será adicionada durante a análise do caso.',
       currentStep: 'Na fila de triagem inicial',
       notes: newNotes,
     }
@@ -189,9 +191,10 @@ export default function DentistCases() {
     setIsDialogOpen(false)
     setNewPatientName('')
     setNewNotes('')
+    setNewProtocol('Classe I')
     toast({
       title: 'Caso clínico criado!',
-      description: `Caso de ${newPatientName} enviado ao Laboratório MWS.`,
+      description: `Caso de ${newPatientName} enviado ao Laboratório MWS (${newProtocol}).`,
     })
   }
 
@@ -204,14 +207,17 @@ export default function DentistCases() {
     return matchesSearch && matchesStage
   })
 
-  const countEnviados = cases.filter(
-    (c) => c.stage === 'enviado_lab' || c.stage === 'analise_lab',
+  // 4 métricas conforme especificação
+  const countAguardandoAnalise = cases.filter(
+    (c) => c.stage === 'aguardando_analise_tecnica',
   ).length
-  const countAguardandoAprovacao = cases.filter((c) => c.stage === 'planejamento_pronto').length
-  const countEmProducao = cases.filter(
-    (c) => c.stage === 'em_producao' || c.stage === 'enviado_clinica',
+  const countEmAnalise = cases.filter((c) => c.stage === 'em_analise_tecnica').length
+  const countPlanejamentoElaborado = cases.filter(
+    (c) => c.stage === 'planejamento_elaborado',
   ).length
-  const countEntregues = cases.filter((c) => c.stage === 'entregue').length
+  const countPlanejamentosEntregues = cases.filter(
+    (c) => c.stage === 'planejamento_entregue',
+  ).length
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-6xl mx-auto animate-fade-in-up">
@@ -222,7 +228,8 @@ export default function DentistCases() {
             Casos Clínicos & Integração Laboratório
           </h1>
           <p className="text-slate-500 mt-1">
-            Acompanhe o fluxo de fabricação dos alinhadores, setups 3D e retorno do laboratório.
+            Acompanhe o fluxo de análise do caso, elaboração do plano de tratamento e retorno do
+            laboratório.
           </p>
         </div>
 
@@ -258,17 +265,14 @@ export default function DentistCases() {
                   <select
                     id="case-protocol"
                     value={newProtocol}
-                    onChange={(e) => setNewProtocol(e.target.value)}
+                    onChange={(e) => setNewProtocol(e.target.value as MWSProtocol)}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                   >
-                    <option value="Protocolo Standard">
-                      Protocolo Standard (Até 14 alinhadores)
-                    </option>
-                    <option value="Protocolo Avançado">
-                      Protocolo Avançado (Complexo / Classe II/III)
-                    </option>
-                    <option value="Protocolo Estético Teens">Protocolo Estético Teens</option>
-                    <option value="Refinamento Adicional">Refinamento Adicional</option>
+                    {MWS_PROTOCOLS.map((protocol) => (
+                      <option key={protocol} value={protocol}>
+                        {protocol}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -289,49 +293,63 @@ export default function DentistCases() {
         </div>
       </div>
 
-      {/* Pipeline / Indicadores com o Laboratório */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* 4 Caixas de Métricas no Topo */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-slate-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">Em Análise Técnica</span>
-              <FlaskConical className="w-4 h-4 text-amber-600" />
+              <span className="text-xs font-medium text-slate-600 line-clamp-2">
+                Casos Aguardando Análise
+              </span>
+              <Clock className="w-4 h-4 text-slate-500 shrink-0 ml-2" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">{countEnviados}</p>
-            <p className="text-[11px] text-amber-700 mt-1 font-medium">Triagem e setup inicial</p>
+            <p className="text-2xl font-bold text-slate-900 mt-2">{countAguardandoAnalise}</p>
+            <p className="text-[11px] text-slate-500 mt-1 font-medium">
+              Na fila de triagem técnica
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-amber-200 bg-amber-50/30">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-amber-800 line-clamp-2">
+                Casos em Análise
+              </span>
+              <FlaskConical className="w-4 h-4 text-amber-600 shrink-0 ml-2" />
+            </div>
+            <p className="text-2xl font-bold text-amber-900 mt-2">{countEmAnalise}</p>
+            <p className="text-[11px] text-amber-700 mt-1 font-medium">
+              Análise técnica e mentoria
+            </p>
           </CardContent>
         </Card>
 
         <Card className="border-purple-200 bg-purple-50/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-purple-700">Setups para Aprovar</span>
-              <Sparkles className="w-4 h-4 text-purple-600" />
+              <span className="text-xs font-medium text-purple-800 line-clamp-2">
+                Casos com Planejamento Elaborado e aguardando Devolução do Ortodontista
+              </span>
+              <Sparkles className="w-4 h-4 text-purple-600 shrink-0 ml-2" />
             </div>
-            <p className="text-2xl font-bold text-purple-900 mt-2">{countAguardandoAprovacao}</p>
+            <p className="text-2xl font-bold text-purple-900 mt-2">{countPlanejamentoElaborado}</p>
             <p className="text-[11px] text-purple-700 mt-1 font-medium">Aguardando sua validação</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200">
+        <Card className="border-emerald-200 bg-emerald-50/30">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">Em Produção / Trânsito</span>
-              <Clock className="w-4 h-4 text-blue-600" />
+              <span className="text-xs font-medium text-emerald-800 line-clamp-2">
+                Casos com Planejamentos já Entregues
+              </span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 ml-2" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">{countEmProducao}</p>
-            <p className="text-[11px] text-blue-700 mt-1 font-medium">Impressão 3D e expedição</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-slate-200">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">Casos Entregues</span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            </div>
-            <p className="text-2xl font-bold text-slate-900 mt-2">{countEntregues}</p>
-            <p className="text-[11px] text-emerald-700 mt-1 font-medium">Prontos na clínica</p>
+            <p className="text-2xl font-bold text-emerald-900 mt-2">
+              {countPlanejamentosEntregues}
+            </p>
+            <p className="text-[11px] text-emerald-700 mt-1 font-medium">Concluídos e liberados</p>
           </CardContent>
         </Card>
       </div>
@@ -358,26 +376,44 @@ export default function DentistCases() {
             Todos ({cases.length})
           </Button>
           <Button
-            variant={stageFilter === 'planejamento_pronto' ? 'default' : 'outline'}
+            variant={stageFilter === 'aguardando_analise_tecnica' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setStageFilter('planejamento_pronto')}
+            onClick={() => setStageFilter('aguardando_analise_tecnica')}
+            className="text-xs"
+          >
+            Aguardando Análise ({countAguardandoAnalise})
+          </Button>
+          <Button
+            variant={stageFilter === 'em_analise_tecnica' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStageFilter('em_analise_tecnica')}
+            className="text-xs"
+          >
+            Em Análise ({countEmAnalise})
+          </Button>
+          <Button
+            variant={stageFilter === 'planejamento_elaborado' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStageFilter('planejamento_elaborado')}
             className={
-              stageFilter === 'planejamento_pronto'
+              stageFilter === 'planejamento_elaborado'
                 ? 'bg-purple-600 hover:bg-purple-700 text-xs'
                 : 'text-xs'
             }
           >
-            Aprovação Pendente ({countAguardandoAprovacao})
+            Planejamento Elaborado ({countPlanejamentoElaborado})
           </Button>
           <Button
-            variant={stageFilter === 'em_producao' ? 'default' : 'outline'}
+            variant={stageFilter === 'planejamento_entregue' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setStageFilter('em_producao')}
+            onClick={() => setStageFilter('planejamento_entregue')}
             className={
-              stageFilter === 'em_producao' ? 'bg-blue-600 hover:bg-blue-700 text-xs' : 'text-xs'
+              stageFilter === 'planejamento_entregue'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-xs'
+                : 'text-xs'
             }
           >
-            Em Produção
+            Entregues ({countPlanejamentosEntregues})
           </Button>
         </div>
       </div>
@@ -403,7 +439,9 @@ export default function DentistCases() {
                         {config.label}
                       </Badge>
                     </div>
-                    <p className="text-sm font-medium text-emerald-700">{c.protocol}</p>
+                    <p className="text-sm font-medium text-emerald-700">
+                      Protocolo MWS: {c.protocol}
+                    </p>
                     <p className="text-xs text-slate-500">
                       Enviado em: {c.submissionDate} • Prazo SLA Estimado:{' '}
                       <strong className="text-slate-700">{c.slaDeadline}</strong>
@@ -411,18 +449,18 @@ export default function DentistCases() {
                   </div>
 
                   <div className="flex items-center gap-2 self-start sm:self-center">
-                    {c.stage === 'planejamento_pronto' && (
+                    {c.stage === 'planejamento_elaborado' && (
                       <Button
                         size="sm"
                         className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
                         onClick={() =>
                           toast({
-                            title: 'Setup 3D Aprovado!',
-                            description: `O caso de ${c.patientName} foi liberado para impressão 3D no laboratório.`,
+                            title: 'Planejamento Validado!',
+                            description: `O planejamento do caso de ${c.patientName} foi aprovado e o laboratório foi notificado.`,
                           })
                         }
                       >
-                        <CheckCircle2 className="w-4 h-4 mr-1.5" /> Aprovar Setup 3D
+                        <CheckCircle2 className="w-4 h-4 mr-1.5" /> Devolução / Validar Planejamento
                       </Button>
                     )}
                     <Link to="/dentist/chat-lab">
@@ -433,29 +471,37 @@ export default function DentistCases() {
                   </div>
                 </div>
 
-                {/* Box de Retorno / Interação do Laboratório */}
-                <div className="rounded-lg bg-slate-50 border border-slate-200/80 p-3.5 space-y-2">
+                {/* Box de Retorno / Interação do Laboratório & Mentoria */}
+                <div className="rounded-lg bg-slate-50 border border-slate-200/80 p-3.5 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-medium text-slate-700">
                     <span className="flex items-center gap-1.5 text-blue-700">
                       <FlaskConical className="w-4 h-4 text-blue-600" />
                       Status no Laboratório MWS:
                       <strong className="text-slate-900 font-semibold">{c.currentStep}</strong>
                     </span>
-                    {c.alignerCount && (
-                      <span className="text-slate-600 font-semibold">
-                        {c.alignerCount} alinhadores programados
-                      </span>
-                    )}
                   </div>
+
                   {c.labFeedback && (
                     <p className="text-xs text-slate-600 leading-relaxed bg-white p-2.5 rounded border border-slate-100">
                       💬 <strong className="text-slate-800">Nota do Técnico Lab:</strong>{' '}
                       {c.labFeedback}
                     </p>
                   )}
+
                   {c.notes && (
-                    <p className="text-[11px] text-slate-500">
-                      📌 <span className="font-medium">Sua nota clínica:</span> {c.notes}
+                    <p className="text-[11px] text-slate-600 bg-slate-100/70 p-2 rounded">
+                      📌 <span className="font-semibold text-slate-700">Sua nota clínica:</span>{' '}
+                      {c.notes}
+                    </p>
+                  )}
+
+                  {c.mentorClinicalNote && (
+                    <p className="text-[11px] text-purple-900 bg-purple-50/70 border border-purple-100 p-2.5 rounded leading-relaxed">
+                      🧑‍⚕️{' '}
+                      <span className="font-semibold text-purple-950">
+                        Nota Clínica do seu Mentor:
+                      </span>{' '}
+                      {c.mentorClinicalNote}
                     </p>
                   )}
                 </div>
