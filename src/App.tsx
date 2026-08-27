@@ -36,6 +36,7 @@ import PatientTreatment from './pages/Patient/Treatment'
 import PatientAppointments from './pages/Patient/Appointments'
 import PatientPayments from './pages/Patient/Payments'
 import PatientProfile from './pages/Patient/Profile'
+import PatientSearch from './pages/Patient/Search'
 
 const App = () => (
   <AuthProvider>
@@ -85,6 +86,7 @@ const App = () => (
               <Route path="/patient/treatment" element={<PatientTreatment />} />
               <Route path="/patient/appointments" element={<PatientAppointments />} />
               <Route path="/patient/payments" element={<PatientPayments />} />
+              <Route path="/patient/search" element={<PatientSearch />} />
               <Route path="/patient/profile" element={<PatientProfile />} />
             </Route>
           </Route>

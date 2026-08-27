@@ -20,6 +20,7 @@ import {
   Megaphone,
   UserCheck,
   UserCheck2,
+  Search,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
@@ -49,6 +50,7 @@ const getLinksForRole = (role: string) => {
       { href: '/patient/treatment', label: 'Meu Tratamento', icon: Activity },
       { href: '/patient/appointments', label: 'Consultas', icon: CalendarCheck },
       { href: '/patient/payments', label: 'Pagamentos', icon: CreditCard },
+      { href: '/patient/search', label: 'Buscar Especialista', icon: Search },
       { href: '/patient/profile', label: 'Perfil', icon: UserCircle },
     ]
   }
@@ -125,7 +127,7 @@ export function BottomNav({ role }: { role: string }) {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around p-1.5 z-50 shadow-lg">
-      {links.slice(0, 5).map((link) => {
+      {links.slice(0, 6).map((link) => {
         const Icon = link.icon
         const isActive = location.pathname === link.href
         return (
@@ -138,7 +140,7 @@ export function BottomNav({ role }: { role: string }) {
             )}
           >
             <Icon className="w-5 h-5 mb-0.5" />
-            <span className="truncate max-w-[58px]">{link.label}</span>
+            <span className="truncate max-w-[52px]">{link.label}</span>
           </Link>
         )
       })}
