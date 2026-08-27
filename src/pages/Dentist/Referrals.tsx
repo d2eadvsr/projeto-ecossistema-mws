@@ -51,7 +51,8 @@ const MOCK_REFERRALS: ReferralLead[] = [
     email: 'matheus.alb@outlook.com',
     source: 'Campanha Digital',
     date: 'Ontem',
-    chiefComplaint: 'Deseja substituir aparelho metálico antigo por alinhadores invisíveis.',
+    chiefComplaint:
+      'Deseja substituir aparelho metálico antigo pela tecnologia lingual Magic Wire.',
     status: 'contatado',
   },
   {

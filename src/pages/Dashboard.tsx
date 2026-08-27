@@ -67,7 +67,7 @@ export default function Dashboard() {
       <h2 className="text-3xl font-bold tracking-tight">Meu Tratamento</h2>
       <Card className="border-primary/20 bg-primary/5">
         <CardHeader>
-          <CardTitle>Progresso do Alinhamento</CardTitle>
+          <CardTitle>Progresso do Tratamento</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex justify-between text-sm font-medium">
@@ -76,7 +76,7 @@ export default function Dashboard() {
           </div>
           <Progress value={profile?.treatment_progress || 0} className="h-3" />
           <p className="text-sm text-muted-foreground mt-4">
-            Próxima troca de alinhador em 4 dias.
+            Próxima ativação do aparelho em 4 dias.
           </p>
         </CardContent>
       </Card>

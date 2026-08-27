@@ -45,7 +45,7 @@ const MOCK_COURSES: Course[] = [
     category: 'Obrigatório',
     instructor: 'Dr. Leonardo Vasconcelos (PhD em Ortodontia)',
     description:
-      'Fundamentos essenciais do protocolo Magic Wire, cinética dos alinhadores e diagnóstico 3D.',
+      'Fundamentos essenciais do protocolo Magic Wire, biomecânica lingual e planejamento 3D.',
     progress: 80,
     totalHours: '12 horas',
     badgeText: 'Certificação Obrigatória',
@@ -100,7 +100,7 @@ const MOCK_COURSES: Course[] = [
       },
       {
         id: 'm6',
-        title: 'Módulo 2: Mini-implantes Extra-alveolares associados a Alinhadores',
+        title: 'Módulo 2: Mini-implantes Extra-alveolares associados ao Magic Wire',
         duration: '3h 00m',
         status: 'em_andamento',
         lessonsCount: 6,
@@ -116,11 +116,11 @@ const MOCK_COURSES: Course[] = [
   },
   {
     id: 'crs-3',
-    title: 'Ortodontia Digital Teens & Alinhadores em Crianças',
+    title: 'Ortodontia Digital Teens & Magic Wire em Crianças',
     category: 'Masterclass',
     instructor: 'Dr. Fernando Prado',
     description:
-      'Manejo de dentição mista, guias de erupção e expansão maxilar com alinhadores inteligentes.',
+      'Manejo de dentição mista, guias de erupção e expansão maxilar com o protocolo Magic Wire.',
     progress: 0,
     totalHours: '6 horas',
     badgeText: 'Novo Curso',

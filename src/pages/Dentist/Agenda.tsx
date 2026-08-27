@@ -46,11 +46,11 @@ const INITIAL_TODAY_APPOINTMENTS: Appointment[] = [
     duration: '30 min',
     patient: 'Maria Silva',
     patientPhone: '(11) 98765-4321',
-    type: 'Instalação de Novo Alinhador (Etapa 4)',
+    type: 'Instalação do Fio Magic Wire (Etapa 4)',
     status: 'confirmado',
     mode: 'presencial',
     room: 'Consultório 1',
-    notes: 'Verificar adaptação da placa superior',
+    notes: 'Verificar adaptação do dispositivo lingual',
   },
   {
     id: 'apt-2',
@@ -104,7 +104,7 @@ const INITIAL_TODAY_APPOINTMENTS: Appointment[] = [
     duration: '30 min',
     patient: 'Bruno Almeida',
     patientPhone: '(11) 93210-9876',
-    type: 'Checagem de Evolução (Alinhador 8/14)',
+    type: 'Checagem de Evolução (Fase 8/14)',
     status: 'confirmado',
     mode: 'presencial',
     room: 'Consultório 1',
@@ -248,10 +248,10 @@ export default function DentistAgenda() {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                 >
                   <option value="1ª Avaliação / Escaneamento">1ª Avaliação / Escaneamento</option>
-                  <option value="Instalação de Alinhador">Instalação de Alinhador</option>
-                  <option value="Manutenção / IPR / Attachments">
-                    Manutenção / IPR / Attachments
+                  <option value="Instalação do Aparelho Magic Wire">
+                    Instalação do Aparelho Magic Wire
                   </option>
+                  <option value="Manutenção / Ativação do Fio">Manutenção / Ativação do Fio</option>
                   <option value="Entrega de Contenção">Entrega de Contenção</option>
                   <option value="Teleorientação de Acompanhamento">
                     Teleorientação de Acompanhamento

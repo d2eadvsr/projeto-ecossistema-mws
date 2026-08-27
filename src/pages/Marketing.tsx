@@ -37,7 +37,7 @@ export default function Marketing() {
             <Sparkles className="w-5 h-5 text-primary" /> Novo Post
           </CardTitle>
           <CardDescription>
-            Descreva o tema do seu próximo post (ex: benefícios do alinhador invisível)
+            Descreva o tema do seu próximo post (ex: vantagens do Magic Wire lingual)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

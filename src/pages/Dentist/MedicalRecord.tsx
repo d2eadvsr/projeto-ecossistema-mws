@@ -32,7 +32,7 @@ interface MedicalRecordEntry {
   id: string
   date: string
   procedure: string
-  alignerStage?: string
+  treatmentStage?: string
   observations: string
   dentistName: string
   nextSteps?: string
@@ -65,30 +65,30 @@ const MOCK_PATIENT_RECORDS: PatientRecord[] = [
       {
         id: 'rec-1',
         date: '24/02/2026',
-        procedure: 'Instalação de Alinhador 04 e Checagem de Attachments',
-        alignerStage: 'Etapa 04 / 18',
+        procedure: 'Instalação do Fio Magic Wire 04 e Checagem Lingual',
+        treatmentStage: 'Etapa 04 / 18',
         observations:
-          'Paciente relata excelente adaptação. Attachments em 14, 24 e 43 íntegros. Ótima higiene.',
+          'Paciente relata excelente adaptação. Fio lingual perfeitamente posicionado. Ótima higiene.',
         dentistName: 'Dr. Roberto Fernandes',
-        nextSteps: 'Uso de 22h diárias. Retorno em 15 dias para troca do alinhador 05.',
+        nextSteps: 'Retorno em 15 dias para ativação do fio na etapa 05.',
       },
       {
         id: 'rec-2',
         date: '10/02/2026',
         procedure: 'Desgaste Interproximal (IPR) 0.2mm',
-        alignerStage: 'Etapa 03 / 18',
+        treatmentStage: 'Etapa 03 / 18',
         observations:
           'Realizado IPR entre 31-41 e 32-31 conforme guia laboratorial. Aplicação de flúor tópica.',
         dentistName: 'Dr. Roberto Fernandes',
-        nextSteps: 'Trocar para etapa 04 no dia 24/02.',
+        nextSteps: 'Avançar para etapa 04 no dia 24/02.',
       },
       {
         id: 'rec-3',
         date: '10/01/2026',
-        procedure: 'Colagem de Attachments e Entrega dos Alinhadores 01 e 02',
-        alignerStage: 'Etapa 01 / 18',
+        procedure: 'Colagem dos Brackets Linguais e Instalação do Fio Inicial',
+        treatmentStage: 'Etapa 01 / 18',
         observations:
-          'Instalação com sucesso do gabarito. Instruções completas de uso, higienização e mastigação repassadas.',
+          'Instalação com sucesso do dispositivo lingual. Instruções completas de uso e higienização repassadas.',
         dentistName: 'Dr. Roberto Fernandes',
       },
     ],
@@ -119,7 +119,7 @@ const MOCK_PATIENT_RECORDS: PatientRecord[] = [
     name: 'Ana Costa',
     age: 22,
     phone: '(11) 96543-2109',
-    currentProtocol: 'Magic Wire Teens & Alinhadores',
+    currentProtocol: 'Magic Wire Teens (Classe I)',
     totalStages: 14,
     currentStage: 14,
     startDate: '15/08/2025',
@@ -128,7 +128,7 @@ const MOCK_PATIENT_RECORDS: PatientRecord[] = [
         id: 'rec-5',
         date: '18/02/2026',
         procedure: 'Avaliação Final de Oclusão & Escaneamento para Contenção',
-        alignerStage: 'Etapa 14 / 14 (Conclusão)',
+        treatmentStage: 'Etapa 14 / 14 (Conclusão)',
         observations:
           'Caso finalizado com fechamento total de espaços e guia canina perfeita. Paciente super satisfeita.',
         dentistName: 'Dr. Roberto Fernandes',
@@ -160,7 +160,7 @@ export default function DentistMedicalRecord() {
       id: `rec-${Date.now()}`,
       date: new Date().toLocaleDateString('pt-BR'),
       procedure: newProcedure,
-      alignerStage: newStage || undefined,
+      treatmentStage: newStage || undefined,
       observations: newObservations,
       dentistName: 'Dr. Roberto Fernandes',
       nextSteps: newNextSteps || undefined,
@@ -221,7 +221,7 @@ export default function DentistMedicalRecord() {
                 <Label htmlFor="proc-name">Procedimento Realizado</Label>
                 <Input
                   id="proc-name"
-                  placeholder="Ex: Troca de alinhador, IPR, colagem de attachment..."
+                  placeholder="Ex: Ativação de fio, IPR, colagem lingual..."
                   value={newProcedure}
                   onChange={(e) => setNewProcedure(e.target.value)}
                   required
@@ -229,7 +229,7 @@ export default function DentistMedicalRecord() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="proc-stage">Etapa / Alinhador Atual</Label>
+                <Label htmlFor="proc-stage">Etapa / Fase Atual</Label>
                 <Input
                   id="proc-stage"
                   placeholder="Ex: Etapa 05 / 18"
@@ -311,7 +311,7 @@ export default function DentistMedicalRecord() {
                       <div>
                         <p className="text-xs font-bold leading-tight">{p.name}</p>
                         <p className="text-[11px] text-slate-500">
-                          {p.currentStage}/{p.totalStages} alinhadores ({progressPct}%)
+                          {p.currentStage}/{p.totalStages} etapas ({progressPct}%)
                         </p>
                       </div>
                     </div>
@@ -373,9 +373,9 @@ export default function DentistMedicalRecord() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-sm font-bold text-slate-900">{rec.procedure}</h4>
-                      {rec.alignerStage && (
+                      {rec.treatmentStage && (
                         <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100 text-[10px]">
-                          {rec.alignerStage}
+                          {rec.treatmentStage}
                         </Badge>
                       )}
                     </div>

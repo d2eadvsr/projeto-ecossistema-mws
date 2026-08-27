@@ -57,7 +57,7 @@ export default function DentistSettings() {
               </div>
               <p className="text-xs text-slate-600">
                 Seu contrato CLM e documentos do CRO estão aprovados para prescrição dos
-                alinhadores.
+                dispositivos Magic Wire.
               </p>
             </div>
 
@@ -122,7 +122,7 @@ export default function DentistSettings() {
                   Atualizações de Rastreio e Entrega
                 </span>
                 <p className="text-xs text-slate-500">
-                  Notificar quando o alinhador for despachado para a clínica
+                  Notificar quando o dispositivo for despachado para a clínica
                 </p>
               </div>
               <input

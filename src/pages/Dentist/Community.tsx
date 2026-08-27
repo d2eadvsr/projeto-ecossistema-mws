@@ -49,9 +49,9 @@ const MOCK_POSTS: ForumPost[] = [
     cro: 'CRO-MG 45.120',
     role: 'Ortodontista Credenciada Master',
     category: 'Caso Clínico',
-    title: 'Fechamento de mordida aberta anterior com alinhadores MW sem cirurgia ortognática',
+    title: 'Fechamento de mordida aberta anterior com sistema Magic Wire sem cirurgia ortognática',
     content:
-      'Compartilho com os colegas o resultado após 14 meses de tratamento. Utilizamos intrusão de molares com apoio de elásticos intermaxilares de classe II associados ao protocolo avançado Magic Wire. O que acharam da estabilidade?',
+      'Compartilho com os colegas o resultado após 14 meses de tratamento. Utilizamos intrusão de molares com apoio de elásticos intermaxilares de classe II associados ao protocolo avançado Magic Wire pelo lado interno dos dentes. O que acharam da estabilidade?',
     likes: 24,
     repliesCount: 8,
     date: 'Há 2 horas',
@@ -190,7 +190,7 @@ export default function DentistCommunity() {
                 <Label htmlFor="post-title">Título do Tópico</Label>
                 <Input
                   id="post-title"
-                  placeholder="Ex: Como conduzir caso de canino impactado com alinhadores?"
+                  placeholder="Ex: Como conduzir caso de canino impactado com Magic Wire?"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   required

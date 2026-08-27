@@ -119,7 +119,7 @@ const INITIAL_MESSAGES: Record<string, ChatMessage[]> = {
       id: 'm4',
       sender: 'lab',
       senderName: 'Dra. Camila (Planejadora Digital)',
-      text: 'Dr. Roberto, o planejamento do João Santos está pronto com 10 alinhadores previstos.',
+      text: 'Dr. Roberto, o planejamento do João Santos está pronto com orientações clínicas para instalação do fio.',
       timestamp: 'Ontem às 16:40',
     },
   ],

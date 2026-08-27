@@ -36,7 +36,7 @@ const MOCK_PROGRAMS: MarketingProgram[] = [
     description:
       'Campanhas geolocalizadas no Meta Ads e Google Ads gerenciadas pela agência oficial MWS direcionando pacientes direto para o seu WhatsApp.',
     benefits: [
-      'Anúncios prontos e validados com foco em alinhadores invisíveis',
+      'Anúncios prontos e validados com foco no tratamento Magic Wire',
       'Página de captura personalizada com seu nome e CRO',
       'Leads pré-qualificados na sua região',
       'Suporte para equipe de recepção',
@@ -68,7 +68,7 @@ const MOCK_PROGRAMS: MarketingProgram[] = [
       'Modelos tridimensionais, display de mesa explicativo, folders para pacientes e totens informativos sobre o sistema Magic Wire.',
     benefits: [
       'Kit de modelos didáticos em acrílico transparente',
-      '100 folders explicativos sobre vantagens do alinhador',
+      '100 folders explicativos sobre a tecnologia Magic Wire',
       'Vídeos institucionais para TV de sala de espera',
     ],
     status: 'disponivel',

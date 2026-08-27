@@ -14,7 +14,7 @@ const mockPatients = [
 
 const mockAppointments = [
   { time: '09:00', patient: 'Maria Silva', type: 'Acompanhamento' },
-  { time: '10:30', patient: 'João Santos', type: 'Instalação de Alinhador' },
+  { time: '10:30', patient: 'João Santos', type: 'Instalação do Fio Magic Wire' },
   { time: '14:00', patient: 'Ana Costa', type: 'Consulta Final' },
 ]
 

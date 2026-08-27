@@ -29,7 +29,7 @@ export default function DentistPublicProfile() {
     name: 'Dr. Roberto Fernandes',
     cro: 'CRO-SP 98.432',
     clinicName: 'Fernandes Ortodontia & Estética Digital',
-    tagline: 'Especialista em Alinhadores Invisíveis e Ortodontia Digital Magic Wire',
+    tagline: 'Especialista em Tecnologia Magic Wire e Ortodontia Digital',
     bio: 'Ortodontista com mais de 12 anos de experiência clínica, credenciado master Magic Wire System. Foco em transformar sorrisos com previsibilidade, conforto e mínima intervenção mecânica.',
     phone: '(11) 98765-4321',
     email: 'contato@clinicafernandes.com.br',
@@ -40,7 +40,7 @@ export default function DentistPublicProfile() {
     state: 'SP',
     specialties: [
       'Ortodontia Digital',
-      'Alinhadores Invisíveis',
+      'Sistema Magic Wire Lingual',
       'Ortopedia Facial',
       'DTM e Oclusão',
     ],

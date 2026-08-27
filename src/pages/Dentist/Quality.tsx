@@ -37,21 +37,22 @@ export default function DentistQuality() {
       patientName: 'Mariana Duarte',
       score: 10,
       comment:
-        'Tratamento impecável! O Dr. Roberto explicou tudo no 3D e os alinhadores foram super confortáveis.',
+        'Tratamento impecável! O Dr. Roberto explicou tudo no 3D e o aparelho Magic Wire é super discreto e confortável.',
       date: 'Há 3 dias',
     },
     {
       id: 'fb-2',
       patientName: 'Carlos Henrique',
       score: 9,
-      comment: 'Pontualidade excelente nas consultas e o alinhador não atrapalhou meu dia a dia.',
+      comment:
+        'Pontualidade excelente nas consultas e o dispositivo interno não atrapalhou meu dia a dia.',
       date: 'Há 1 semana',
     },
     {
       id: 'fb-3',
       patientName: 'Beatriz Vasconcelos',
       score: 10,
-      comment: 'Super satisfeita com o alinhamento em apenas 6 meses. Recomendo de olhos fechados!',
+      comment: 'Super satisfeita com o resultado em apenas 6 meses. Recomendo de olhos fechados!',
       date: 'Há 2 semanas',
     },
   ]
