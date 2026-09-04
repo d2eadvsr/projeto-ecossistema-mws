@@ -23,6 +23,7 @@ export default function Dashboard() {
 
   if (user?.role === 'dentist') return <Navigate to="/dashboard/dentist" replace />
   if (user?.role === 'patient') return <Navigate to="/dashboard/patient" replace />
+  if (user?.role === 'lab') return <Navigate to="/lab/dashboard" replace />
 
   const renderAdminDash = () => (
     <div className="space-y-6 animate-fade-in-up">

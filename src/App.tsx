@@ -10,7 +10,6 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import Cases from './pages/Cases'
-import Lab from './pages/Lab'
 import Marketing from './pages/Marketing'
 import Financing from './pages/Financing'
 import Unauthorized from './pages/Unauthorized'
@@ -48,6 +47,14 @@ import PatientPayments from './pages/Patient/Payments'
 import PatientProfile from './pages/Patient/Profile'
 import PatientSearch from './pages/Patient/Search'
 
+import LabDashboard from './pages/Lab/Dashboard'
+import LabCases from './pages/Lab/Cases'
+import LabPlanning from './pages/Lab/Planning'
+import LabProduction from './pages/Lab/Production'
+import LabSla from './pages/Lab/Sla'
+import LabTeam from './pages/Lab/Team'
+import LabSettings from './pages/Lab/Settings'
+
 const App = () => (
   <AuthProvider>
     <BrowserRouter>
@@ -64,9 +71,20 @@ const App = () => (
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/cases" element={<Cases />} />
-              <Route path="/lab" element={<Lab />} />
               <Route path="/marketing" element={<Marketing />} />
               <Route path="/financing" element={<Financing />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['lab']} />}>
+            <Route element={<Layout />}>
+              <Route path="/lab/dashboard" element={<LabDashboard />} />
+              <Route path="/lab/cases" element={<LabCases />} />
+              <Route path="/lab/planning" element={<LabPlanning />} />
+              <Route path="/lab/production" element={<LabProduction />} />
+              <Route path="/lab/sla" element={<LabSla />} />
+              <Route path="/lab/team" element={<LabTeam />} />
+              <Route path="/lab/settings" element={<LabSettings />} />
             </Route>
           </Route>
 

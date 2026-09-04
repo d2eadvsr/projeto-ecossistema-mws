@@ -56,6 +56,8 @@ export default function Login() {
       navigate('/dashboard/patient', { replace: true })
     } else if (role === 'admin') {
       navigate('/admin/dashboard', { replace: true })
+    } else if (role === 'lab') {
+      navigate('/lab/dashboard', { replace: true })
     } else {
       navigate(from, { replace: true })
     }

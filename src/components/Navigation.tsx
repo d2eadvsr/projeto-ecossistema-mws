@@ -69,14 +69,22 @@ const getLinksForRole = (role: string) => {
       { href: '/admin/rbac', label: 'Console RBAC', icon: Settings },
     ]
   }
-  const base = [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
   if (role === 'lab') {
-    return [...base, { href: '/lab', label: 'Produção Lab', icon: FlaskConical }]
+    return [
+      { href: '/lab/dashboard', label: 'Dashboard Lab', icon: LayoutDashboard },
+      { href: '/lab/cases', label: 'Fila de Casos', icon: FolderOpen },
+      { href: '/lab/planning', label: 'Planejamento & Mentoria', icon: FlaskConical },
+      { href: '/lab/production', label: 'Produção Fios Mágicos', icon: Activity },
+      { href: '/lab/sla', label: 'SLAs & Desempenho', icon: ShieldCheck },
+      { href: '/lab/team', label: 'Equipe Técnica', icon: Users },
+      { href: '/lab/settings', label: 'Configurações Lab', icon: Settings },
+    ]
   }
+  const base = [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
   return [
     ...base,
     { href: '/cases', label: 'Todos os Casos', icon: FolderOpen },
-    { href: '/lab', label: 'Visão Lab', icon: FlaskConical },
+    { href: '/lab/dashboard', label: 'Laboratório MWS', icon: FlaskConical },
     { href: '/financing', label: 'Fintech (Simular)', icon: CreditCard },
   ]
 }
