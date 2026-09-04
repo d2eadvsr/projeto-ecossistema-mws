@@ -21,6 +21,7 @@ import {
   UserCheck,
   UserCheck2,
   Search,
+  Sparkles,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
@@ -42,6 +43,15 @@ const getLinksForRole = (role: string) => {
       { href: '/dentist/referrals', label: 'Indicação de Pacientes', icon: UserCheck },
       { href: '/dentist/public-profile', label: 'Perfil Público', icon: UserCircle },
       { href: '/dentist/settings', label: 'Configurações', icon: Settings },
+    ]
+  }
+  if (role === 'lead') {
+    return [
+      { href: '/lead/dashboard', label: 'Dashboard Lead', icon: LayoutDashboard },
+      { href: '/lead/ortodontista', label: 'Meu Ortodontista', icon: UserCircle },
+      { href: '/lead/consulta', label: 'Primeira Consulta', icon: CalendarCheck },
+      { href: '/lead/orcamento', label: 'Meu Orçamento', icon: CreditCard },
+      { href: '/lead/tecnologia', label: 'Conheça a Magic Wire', icon: Sparkles },
     ]
   }
   if (role === 'patient') {

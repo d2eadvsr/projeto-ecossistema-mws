@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T11:31:53.219Z",
+  "generatedAt": "2026-09-04T15:26:36.023Z",
   "collections": [
     {
       "name": "users",
@@ -54,7 +54,8 @@
             "support",
             "lab",
             "fintech",
-            "juridico"
+            "juridico",
+            "lead"
           ]
         },
         {

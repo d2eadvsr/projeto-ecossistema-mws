@@ -55,6 +55,12 @@ import LabSla from './pages/Lab/Sla'
 import LabTeam from './pages/Lab/Team'
 import LabSettings from './pages/Lab/Settings'
 
+import LeadDashboard from './pages/Lead/Dashboard'
+import LeadDentist from './pages/Lead/Dentist'
+import LeadAppointment from './pages/Lead/Appointment'
+import LeadBudget from './pages/Lead/Budget'
+import LeadTechnology from './pages/Lead/Technology'
+
 const App = () => (
   <AuthProvider>
     <BrowserRouter>
@@ -132,6 +138,16 @@ const App = () => (
               <Route path="/patient/payments" element={<PatientPayments />} />
               <Route path="/patient/search" element={<PatientSearch />} />
               <Route path="/patient/profile" element={<PatientProfile />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['lead']} />}>
+            <Route element={<Layout />}>
+              <Route path="/lead/dashboard" element={<LeadDashboard />} />
+              <Route path="/lead/ortodontista" element={<LeadDentist />} />
+              <Route path="/lead/consulta" element={<LeadAppointment />} />
+              <Route path="/lead/orcamento" element={<LeadBudget />} />
+              <Route path="/lead/tecnologia" element={<LeadTechnology />} />
             </Route>
           </Route>
 

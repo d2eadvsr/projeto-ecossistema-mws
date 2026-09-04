@@ -58,6 +58,8 @@ export default function Login() {
       navigate('/admin/dashboard', { replace: true })
     } else if (role === 'lab') {
       navigate('/lab/dashboard', { replace: true })
+    } else if (role === 'lead') {
+      navigate('/lead/dashboard', { replace: true })
     } else {
       navigate(from, { replace: true })
     }
@@ -156,6 +158,9 @@ export default function Login() {
             <li>Dentista: dentist@magicwire.com</li>
             <li>Paciente: patient@magicwire.com</li>
             <li>Lab: lab@magicwire.com</li>
+            <li className="font-semibold text-emerald-700">
+              Lead Qualificado: lead.teste@mws.com.br
+            </li>
           </ul>
           <p className="text-gray-500 text-xs">Senha padrão: Skip@Pass</p>
         </div>
