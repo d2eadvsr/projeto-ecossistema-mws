@@ -54,6 +54,8 @@ export default function Login() {
       navigate('/dashboard/dentist', { replace: true })
     } else if (role === 'patient') {
       navigate('/dashboard/patient', { replace: true })
+    } else if (role === 'admin') {
+      navigate('/admin/dashboard', { replace: true })
     } else {
       navigate(from, { replace: true })
     }

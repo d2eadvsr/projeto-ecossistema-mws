@@ -54,6 +54,21 @@ const getLinksForRole = (role: string) => {
       { href: '/patient/profile', label: 'Perfil', icon: UserCircle },
     ]
   }
+  if (role === 'admin') {
+    return [
+      { href: '/admin/dashboard', label: 'Visão Executiva', icon: LayoutDashboard },
+      { href: '/admin/ortodontistas', label: 'Ortodontistas (Adesão)', icon: Users },
+      { href: '/admin/pacientes-leads', label: 'Pacientes & Leads', icon: UserCheck },
+      { href: '/admin/mobilidade', label: 'Mobilidade Geográfica', icon: Activity },
+      { href: '/admin/casos', label: 'Casos & Laboratório', icon: FolderOpen },
+      { href: '/admin/financeiro', label: 'Financeiro & Splits', icon: CreditCard },
+      { href: '/admin/logistica', label: 'Logística & Fios', icon: ShieldCheck },
+      { href: '/admin/qualidade', label: 'Qualidade & SLAs', icon: ShieldCheck },
+      { href: '/admin/programas', label: 'Programas MKT/Gestão', icon: Megaphone },
+      { href: '/admin/escola', label: 'Escola MWS & Fórum', icon: GraduationCap },
+      { href: '/admin/rbac', label: 'Console RBAC', icon: Settings },
+    ]
+  }
   const base = [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
   if (role === 'lab') {
     return [...base, { href: '/lab', label: 'Produção Lab', icon: FlaskConical }]

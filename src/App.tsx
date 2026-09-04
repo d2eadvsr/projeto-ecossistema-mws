@@ -16,6 +16,16 @@ import Financing from './pages/Financing'
 import Unauthorized from './pages/Unauthorized'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
+import AdminDashboard from './pages/Admin/Dashboard'
+import AdminDentists from './pages/Admin/Dentists'
+import AdminPatientsLeads from './pages/Admin/PatientsLeads'
+import AdminCases from './pages/Admin/Cases'
+import AdminFinancial from './pages/Admin/Financial'
+import AdminLogistics from './pages/Admin/Logistics'
+import AdminQuality from './pages/Admin/Quality'
+import AdminSchoolCommunity from './pages/Admin/SchoolCommunity'
+import AdminPrograms from './pages/Admin/Programs'
+import AdminRBAC from './pages/Admin/RBAC'
 import DentistDashboard from './pages/Dentist/Dashboard'
 import DentistAgenda from './pages/Dentist/Agenda'
 import DentistPatients from './pages/Dentist/Patients'
@@ -57,6 +67,22 @@ const App = () => (
               <Route path="/lab" element={<Lab />} />
               <Route path="/marketing" element={<Marketing />} />
               <Route path="/financing" element={<Financing />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route element={<Layout />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/ortodontistas" element={<AdminDentists />} />
+              <Route path="/admin/pacientes-leads" element={<AdminPatientsLeads />} />
+              <Route path="/admin/mobilidade" element={<AdminPatientsLeads />} />
+              <Route path="/admin/casos" element={<AdminCases />} />
+              <Route path="/admin/financeiro" element={<AdminFinancial />} />
+              <Route path="/admin/logistica" element={<AdminLogistics />} />
+              <Route path="/admin/qualidade" element={<AdminQuality />} />
+              <Route path="/admin/programas" element={<AdminPrograms />} />
+              <Route path="/admin/escola" element={<AdminSchoolCommunity />} />
+              <Route path="/admin/rbac" element={<AdminRBAC />} />
             </Route>
           </Route>
 

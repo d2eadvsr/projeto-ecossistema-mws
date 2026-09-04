@@ -12,5 +12,20 @@ export default function Index() {
     )
   }
 
-  return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+
+  const role = (window as any).pocketbase?.authStore?.record?.role || 'admin'
+  if (role === 'admin') {
+    return <Navigate to="/admin/dashboard" replace />
+  }
+  if (role === 'dentist') {
+    return <Navigate to="/dashboard/dentist" replace />
+  }
+  if (role === 'patient') {
+    return <Navigate to="/dashboard/patient" replace />
+  }
+
+  return <Navigate to="/dashboard" replace />
 }
