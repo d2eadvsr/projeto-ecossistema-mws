@@ -139,6 +139,7 @@ const App = () => (
               <Route path="/dentist/programs" element={<DentistPrograms />} />
               <Route path="/dentist/referrals" element={<DentistReferrals />} />
               <Route path="/dentist/public-profile" element={<DentistPublicProfile />} />
+              <Route path="/dentist/profile-public" element={<DentistPublicProfile />} />
               <Route path="/dentist/onboarding" element={<DentistOnboarding />} />
               <Route path="/dentist/settings" element={<DentistSettings />} />
             </Route>
