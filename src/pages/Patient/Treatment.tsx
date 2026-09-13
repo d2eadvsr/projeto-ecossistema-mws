@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -30,6 +30,10 @@ import {
   ExternalLink,
   CircleDashed,
   FolderOpen,
+  MessageSquareHeart,
+  Star,
+  Check,
+  Lock,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
@@ -40,6 +44,13 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
+import {
+  PatientConsultationSurvey,
+  PatientSurveyResponse,
+  loadPatientSurveys,
+  savePatientSurveys,
+} from './surveyData'
+import { SurveyModal } from './SurveyModal'
 
 export interface AttachedDocument {
   id: string
@@ -668,13 +679,45 @@ const MOCK_TREATMENT_DATA = {
 }
 
 export default function PatientTreatment() {
-  const [activeTab, setActiveTab] = useState<'manutencoes' | 'fases' | 'status-fios' | 'equipe'>(
-    'manutencoes',
-  )
+  const [activeTab, setActiveTab] = useState<
+    'manutencoes' | 'pesquisas' | 'fases' | 'status-fios' | 'equipe'
+  >('manutencoes')
   const [selectedSessionId, setSelectedSessionId] = useState<string>('ms-man-2')
   const [selectedPhaseId, setSelectedPhaseId] = useState<number>(3)
   const [previewPhoto, setPreviewPhoto] = useState<PatientPhoto | null>(null)
+  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(loadPatientSurveys)
+  const [activeSurvey, setActiveSurvey] = useState<PatientConsultationSurvey | null>(null)
+  const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false)
   const { toast } = useToast()
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setSurveys(loadPatientSurveys())
+    }
+    window.addEventListener('mws-surveys-updated', handleUpdate)
+    return () => window.removeEventListener('mws-surveys-updated', handleUpdate)
+  }, [])
+
+  const answeredSurveysCount = surveys.filter((s) => s.isAnswered).length
+  const totalSurveysCount = surveys.length
+  const pendingSurveysCount = totalSurveysCount - answeredSurveysCount
+
+  const handleOpenSurvey = (survey: PatientConsultationSurvey) => {
+    setActiveSurvey(survey)
+    setIsSurveyModalOpen(true)
+  }
+
+  const handleSubmitSurvey = (surveyId: string, response: PatientSurveyResponse) => {
+    const updated = surveys.map((s) =>
+      s.id === surveyId ? { ...s, isAnswered: true, response } : s,
+    )
+    setSurveys(updated)
+    savePatientSurveys(updated)
+    toast({
+      title: 'Pesquisa Registrada!',
+      description: 'Sua avaliação foi salva no prontuário do tratamento Magic Wire.',
+    })
+  }
 
   const selectedPhase =
     MOCK_TREATMENT_DATA.phases.find((p) => p.id === selectedPhaseId) ||
@@ -789,6 +832,16 @@ export default function PatientTreatment() {
               Consolidado por Manutenção
               <Badge className="ml-1 bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0 hover:bg-emerald-100">
                 {totalSessionsCount}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger
+              value="pesquisas"
+              className="gap-2 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-xs font-semibold"
+            >
+              <MessageSquareHeart className="w-4 h-4 text-emerald-600" />
+              Pesquisas
+              <Badge className="ml-1 bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0 hover:bg-emerald-100 font-bold">
+                {answeredSurveysCount}/{totalSurveysCount}
               </Badge>
             </TabsTrigger>
             <TabsTrigger
@@ -1198,7 +1251,248 @@ export default function PatientTreatment() {
           </Card>
         </TabsContent>
 
-        {/* TAB 2: FASES DO PROTOCOLO (Visão Geral de 5 Fases) */}
+        {/* TAB 2: PESQUISAS DE SATISFAÇÃO (Item 3 do requisito) */}
+        <TabsContent value="pesquisas" className="space-y-6 m-0 focus-visible:outline-none">
+          {/* Header & Progresso do Bloco Pesquisas */}
+          <Card className="border-emerald-200 bg-gradient-to-r from-emerald-50 via-teal-50/40 to-white shadow-xs">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                      <MessageSquareHeart className="w-4 h-4" />
+                    </div>
+                    <CardTitle className="text-base sm:text-lg font-bold text-slate-900">
+                      Pesquisas de Satisfação do Tratamento
+                    </CardTitle>
+                  </div>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Acompanhe aqui a avaliação de cada uma das 8 consultas do seu ciclo clínico
+                    pós-aquisição, desde a instalação do fio lingual até a conclusão com contenção
+                    fixa.
+                  </CardDescription>
+                </div>
+
+                <div className="flex items-baseline gap-2 bg-white px-3.5 py-2 rounded-xl border border-emerald-200/80 shadow-2xs self-start sm:self-auto shrink-0">
+                  <span className="text-xs text-slate-500 font-medium">Respondidas:</span>
+                  <span className="text-xl font-black text-emerald-800">
+                    {answeredSurveysCount}
+                    <span className="text-sm font-semibold text-slate-400">
+                      /{totalSurveysCount}
+                    </span>
+                  </span>
+                  <Badge className="bg-emerald-100 text-emerald-800 text-[10px] font-bold ml-1">
+                    {Math.round((answeredSurveysCount / totalSurveysCount) * 100)}%
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="space-y-3 pt-0">
+              <div className="flex items-center justify-between text-xs text-slate-600">
+                <span className="text-[11px] font-medium text-emerald-900">
+                  {pendingSurveysCount === 0
+                    ? 'Todas as consultas realizadas foram avaliadas!'
+                    : `${pendingSurveysCount} pesquisa(s) pendente(s) ou aguardando realização`}
+                </span>
+                <span className="text-[11px] font-bold text-emerald-700">
+                  {answeredSurveysCount} de {totalSurveysCount} avaliações
+                </span>
+              </div>
+              <Progress
+                value={Math.round((answeredSurveysCount / totalSurveysCount) * 100)}
+                className="h-2.5 bg-emerald-100 [&>div]:bg-emerald-600 transition-all duration-500"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Listagem das 8 consultas uma a uma com status de pesquisa */}
+          <div className="space-y-3">
+            {surveys.map((survey) => {
+              const isAnswered = survey.isAnswered
+              const isCompleted = survey.consultationStatus === 'completed'
+              const isScheduled = survey.consultationStatus === 'scheduled'
+
+              return (
+                <Card
+                  key={survey.id}
+                  className={`transition-all border ${
+                    isAnswered
+                      ? 'border-emerald-200/80 bg-white hover:border-emerald-300'
+                      : isCompleted
+                        ? 'border-amber-300 bg-amber-50/20 hover:border-amber-400'
+                        : 'border-slate-200 bg-slate-50/40 opacity-80 hover:opacity-100'
+                  }`}
+                >
+                  <CardContent className="p-4 sm:p-5">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      {/* Identificação da consulta */}
+                      <div className="space-y-1.5 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge
+                            className={`text-[10px] font-bold ${
+                              survey.consultationType === 'instalacao'
+                                ? 'bg-purple-100 text-purple-800'
+                                : survey.consultationType === 'conclusao'
+                                  ? 'bg-amber-100 text-amber-800'
+                                  : 'bg-emerald-100 text-emerald-800'
+                            }`}
+                          >
+                            {survey.consultationOrder}ª Consulta •{' '}
+                            {survey.consultationType === 'instalacao'
+                              ? 'Instalação'
+                              : survey.consultationType === 'conclusao'
+                                ? 'Finalização'
+                                : 'Manutenção'}
+                          </Badge>
+
+                          <span className="text-xs text-slate-500 font-medium">
+                            {survey.consultationDate || 'Data a confirmar'}
+                          </span>
+
+                          {isAnswered ? (
+                            <Badge className="bg-emerald-600 text-white text-[10px] flex items-center gap-1 font-semibold">
+                              <Check className="w-3 h-3" /> Respondida
+                            </Badge>
+                          ) : isCompleted ? (
+                            <Badge className="bg-amber-500 text-white text-[10px] flex items-center gap-1 font-semibold">
+                              <Clock className="w-3 h-3" /> Pendente de Resposta
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] text-slate-500 bg-slate-100"
+                            >
+                              <Lock className="w-3 h-3 mr-1" /> Aguardando Consulta
+                            </Badge>
+                          )}
+                        </div>
+
+                        <h4 className="text-base font-bold text-slate-900">
+                          {survey.consultationTitle}
+                        </h4>
+
+                        {/* Exibição da Nota/Resposta dada quando respondida */}
+                        {isAnswered && survey.response && (
+                          <div className="pt-1 space-y-1.5">
+                            <div className="flex items-center gap-4 flex-wrap text-xs">
+                              <div className="flex items-center gap-1 text-slate-700">
+                                <span className="text-slate-500 text-[11px]">Ortodontista:</span>
+                                <div className="flex items-center">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`w-3.5 h-3.5 ${
+                                        star <= survey.response!.rating
+                                          ? 'fill-amber-400 text-amber-500'
+                                          : 'text-slate-300'
+                                      }`}
+                                    />
+                                  ))}
+                                  <span className="font-bold text-slate-900 ml-1">
+                                    {survey.response.rating}/5
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1 text-slate-700">
+                                <span className="text-slate-500 text-[11px]">Conforto Fio:</span>
+                                <div className="flex items-center">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`w-3.5 h-3.5 ${
+                                        star <= survey.response!.comfortRating
+                                          ? 'fill-emerald-500 text-emerald-600'
+                                          : 'text-slate-300'
+                                      }`}
+                                    />
+                                  ))}
+                                  <span className="font-bold text-slate-900 ml-1">
+                                    {survey.response.comfortRating}/5
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1 text-slate-700">
+                                <span className="text-slate-500 text-[11px]">NPS:</span>
+                                <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                                  {survey.response.npsScore}/10
+                                </span>
+                              </div>
+
+                              <span className="text-[10px] text-slate-400">
+                                Avaliada em {survey.response.answeredAt}
+                              </span>
+                            </div>
+
+                            {survey.response.comments && (
+                              <p className="text-xs text-slate-700 italic bg-slate-50 p-2.5 rounded-lg border border-slate-200 max-w-2xl">
+                                &ldquo;{survey.response.comments}&rdquo;
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {!isAnswered && isCompleted && (
+                          <p className="text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200/60 inline-block">
+                            Consulta realizada! Responda à pesquisa para registrar sua opinião e nos
+                            ajudar a acompanhar sua evolução.
+                          </p>
+                        )}
+
+                        {!isAnswered && !isCompleted && (
+                          <p className="text-xs text-slate-500">
+                            {isScheduled
+                              ? 'Consulta agendada. A pesquisa será liberada após a finalização do atendimento presencial.'
+                              : 'Consulta futura do plano. Será liberada após a realização da sessão.'}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Ações / Botões */}
+                      <div className="flex items-center gap-2 self-start lg:self-center shrink-0">
+                        {isAnswered ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleOpenSurvey(survey)}
+                            className="text-xs border-emerald-300 text-emerald-800 bg-emerald-50/60 hover:bg-emerald-100"
+                          >
+                            <Check className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+                            Ver Avaliação Completa
+                          </Button>
+                        ) : isCompleted ? (
+                          <Button
+                            size="sm"
+                            onClick={() => handleOpenSurvey(survey)}
+                            className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                          >
+                            <MessageSquareHeart className="w-3.5 h-3.5 mr-1" />
+                            Responder Pesquisa
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled
+                            className="text-xs text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed"
+                            title="A pesquisa fica disponível após a realização da consulta"
+                          >
+                            <Lock className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                            Responder Pesquisa
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        </TabsContent>
+
+        {/* TAB 3: FASES DO PROTOCOLO (Visão Geral de 5 Fases) */}
         <TabsContent value="fases" className="space-y-6 m-0 focus-visible:outline-none">
           {/* Barra de Progresso e Fases Visuais */}
           <Card className="border-slate-200 shadow-sm">
@@ -1588,6 +1882,17 @@ export default function PatientTreatment() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Modal de Avaliação / Detalhe da Pesquisa */}
+      <SurveyModal
+        survey={activeSurvey}
+        isOpen={isSurveyModalOpen}
+        onClose={() => {
+          setIsSurveyModalOpen(false)
+          setActiveSurvey(null)
+        }}
+        onSubmit={handleSubmitSurvey}
+      />
 
       {/* Modal de Pré-visualização de Foto de Acompanhamento */}
       <Dialog open={!!previewPhoto} onOpenChange={(open) => !open && setPreviewPhoto(null)}>

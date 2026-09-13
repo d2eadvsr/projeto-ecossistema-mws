@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Progress } from '@/components/ui/progress'
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -23,6 +24,10 @@ import {
   Stethoscope,
   Info,
   CalendarX2,
+  MessageSquareHeart,
+  Star,
+  Check,
+  Lock,
 } from 'lucide-react'
 import {
   Dialog,
@@ -33,6 +38,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
+import {
+  PatientConsultationSurvey,
+  PatientSurveyResponse,
+  loadPatientSurveys,
+  savePatientSurveys,
+} from './surveyData'
+import { SurveyModal } from './SurveyModal'
 
 interface Appointment {
   id: string
@@ -158,12 +170,68 @@ const statusConfig = {
 export default function PatientAppointments() {
   const [upcoming, setUpcoming] = useState<Appointment[]>(MOCK_UPCOMING_APPOINTMENTS)
   const [past, setPast] = useState<Appointment[]>(MOCK_PAST_APPOINTMENTS)
+  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(loadPatientSurveys)
+  const [activeSurvey, setActiveSurvey] = useState<PatientConsultationSurvey | null>(null)
+  const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [requestedDate, setRequestedDate] = useState('')
   const [requestedTime, setRequestedTime] = useState('14:00')
   const [appointmentReason, setAppointmentReason] = useState('Manutenção / Ativação de Fio Lingual')
   const [patientNotes, setPatientNotes] = useState('')
   const { toast } = useToast()
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setSurveys(loadPatientSurveys())
+    }
+    window.addEventListener('mws-surveys-updated', handleUpdate)
+    return () => window.removeEventListener('mws-surveys-updated', handleUpdate)
+  }, [])
+
+  const answeredSurveysCount = surveys.filter((s) => s.isAnswered).length
+  const totalConsultationsCount = surveys.length // 8 consultas pós-aquisição
+  const surveyProgressPercentage = Math.round(
+    (answeredSurveysCount / totalConsultationsCount) * 100,
+  )
+
+  const handleOpenSurvey = (survey: PatientConsultationSurvey) => {
+    setActiveSurvey(survey)
+    setIsSurveyModalOpen(true)
+  }
+
+  const handleSubmitSurvey = (surveyId: string, response: PatientSurveyResponse) => {
+    const updated = surveys.map((s) =>
+      s.id === surveyId ? { ...s, isAnswered: true, response } : s,
+    )
+    setSurveys(updated)
+    savePatientSurveys(updated)
+    toast({
+      title: 'Pesquisa Enviada com Sucesso!',
+      description:
+        'Obrigado por avaliar sua consulta. Sua resposta ajuda no aperfeiçoamento contínuo.',
+    })
+  }
+
+  // Mapeamento de pesquisa para cada consulta da lista
+  const getSurveyForUpcoming = (apt: Appointment, idx: number) => {
+    // Upcoming appointments correspondem às consultas 5ª e 6ª da jornada (ou ordem 6 e 7)
+    // apt-001 (18/07) -> srv-6 (5ª manutenção)
+    // apt-002 (22/08) -> srv-7 (6ª manutenção)
+    if (apt.id === 'apt-001') return surveys.find((s) => s.id === 'srv-6')
+    if (apt.id === 'apt-002') return surveys.find((s) => s.id === 'srv-7')
+    return surveys[Math.min(5 + idx, surveys.length - 1)]
+  }
+
+  const getSurveyForPast = (apt: Appointment, idx: number) => {
+    // Past appointments no mock:
+    // apt-003 (10/02/2026 - Instalação) -> srv-1
+    // apt-004 (27/01/2026) -> srv-2
+    // apt-005 (12/01/2026) -> srv-3
+    if (apt.id === 'apt-003') return surveys.find((s) => s.id === 'srv-1')
+    if (apt.id === 'apt-004') return surveys.find((s) => s.id === 'srv-2')
+    if (apt.id === 'apt-005') return surveys.find((s) => s.id === 'srv-3')
+    return surveys[idx]
+  }
 
   const handleRequestAppointment = (e: React.FormEvent) => {
     e.preventDefault()
@@ -337,6 +405,63 @@ export default function PatientAppointments() {
         </Dialog>
       </div>
 
+      {/* 2. Painel de Controle de Pesquisas Respondidas / Total de Consultas */}
+      <Card className="border-emerald-200 bg-gradient-to-r from-emerald-50 via-teal-50/40 to-white shadow-xs">
+        <CardContent className="p-4 sm:p-5 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <MessageSquareHeart className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                    Painel de Pesquisas de Satisfação
+                  </h3>
+                  <Badge
+                    variant="outline"
+                    className="border-emerald-300 bg-white text-emerald-800 text-[11px] font-semibold"
+                  >
+                    Jornada de 8 Consultas
+                  </Badge>
+                </div>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Avalie o atendimento da sua ortodontista após cada consulta presencial concluída.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-baseline gap-2 bg-white px-4 py-2 rounded-xl border border-emerald-200/80 shadow-2xs self-start sm:self-center shrink-0">
+              <span className="text-xs text-slate-500 font-medium">Pesquisas Respondidas:</span>
+              <span className="text-xl sm:text-2xl font-black text-emerald-800">
+                {answeredSurveysCount}
+                <span className="text-sm font-semibold text-slate-400">
+                  /{totalConsultationsCount}
+                </span>
+              </span>
+              <Badge className="bg-emerald-100 text-emerald-800 text-[10px] font-bold ml-1">
+                {surveyProgressPercentage}%
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-1.5 pt-1">
+            <div className="flex justify-between items-center text-xs text-slate-600">
+              <span className="text-[11px] text-emerald-900 font-medium">
+                Progresso das avaliações do tratamento
+              </span>
+              <span className="text-[11px] font-bold text-emerald-700">
+                {answeredSurveysCount} de {totalConsultationsCount} consultas avaliadas
+              </span>
+            </div>
+            <Progress
+              value={surveyProgressPercentage}
+              className="h-2.5 bg-emerald-100 [&>div]:bg-emerald-600 transition-all duration-500"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Cartões de Lembretes e Recomendações Rápidas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-emerald-200 bg-emerald-50/40">
@@ -397,8 +522,13 @@ export default function PatientAppointments() {
 
         {/* Tab 1: Próximas Consultas */}
         <TabsContent value="upcoming" className="space-y-4 pt-4">
-          {upcoming.map((apt) => {
+          {upcoming.map((apt, idx) => {
             const config = statusConfig[apt.status] || statusConfig.confirmed
+            const survey = getSurveyForUpcoming(apt, idx)
+            const isSurveyAnswered = survey?.isAnswered
+            // Consultas futuras não aconteceram ainda: paciente só avalia após a realização
+            const isCompletedApt = apt.status === 'completed'
+
             return (
               <Card
                 key={apt.id}
@@ -427,7 +557,7 @@ export default function PatientAppointments() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 self-start sm:self-center">
+                    <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
                       <Button
                         size="sm"
                         variant="outline"
@@ -437,6 +567,42 @@ export default function PatientAppointments() {
                         <CheckCircle2 className="w-4 h-4 mr-1 text-emerald-600" /> Confirmar
                         Presença
                       </Button>
+
+                      {/* Botão "Responder Pesquisa" (ao lado do Confirmar Presença) */}
+                      {isCompletedApt ? (
+                        isSurveyAnswered ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => survey && handleOpenSurvey(survey)}
+                            className="text-xs bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100"
+                            title="Ver avaliação registrada"
+                          >
+                            <Check className="w-4 h-4 mr-1 text-emerald-600" /> Pesquisa Respondida
+                            ({survey?.response?.rating}★)
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => survey && handleOpenSurvey(survey)}
+                            className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                          >
+                            <MessageSquareHeart className="w-4 h-4 mr-1" /> Responder Pesquisa
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled
+                          className="text-xs text-slate-400 border-slate-200 bg-slate-50 cursor-not-allowed"
+                          title="A pesquisa será liberada após a realização da consulta presencial"
+                        >
+                          <Lock className="w-3.5 h-3.5 mr-1 text-slate-400" /> Responder Pesquisa
+                          (Pendente)
+                        </Button>
+                      )}
+
                       <Button
                         size="sm"
                         variant="ghost"
@@ -525,37 +691,82 @@ export default function PatientAppointments() {
         {/* Tab 2: Histórico de Consultas Realizadas */}
         <TabsContent value="history" className="space-y-4 pt-4">
           <div className="space-y-3">
-            {past.map((apt) => (
-              <Card
-                key={apt.id}
-                className="border-slate-200 hover:bg-slate-50/50 transition-colors"
-              >
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-slate-100 text-slate-700 text-xs">
-                          Realizada
-                        </Badge>
-                        <span className="text-xs font-semibold text-slate-500">{apt.date}</span>
-                        <span className="text-xs text-slate-400">• {apt.time}</span>
-                      </div>
-                      <h4 className="text-base font-bold text-slate-900">{apt.type}</h4>
-                      <p className="text-xs text-slate-600">
-                        Atendido por <strong>{apt.doctorName}</strong> na {apt.clinicName}
-                      </p>
-                    </div>
+            {past.map((apt, idx) => {
+              const survey = getSurveyForPast(apt, idx)
+              const isSurveyAnswered = survey?.isAnswered
 
-                    <div className="text-xs text-slate-500 max-w-sm bg-white p-3 rounded-lg border border-slate-100">
-                      <p className="italic text-slate-700">&ldquo;{apt.notes}&rdquo;</p>
+              return (
+                <Card
+                  key={apt.id}
+                  className="border-slate-200 hover:bg-slate-50/50 transition-colors"
+                >
+                  <CardContent className="p-4 sm:p-5">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant="outline" className="bg-slate-100 text-slate-700 text-xs">
+                            Realizada
+                          </Badge>
+                          <span className="text-xs font-semibold text-slate-500">{apt.date}</span>
+                          <span className="text-xs text-slate-400">• {apt.time}</span>
+                          {isSurveyAnswered && (
+                            <Badge className="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-semibold">
+                              <Star className="w-3 h-3 mr-1 fill-amber-400 text-amber-500 inline" />
+                              Nota: {survey?.response?.rating}/5
+                            </Badge>
+                          )}
+                        </div>
+                        <h4 className="text-base font-bold text-slate-900">{apt.type}</h4>
+                        <p className="text-xs text-slate-600">
+                          Atendido por <strong>{apt.doctorName}</strong> na {apt.clinicName}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <div className="text-xs text-slate-500 max-w-sm bg-white p-3 rounded-lg border border-slate-100">
+                          <p className="italic text-slate-700">&ldquo;{apt.notes}&rdquo;</p>
+                        </div>
+
+                        {/* Botão Responder Pesquisa na consulta realizada */}
+                        {isSurveyAnswered ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => survey && handleOpenSurvey(survey)}
+                            className="text-xs border-emerald-300 text-emerald-800 bg-emerald-50/70 hover:bg-emerald-100 shrink-0"
+                            title="Ver detalhes da pesquisa enviada"
+                          >
+                            <Check className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Ver Avaliação
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => survey && handleOpenSurvey(survey)}
+                            className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 shadow-xs"
+                          >
+                            <MessageSquareHeart className="w-3.5 h-3.5 mr-1.5" /> Responder Pesquisa
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Modal de Avaliação / Detalhe da Pesquisa */}
+      <SurveyModal
+        survey={activeSurvey}
+        isOpen={isSurveyModalOpen}
+        onClose={() => {
+          setIsSurveyModalOpen(false)
+          setActiveSurvey(null)
+        }}
+        onSubmit={handleSubmitSurvey}
+      />
     </div>
   )
 }

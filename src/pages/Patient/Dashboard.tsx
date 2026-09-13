@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -14,10 +14,14 @@ import {
   ChevronDown,
   ChevronUp,
   Banknote,
+  MessageSquareHeart,
+  X,
+  ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { PatientConsultationSurvey, loadPatientSurveys } from './surveyData'
 
 export type PaymentMethod = 'mws' | 'particular'
 
@@ -254,6 +258,20 @@ export default function PatientDashboard() {
     : undefined
 
   const [showConsultationsList, setShowConsultationsList] = useState(false)
+  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(loadPatientSurveys)
+  const [isReminderDismissed, setIsReminderDismissed] = useState(false)
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setSurveys(loadPatientSurveys())
+    }
+    window.addEventListener('mws-surveys-updated', handleUpdate)
+    return () => window.removeEventListener('mws-surveys-updated', handleUpdate)
+  }, [])
+
+  const answeredSurveysCount = surveys.filter((s) => s.isAnswered).length
+  const totalConsultationsForSurveys = surveys.length
+  const pendingSurveysCount = totalConsultationsForSurveys - answeredSurveysCount
 
   const pendingPayments = mockInstallments.filter((i) => i.status === 'pending').length
   const totalPaid = mockInstallments.filter((i) => i.status === 'paid').length
@@ -326,6 +344,69 @@ export default function PatientDashboard() {
           ))}
         </div>
       </div>
+
+      {/* 4. Lembrete Recorrente de Pesquisas Pendentes:
+          Exibido sempre que o paciente entrar no app com pesquisas pendentes.
+          IMPORTANTE: Decisão explícita de produto da sponsor Emilene:
+          NÃO bloqueia agendamento, novas marcações de consulta nem qualquer funcionalidade.
+          Banner 100% informativo e dispensável pelo usuário. */}
+      {!isReminderDismissed && pendingSurveysCount > 0 && (
+        <div className="relative rounded-xl border border-emerald-300 bg-gradient-to-r from-emerald-50 via-teal-50/50 to-white p-4 shadow-xs animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                <MessageSquareHeart className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-xs sm:text-sm font-bold text-emerald-950">
+                    Você tem pesquisas de acompanhamento pendentes ({answeredSurveysCount}/
+                    {totalConsultationsForSurveys} respondidas)
+                  </h3>
+                  <Badge className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold border-emerald-300">
+                    Lembrete Amigável
+                  </Badge>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed max-w-2xl">
+                  Sua avaliação leva menos de 1 minuto e é essencial para acompanhar a evolução do
+                  seu tratamento Magic Wire.
+                  <span className="text-slate-500 block sm:inline sm:ml-1">
+                    (Este lembrete é apenas informativo e não impede novos agendamentos).
+                  </span>
+                </p>
+                <div className="pt-1.5 flex items-center gap-3">
+                  <Link
+                    to="/patient/appointments"
+                    className="inline-flex items-center text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline gap-1 group"
+                  >
+                    <span>Responder em Consultas</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                  <span className="text-slate-300">•</span>
+                  <Link
+                    to="/patient/treatment"
+                    className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-emerald-700 hover:underline"
+                  >
+                    Ver todas as pesquisas em Meu Tratamento
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsReminderDismissed(true)}
+              className="h-7 w-7 text-slate-400 hover:text-slate-700 hover:bg-slate-100/80 shrink-0"
+              title="Dispensar lembrete"
+              aria-label="Dispensar lembrete de pesquisas"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* 1. Barra de progresso do tratamento:
           Consulta de Avaliação → Planejamento → Instalação → Manutenções → Conclusão
