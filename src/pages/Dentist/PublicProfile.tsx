@@ -303,16 +303,18 @@ export default function DentistPublicProfile() {
                   </h1>
                   <Badge
                     variant="outline"
-                    className="border-emerald-500 text-emerald-400 bg-emerald-500/10 font-medium"
+                    className="border-emerald-600/40 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 font-medium"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                    <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" />
                     {profile.cro}
                   </Badge>
                   <Badge variant="secondary" className="font-semibold text-xs">
                     Ortodontista Verificado
                   </Badge>
                 </div>
-                <p className="text-sm font-medium text-emerald-400">{profile.professionalTitle}</p>
+                <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                  {profile.professionalTitle}
+                </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
                   {profile.clinicName} • {profile.city}/{profile.state}
@@ -342,10 +344,10 @@ export default function DentistPublicProfile() {
               <Badge
                 key={spec}
                 variant="secondary"
-                className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-3 py-1 text-xs"
+                className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-600/30 px-3 py-1 text-xs"
               >
                 {spec.includes('Magic Wire') || spec.includes('Fio Lingual') ? (
-                  <Sparkles className="w-3 h-3 mr-1 text-emerald-400" />
+                  <Sparkles className="w-3 h-3 mr-1 text-emerald-600 dark:text-emerald-400" />
                 ) : null}
                 {spec}
               </Badge>
@@ -361,7 +363,7 @@ export default function DentistPublicProfile() {
           {/* Métricas de autoridade (casos, anos de experiência, tratamentos Magic Wire) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Card className="border-border bg-card/60 p-4 text-center">
-              <p className="text-2xl font-bold text-emerald-400">
+              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                 +{profile.stats.yearsExperience} anos
               </p>
               <p className="text-xs text-muted-foreground mt-1">Atuação em Ortodontia</p>
@@ -372,11 +374,13 @@ export default function DentistPublicProfile() {
               <p className="text-xs text-muted-foreground mt-1">Casos Concluídos</p>
             </Card>
 
-            <Card className="border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
-              <p className="text-2xl font-bold text-emerald-300">
+            <Card className="border-emerald-600/30 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-center">
+              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
                 +{profile.stats.magicWireTreatments}
               </p>
-              <p className="text-xs text-emerald-200/80 mt-1">Tratamentos Magic Wire</p>
+              <p className="text-xs text-emerald-800 dark:text-emerald-200/90 font-medium mt-1">
+                Tratamentos Magic Wire
+              </p>
             </Card>
 
             <Card className="border-border bg-card/60 p-4 text-center">
@@ -391,7 +395,7 @@ export default function DentistPublicProfile() {
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <User className="w-4 h-4 text-emerald-400" />
+                <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Sobre o Ortodontista
               </CardTitle>
             </CardHeader>
@@ -406,7 +410,7 @@ export default function DentistPublicProfile() {
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-emerald-400" />
+                <GraduationCap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Formação Acadêmica & Certificações
               </CardTitle>
             </CardHeader>
@@ -426,10 +430,10 @@ export default function DentistPublicProfile() {
           </Card>
 
           {/* Diferenciais da Tecnologia Magic Wire */}
-          <Card className="border-emerald-500/30 bg-emerald-950/20">
+          <Card className="border-emerald-600/30 bg-emerald-50/60 dark:bg-emerald-950/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2 text-emerald-300">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
+              <CardTitle className="text-base flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
+                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Por que tratar com a Tecnologia Magic Wire nesta clínica?
               </CardTitle>
             </CardHeader>
@@ -468,7 +472,7 @@ export default function DentistPublicProfile() {
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-emerald-400" />
+                <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Localização & Consultório
               </CardTitle>
             </CardHeader>
@@ -483,12 +487,12 @@ export default function DentistPublicProfile() {
 
               <div className="pt-2 border-t border-border space-y-2">
                 <div className="flex items-center gap-2 text-xs">
-                  <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                  <Phone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span className="text-muted-foreground">WhatsApp / Fone:</span>
                   <span className="font-medium text-foreground">{profile.phone}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                  <Mail className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span className="text-muted-foreground">E-mail:</span>
                   <span className="font-medium text-foreground truncate">{profile.email}</span>
                 </div>
@@ -500,7 +504,7 @@ export default function DentistPublicProfile() {
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="w-4 h-4 text-emerald-400" />
+                <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Horários de Atendimento
               </CardTitle>
             </CardHeader>
@@ -511,7 +515,9 @@ export default function DentistPublicProfile() {
                   className="flex items-center justify-between text-xs py-1.5 border-b border-border/50 last:border-0"
                 >
                   <span className="font-medium text-foreground">{wh.days}</span>
-                  <span className="text-emerald-400 font-semibold">{wh.period}</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                    {wh.period}
+                  </span>
                 </div>
               ))}
             </CardContent>
@@ -521,14 +527,14 @@ export default function DentistPublicProfile() {
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-emerald-400" />
+                <CreditCard className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Formas de Pagamento & Financiamento
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-xs">
               {profile.paymentMethods.mwsFintech && (
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-600/25 text-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>
                     <strong>Financiamento MWS:</strong> Parcelamento facilitado em até 24x sem
                     comprometer o limite do cartão
@@ -537,25 +543,25 @@ export default function DentistPublicProfile() {
               )}
               {profile.paymentMethods.particular && (
                 <div className="flex items-center gap-2 text-muted-foreground py-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Atendimento Particular</span>
                 </div>
               )}
               {profile.paymentMethods.pix && (
                 <div className="flex items-center gap-2 text-muted-foreground py-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>PIX com desconto à vista</span>
                 </div>
               )}
               {profile.paymentMethods.creditCardInstallments && (
                 <div className="flex items-center gap-2 text-muted-foreground py-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Cartões de Crédito (todas as bandeiras)</span>
                 </div>
               )}
               {profile.paymentMethods.conveniosReembolso && (
                 <div className="flex items-center gap-2 text-muted-foreground py-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Emissão de laudo para reembolso por convênios</span>
                 </div>
               )}
@@ -566,7 +572,7 @@ export default function DentistPublicProfile() {
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Globe className="w-4 h-4 text-emerald-400" />
+                <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Canais Digitais
               </CardTitle>
             </CardHeader>
@@ -585,7 +591,7 @@ export default function DentistPublicProfile() {
               )}
               {profile.website && (
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Globe className="w-4 h-4 text-emerald-400" />
+                  <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span className="truncate">{profile.website}</span>
                 </div>
               )}
@@ -605,7 +611,7 @@ export default function DentistPublicProfile() {
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
               Perfil Público do Ortodontista
             </h1>
-            <Badge className="bg-emerald-600/20 text-emerald-400 border border-emerald-500/30">
+            <Badge className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-600/30">
               Público na Rede
             </Badge>
           </div>
@@ -628,7 +634,7 @@ export default function DentistPublicProfile() {
           >
             {viewMode === 'editor' ? (
               <>
-                <Eye className="h-4 w-4 mr-2 text-emerald-400" />
+                <Eye className="h-4 w-4 mr-2 text-emerald-600 dark:text-emerald-400" />
                 Visualizar como Paciente
               </>
             ) : (
@@ -657,7 +663,7 @@ export default function DentistPublicProfile() {
         /* Modo Editor com Preview Rápido no Topo */
         <div className="space-y-6">
           {/* Card Hero Preview Rápido (Compacto) */}
-          <Card className="border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-card to-card shadow-sm">
+          <Card className="border-emerald-600/30 bg-gradient-to-r from-emerald-50/50 dark:from-emerald-950/30 via-card to-card shadow-sm">
             <CardContent className="p-5">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <div className="relative group flex-shrink-0">
@@ -688,19 +694,19 @@ export default function DentistPublicProfile() {
                     <h2 className="text-xl font-bold text-foreground">{profile.name}</h2>
                     <Badge
                       variant="outline"
-                      className="border-emerald-500 text-emerald-400 bg-emerald-500/10 text-xs"
+                      className="border-emerald-600/40 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-xs font-medium"
                     >
                       {profile.cro}
                     </Badge>
-                    <span className="flex items-center gap-1 text-xs font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    <span className="flex items-center gap-1 text-xs font-semibold text-amber-500 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                      <Star className="w-3 h-3 fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400" />
                       {profile.stats.rating} ({profile.stats.totalReviews} avaliações)
                     </span>
                     <Badge variant="secondary" className="text-xs">
                       NPS {profile.stats.npsScore}
                     </Badge>
                   </div>
-                  <p className="text-xs font-medium text-emerald-400">
+                  <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
                     {profile.professionalTitle}
                   </p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 truncate">
@@ -717,7 +723,7 @@ export default function DentistPublicProfile() {
                     className="text-xs"
                     onClick={() => setViewMode('preview')}
                   >
-                    <Eye className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                    <Eye className="w-3.5 h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" />
                     Ver Página Completa
                   </Button>
                 </div>
@@ -729,14 +735,14 @@ export default function DentistPublicProfile() {
           {!profile.photoTipDismissed && (
             <div className="bg-muted/40 border border-border rounded-xl p-3.5 flex items-start justify-between gap-3 text-xs text-muted-foreground">
               <div className="flex items-start gap-2.5">
-                <Info className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-foreground">
                     Recomendação dos Portais Médicos (Doctoralia & BoaConsulta):
                   </strong>{' '}
                   Profissionais que utilizam fotos frontais com fundo neutro e expressão amigável
                   recebem até{' '}
-                  <span className="text-emerald-400 font-semibold">
+                  <span className="text-emerald-700 dark:text-emerald-300 font-semibold">
                     3.8x mais agendamentos de primeiras consultas
                   </span>
                   .
@@ -877,11 +883,11 @@ export default function DentistPublicProfile() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="p-3 bg-emerald-950/20 border border-emerald-500/20 rounded-lg text-xs text-emerald-300">
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-600/30 rounded-lg text-xs text-emerald-800 dark:text-emerald-200">
                       <strong>Boa prática recomendada pelos portais:</strong> Escreva em primeira
-                      pessoa ("Sou ortodontista...", "Atuo com foco em..."), mencione sua formação,
-                      a experiência com a tecnologia Magic Wire (fio lingual invisível) e sua
-                      filosofia de atendimento.
+                      pessoa (&quot;Sou ortodontista...&quot;, &quot;Atuo com foco em...&quot;),
+                      mencione sua formação, a experiência com a tecnologia Magic Wire (fio lingual
+                      invisível) e sua filosofia de atendimento.
                     </div>
 
                     <div className="space-y-2">
@@ -915,10 +921,10 @@ export default function DentistPublicProfile() {
                       {profile.specialties.map((spec) => (
                         <Badge
                           key={spec}
-                          className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 text-xs flex items-center gap-1.5"
+                          className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-600/30 px-3 py-1.5 text-xs flex items-center gap-1.5"
                         >
                           {spec.includes('Magic Wire') || spec.includes('Fio Lingual') ? (
-                            <Sparkles className="w-3 h-3 text-emerald-400" />
+                            <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                           ) : null}
                           {spec}
                           <button
@@ -978,7 +984,7 @@ export default function DentistPublicProfile() {
                                   specialties: [...prev.specialties, tag],
                                 }))
                               }}
-                              className="text-[11px] px-2.5 py-1 rounded-full border border-border bg-muted/50 hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-300 text-muted-foreground transition-colors flex items-center gap-1"
+                              className="text-[11px] px-2.5 py-1 rounded-full border border-border bg-muted/50 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-600/40 hover:text-emerald-700 dark:hover:text-emerald-300 text-muted-foreground transition-colors flex items-center gap-1"
                             >
                               <Plus className="w-3 h-3" /> {tag}
                             </button>
@@ -1284,7 +1290,9 @@ export default function DentistPublicProfile() {
                             className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-muted/30 text-xs"
                           >
                             <span className="font-semibold text-foreground">{wh.days}</span>
-                            <span className="text-emerald-400 font-medium">{wh.period}</span>
+                            <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+                              {wh.period}
+                            </span>
                             <Button
                               type="button"
                               variant="ghost"
@@ -1339,7 +1347,7 @@ export default function DentistPublicProfile() {
                     <CardContent className="space-y-3">
                       <label className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/20 cursor-pointer hover:bg-muted/40">
                         <div className="space-y-0.5">
-                          <span className="text-sm font-semibold text-emerald-400">
+                          <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                             Financiamento MWS
                           </span>
                           <p className="text-xs text-muted-foreground">
@@ -1499,7 +1507,8 @@ export default function DentistPublicProfile() {
 
                       <div className="space-y-2">
                         <Label htmlFor="link-site" className="flex items-center gap-1.5">
-                          <Globe className="w-3.5 h-3.5 text-emerald-400" /> Site / Landing Page
+                          <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />{' '}
+                          Site / Landing Page
                         </Label>
                         <Input
                           id="link-site"
@@ -1526,7 +1535,7 @@ export default function DentistPublicProfile() {
                   className="flex-1 sm:flex-none border-border"
                   onClick={() => setViewMode('preview')}
                 >
-                  <Eye className="w-4 h-4 mr-2 text-emerald-400" />
+                  <Eye className="w-4 h-4 mr-2 text-emerald-600 dark:text-emerald-400" />
                   Visualizar como Paciente
                 </Button>
                 <Button
