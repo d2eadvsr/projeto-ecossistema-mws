@@ -55,7 +55,7 @@ const MOCK_FINANCIAL_SUMMARY = {
   installmentAmount: 500.0,
   contractId: 'MWS-FIN-2026-9921',
   paymentPlan: 'Parcelamento Direto MWS em 10x sem juros',
-  responsibleDentist: 'Dra. Aline Costa (Clínica OrthoDesign)',
+  responsibleOrthodontist: 'Dra. Aline Costa (Clínica OrthoDesign)',
 }
 
 const MOCK_INSTALLMENTS: Installment[] = [

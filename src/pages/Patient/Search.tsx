@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Search, MapPin, Star } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
-const mockDentists = [
-  { name: 'Dr. Aline Costa', spec: 'Ortodontia', dist: '1.2 km', nps: 92 },
-  { name: 'Dr. Bruno Souza', spec: 'Ortodontia', dist: '3.4 km', nps: 88 },
+const mockOrthodontists = [
+  { name: 'Dra. Aline Costa', spec: 'Ortodontia Lingual MWS', dist: '1.2 km', nps: 92 },
+  { name: 'Dr. Bruno Souza', spec: 'Ortodontia Lingual MWS', dist: '3.4 km', nps: 88 },
 ]
 
 export default function PatientSearch() {
@@ -23,7 +23,7 @@ export default function PatientSearch() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        {mockDentists.map((d, i) => (
+        {mockOrthodontists.map((d, i) => (
           <Card key={i} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6 flex flex-col justify-between h-full">
               <div className="flex items-start justify-between mb-4">
