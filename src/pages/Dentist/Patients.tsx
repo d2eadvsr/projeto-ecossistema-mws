@@ -121,7 +121,7 @@ export default function DentistPatients() {
                     {counts.emPlanejamento}
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    Casos enviados ao laboratório, aguardando devolução do planejamento 3D.
+                    Casos enviados ao laboratório, aguardando aprovação do planejamento 3D.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-amber-700 group-hover:text-amber-800">

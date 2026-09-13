@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -83,6 +84,36 @@ const MOCK_CHANNELS: ChatChannel[] = [
     unreadCount: 0,
     status: 'online',
   },
+  {
+    id: 'ch-CAS-2026-004',
+    caseId: 'CAS-2026-004',
+    patientName: 'Pedro Lima',
+    technicianName: 'Dr. Roberto (Planejamento Avançado MWS)',
+    lastMessage: 'Avaliando relação oclusal posterior e diagrama de dobras do fio lingual.',
+    lastTime: '22/02',
+    unreadCount: 0,
+    status: 'em_analise',
+  },
+  {
+    id: 'ch-CAS-2026-005',
+    caseId: 'CAS-2026-005',
+    patientName: 'Carla Souza',
+    technicianName: 'Triagem Técnica MWS',
+    lastMessage: 'Arquivos STL recebidos e em validação de integridade.',
+    lastTime: '24/02',
+    unreadCount: 0,
+    status: 'online',
+  },
+  {
+    id: 'ch-CAS-2026-006',
+    caseId: 'CAS-2026-006',
+    patientName: 'Bruno Almeida',
+    technicianName: 'Dr. Alexandre (Técnico Lab 3D)',
+    lastMessage: 'Kit de fios e guias linguais enviado com sucesso.',
+    lastTime: '25/01',
+    unreadCount: 0,
+    status: 'produzindo',
+  },
 ]
 
 const INITIAL_MESSAGES: Record<string, ChatMessage[]> = {
@@ -119,16 +150,88 @@ const INITIAL_MESSAGES: Record<string, ChatMessage[]> = {
       id: 'm4',
       sender: 'lab',
       senderName: 'Dra. Camila (Planejadora Digital)',
-      text: 'Dr. Roberto, o planejamento do João Santos está pronto com orientações clínicas para instalação do fio.',
+      text: 'Dr. Roberto, o planejamento do João Santos está pronto com orientações clínicas para instalação do fio lingual.',
       timestamp: 'Ontem às 16:40',
+    },
+  ],
+  'ch-3': [
+    {
+      id: 'm5',
+      sender: 'lab',
+      senderName: 'Central de Logística MWS',
+      text: 'Dispositivo lingual MWS da Ana Costa despachado via courier expresso.',
+      timestamp: '20/02 às 10:15',
+    },
+  ],
+  'ch-CAS-2026-004': [
+    {
+      id: 'm6',
+      sender: 'lab',
+      senderName: 'Dr. Roberto (Planejamento Avançado MWS)',
+      text: 'Caso Pedro Lima: análise cefalométrica em andamento para diagrama lingual customizado.',
+      timestamp: '22/02 às 11:00',
     },
   ],
 }
 
 export default function DentistChatLab() {
-  const [selectedChannelId, setSelectedChannelId] = useState<string>('ch-1')
-  const [channels] = useState<ChatChannel[]>(MOCK_CHANNELS)
+  const [searchParams] = useSearchParams()
+  const caseIdParam = searchParams.get('caseId')
+  const patientParam = searchParams.get('patient')
   const [messagesMap, setMessagesMap] = useState<Record<string, ChatMessage[]>>(INITIAL_MESSAGES)
+
+  const [channels, setChannels] = useState<ChatChannel[]>(() => {
+    if (caseIdParam) {
+      const exists = MOCK_CHANNELS.find((c) => c.caseId === caseIdParam)
+      if (!exists && patientParam) {
+        return [
+          {
+            id: `ch-${caseIdParam}`,
+            caseId: caseIdParam,
+            patientName: patientParam,
+            technicianName: 'Equipe de Planejamento MWS',
+            lastMessage: 'Canal contextualizado aberto para este caso.',
+            lastTime: 'Hoje',
+            unreadCount: 0,
+            status: 'online',
+          },
+          ...MOCK_CHANNELS,
+        ]
+      }
+    }
+    return MOCK_CHANNELS
+  })
+
+  const [selectedChannelId, setSelectedChannelId] = useState<string>(() => {
+    if (caseIdParam) {
+      const found = MOCK_CHANNELS.find((c) => c.caseId === caseIdParam)
+      if (found) return found.id
+      return `ch-${caseIdParam}`
+    }
+    return 'ch-1'
+  })
+
+  useEffect(() => {
+    if (caseIdParam) {
+      const match = channels.find((c) => c.caseId === caseIdParam)
+      if (match) {
+        setSelectedChannelId(match.id)
+      } else if (patientParam) {
+        const newChan: ChatChannel = {
+          id: `ch-${caseIdParam}`,
+          caseId: caseIdParam,
+          patientName: patientParam,
+          technicianName: 'Equipe de Planejamento MWS',
+          lastMessage: 'Canal contextualizado aberto para este caso.',
+          lastTime: 'Hoje',
+          unreadCount: 0,
+          status: 'online',
+        }
+        setChannels((prev) => [newChan, ...prev])
+        setSelectedChannelId(newChan.id)
+      }
+    }
+  }, [caseIdParam, patientParam])
   const [inputMessage, setInputMessage] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const { toast } = useToast()
@@ -143,7 +246,7 @@ export default function DentistChatLab() {
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       sender: 'dentist',
-      senderName: 'Dr. Roberto Fernandes',
+      senderName: 'Dr. Roberto Fernandes (Ortodontista)',
       text: inputMessage,
       timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
     }
@@ -160,8 +263,8 @@ export default function DentistChatLab() {
       const replyMsg: ChatMessage = {
         id: `msg-rep-${Date.now()}`,
         sender: 'lab',
-        senderName: selectedChannel.technicianName,
-        text: 'Mensagem recebida pelo laboratório! Nossa equipe técnica está avaliando o arquivo e retornará em breve.',
+        senderName: selectedChannel?.technicianName || 'Laboratório MWS',
+        text: `Recebido sobre o caso ${selectedChannel?.patientName} (${selectedChannel?.caseId}). Nossa equipe técnica do laboratório já está analisando sua solicitação.`,
         timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       }
       setMessagesMap((prev) => ({
@@ -276,8 +379,8 @@ export default function DentistChatLab() {
                   </Badge>
                 </div>
                 <p className="text-xs text-slate-400 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Disponível para
-                  alinhamento técnico
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Canal contextualizado ao
+                  caso de <strong className="text-slate-700">{selectedChannel.patientName}</strong>
                 </p>
               </div>
             </div>

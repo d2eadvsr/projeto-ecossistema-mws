@@ -50,7 +50,7 @@ export const STATUS_CONFIG: Record<
     textColor: 'text-amber-700',
     bgColor: 'bg-amber-50',
     iconBgColor: 'bg-amber-100 text-amber-700',
-    description: 'Enviados ao laboratório MWS, aguardando devolução do planejamento 3D.',
+    description: 'Enviados ao laboratório MWS, aguardando aprovação do planejamento 3D.',
   },
   planejados: {
     key: 'planejados',
