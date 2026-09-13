@@ -50,6 +50,7 @@ import PatientAppointments from './pages/Patient/Appointments'
 import PatientPayments from './pages/Patient/Payments'
 import PatientProfile from './pages/Patient/Profile'
 import PatientSearch from './pages/Patient/Search'
+import PatientPoints from './pages/Patient/Points'
 
 import LabDashboard from './pages/Lab/Dashboard'
 import LabCases from './pages/Lab/Cases'
@@ -150,6 +151,7 @@ const App = () => (
               <Route path="/dashboard/patient" element={<PatientDashboard />} />
               <Route path="/patient/treatment" element={<PatientTreatment />} />
               <Route path="/patient/appointments" element={<PatientAppointments />} />
+              <Route path="/patient/points" element={<PatientPoints />} />
               <Route path="/patient/payments" element={<PatientPayments />} />
               <Route path="/patient/search" element={<PatientSearch />} />
               <Route path="/patient/profile" element={<PatientProfile />} />

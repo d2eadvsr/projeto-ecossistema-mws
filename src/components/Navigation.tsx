@@ -60,6 +60,7 @@ const getLinksForRole = (role: string) => {
       { href: '/dashboard/patient', label: 'Dashboard', icon: LayoutDashboard },
       { href: '/patient/treatment', label: 'Meu Tratamento', icon: Activity },
       { href: '/patient/appointments', label: 'Consultas', icon: CalendarCheck },
+      { href: '/patient/points', label: 'Pontuação', icon: Sparkles },
       { href: '/patient/payments', label: 'Pagamentos', icon: CreditCard },
       { href: '/patient/search', label: 'Buscar Especialista', icon: Search },
       { href: '/patient/profile', label: 'Perfil', icon: UserCircle },
@@ -161,7 +162,7 @@ export function BottomNav({ role }: { role: string }) {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around p-1.5 z-50 shadow-lg">
-      {links.slice(0, 6).map((link) => {
+      {links.slice(0, 7).map((link) => {
         const Icon = link.icon
         const isActive = location.pathname === link.href
         return (
