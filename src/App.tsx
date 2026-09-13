@@ -32,6 +32,7 @@ import DentistPatientsByStatus from './pages/Dentist/PatientStatusList'
 import DentistPatientDetail from './pages/Dentist/PatientDetail'
 import DentistCases from './pages/Dentist/Cases'
 import DentistFinancing from './pages/Dentist/Financing'
+import DentistMaintenanceDetails from './pages/Dentist/MaintenanceDetails'
 import DentistMedicalRecord from './pages/Dentist/MedicalRecord'
 import DentistChatLab from './pages/Dentist/ChatLab'
 import DentistSchool from './pages/Dentist/School'
@@ -124,6 +125,10 @@ const App = () => (
               <Route path="/dentist/patients/:id" element={<DentistPatientDetail />} />
               <Route path="/dentist/cases" element={<DentistCases />} />
               <Route path="/dentist/financing" element={<DentistFinancing />} />
+              <Route
+                path="/dentist/financing/manutencoes"
+                element={<DentistMaintenanceDetails />}
+              />
               <Route path="/dentist/medical-record" element={<DentistMedicalRecord />} />
               <Route path="/dentist/chat-lab" element={<DentistChatLab />} />
               <Route path="/dentist/school" element={<DentistSchool />} />
