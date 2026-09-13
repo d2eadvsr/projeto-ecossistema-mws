@@ -69,7 +69,7 @@ const MOCK_PATIENT_RECORDS: PatientRecord[] = [
         treatmentStage: 'Etapa 04 / 18',
         observations:
           'Paciente relata excelente adaptação. Fio lingual perfeitamente posicionado. Ótima higiene.',
-        dentistName: 'Dr. Roberto Fernandes',
+        dentistName: 'Dr. Roberto Fernandes (Ortodontista)',
         nextSteps: 'Retorno em 15 dias para ativação do fio na etapa 05.',
       },
       {
@@ -395,7 +395,8 @@ export default function DentistMedicalRecord() {
                   )}
 
                   <p className="text-[10px] text-slate-400">
-                    Registrado por: <strong className="text-slate-600">{rec.dentistName}</strong>
+                    Registrado por ortodontista:{' '}
+                    <strong className="text-slate-600">{rec.dentistName}</strong>
                   </p>
                 </div>
               ))}

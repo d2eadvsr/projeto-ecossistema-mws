@@ -28,6 +28,8 @@ import AdminRBAC from './pages/Admin/RBAC'
 import DentistDashboard from './pages/Dentist/Dashboard'
 import DentistAgenda from './pages/Dentist/Agenda'
 import DentistPatients from './pages/Dentist/Patients'
+import DentistPatientsByStatus from './pages/Dentist/PatientStatusList'
+import DentistPatientDetail from './pages/Dentist/PatientDetail'
 import DentistCases from './pages/Dentist/Cases'
 import DentistFinancing from './pages/Dentist/Financing'
 import DentistMedicalRecord from './pages/Dentist/MedicalRecord'
@@ -115,6 +117,11 @@ const App = () => (
               <Route path="/dashboard/dentist" element={<DentistDashboard />} />
               <Route path="/dentist/agenda" element={<DentistAgenda />} />
               <Route path="/dentist/patients" element={<DentistPatients />} />
+              <Route
+                path="/dentist/patients/status/:status"
+                element={<DentistPatientsByStatus />}
+              />
+              <Route path="/dentist/patients/:id" element={<DentistPatientDetail />} />
               <Route path="/dentist/cases" element={<DentistCases />} />
               <Route path="/dentist/financing" element={<DentistFinancing />} />
               <Route path="/dentist/medical-record" element={<DentistMedicalRecord />} />

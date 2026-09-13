@@ -38,7 +38,7 @@ export default function DentistDashboard() {
         </Avatar>
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
-            Olá, {user?.name || 'Dentista'}
+            Olá, {user?.name || 'Ortodontista'}
           </h1>
           <p className="text-slate-500">Bem-vindo ao seu painel clínico.</p>
         </div>

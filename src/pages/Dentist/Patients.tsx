@@ -1,276 +1,348 @@
-import { Users, Activity, CheckCircle2, FileText, Wrench, Calendar } from 'lucide-react'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  Users,
+  Activity,
+  CheckCircle2,
+  FileText,
+  Search,
+  ArrowRight,
+  ChevronRight,
+  Sparkles,
+  Phone,
+  Calendar,
+  Layers,
+  Wrench,
+} from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-
-const MANUTENCAO_LABELS = [
-  '1ª Manutenção',
-  '2ª Manutenção',
-  '3ª Manutenção',
-  '4ª Manutenção',
-  '5ª Manutenção',
-  '6ª Manutenção',
-]
-
-interface MockPatient {
-  id: string
-  name: string
-  lab_response_date: string | null
-  first_consultation_date: string | null
-  last_consultation_date: string | null
-  consultation_count: number
-}
-
-// Backend integration will replace this mock data later.
-const MOCK_PATIENTS: MockPatient[] = [
-  // 2 EM PLANEJAMENTO (lab_response_date: null, first_consultation_date: null, last_consultation_date: null)
-  {
-    id: '1',
-    name: 'Maria Silva',
-    lab_response_date: null,
-    first_consultation_date: null,
-    last_consultation_date: null,
-    consultation_count: 0,
-  },
-  {
-    id: '2',
-    name: 'João Santos',
-    lab_response_date: null,
-    first_consultation_date: null,
-    last_consultation_date: null,
-    consultation_count: 0,
-  },
-  // 2 PLANEJADOS (lab_response_date set, first_consultation_date: null, last_consultation_date: null)
-  {
-    id: '3',
-    name: 'Ana Costa',
-    lab_response_date: '2026-01-15',
-    first_consultation_date: null,
-    last_consultation_date: null,
-    consultation_count: 0,
-  },
-  {
-    id: '4',
-    name: 'Pedro Lima',
-    lab_response_date: '2026-01-20',
-    first_consultation_date: null,
-    last_consultation_date: null,
-    consultation_count: 0,
-  },
-  // 5 EM TRATAMENTO / Aparelho Colocado (first_consultation_date set, last_consultation_date: null)
-  // Manutenções: 1ª: 1, 2ª: 1, 3ª: 0, 4ª: 0, 5ª: 2, 6ª: 1 (soma = 5)
-  {
-    id: '5',
-    name: 'Carla Mendes',
-    lab_response_date: '2025-10-10',
-    first_consultation_date: '2025-10-25',
-    last_consultation_date: null,
-    consultation_count: 1, // 1ª Manutenção
-  },
-  {
-    id: '6',
-    name: 'Bruno Almeida',
-    lab_response_date: '2025-09-01',
-    first_consultation_date: '2025-09-15',
-    last_consultation_date: null,
-    consultation_count: 2, // 2ª Manutenção
-  },
-  {
-    id: '7',
-    name: 'Fernanda Rocha',
-    lab_response_date: '2025-06-15',
-    first_consultation_date: '2025-07-01',
-    last_consultation_date: null,
-    consultation_count: 5, // 5ª Manutenção (1/2)
-  },
-  {
-    id: '8',
-    name: 'Lucas Pereira',
-    lab_response_date: '2025-06-10',
-    first_consultation_date: '2025-06-25',
-    last_consultation_date: null,
-    consultation_count: 5, // 5ª Manutenção (2/2)
-  },
-  {
-    id: '9',
-    name: 'Juliana Martins',
-    lab_response_date: '2025-05-01',
-    first_consultation_date: '2025-05-15',
-    last_consultation_date: null,
-    consultation_count: 6, // 6ª Manutenção
-  },
-  // 1 CONCLUÍDO (last_consultation_date set)
-  {
-    id: '10',
-    name: 'Ricardo Tavares',
-    lab_response_date: '2025-01-01',
-    first_consultation_date: '2025-01-15',
-    last_consultation_date: '2026-01-10',
-    consultation_count: 6,
-  },
-]
-
-function computeCounts(patients: MockPatient[]) {
-  const totalPatients = patients.length
-
-  const emPlanejamento = patients.filter((p) => !p.lab_response_date).length
-  const planejados = patients.filter(
-    (p) => p.lab_response_date && !p.first_consultation_date,
-  ).length
-  const emTratamento = patients.filter(
-    (p) => p.first_consultation_date && !p.last_consultation_date,
-  ).length
-
-  // Aparelho Colocado = pacientes em tratamento com primeira consulta realizada (= 5)
-  const emTratamentoPatients = patients.filter(
-    (p) => p.first_consultation_date && !p.last_consultation_date,
-  )
-  const aparelhoColocado = emTratamentoPatients.length
-
-  const manutencoesProgramadas = [1, 2, 3, 4, 5, 6].map(
-    (n) => emTratamentoPatients.filter((p) => p.consultation_count === n).length,
-  )
-
-  const concluidos = patients.filter((p) => p.last_consultation_date).length
-
-  return {
-    totalPatients,
-    emAndamento: {
-      emPlanejamento,
-      planejados,
-      emTratamento,
-      aparelhoColocado,
-      manutencoesProgramadas,
-    },
-    concluidos: {
-      total: concluidos,
-    },
-  }
-}
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  MOCK_DENTIST_PATIENTS,
+  STATUS_CONFIG,
+  getDentistCounts,
+  DentistPatient,
+} from './mockPatients'
 
 export default function DentistPatients() {
-  const counts = computeCounts(MOCK_PATIENTS)
+  const [searchTerm, setSearchTerm] = useState('')
+  const counts = getDentistCounts()
+
+  const filteredPatients = MOCK_DENTIST_PATIENTS.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.protocol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.statusLabel.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-5xl mx-auto animate-fade-in-up">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Pacientes</h1>
-        <p className="text-slate-500">Visão geral dos seus pacientes e casos clínicos.</p>
+    <div className="p-4 md:p-8 space-y-6 max-w-6xl mx-auto animate-fade-in-up">
+      {/* Cabeçalho */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Pacientes</h1>
+            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+              Ortodontia Lingual
+            </Badge>
+          </div>
+          <p className="text-slate-500 mt-1">
+            Gestão dos pacientes e acompanhamento de casos clínicos com a tecnologia Magic Wire.
+          </p>
+        </div>
       </div>
 
-      <Card className="border-emerald-200 bg-emerald-50">
-        <CardContent className="flex items-center gap-4 p-6">
-          <div className="w-14 h-14 rounded-xl bg-emerald-600 flex items-center justify-center flex-shrink-0">
-            <Users className="w-7 h-7 text-white" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-emerald-700">Total de Pacientes</p>
-            <p className="text-3xl font-bold text-slate-900">{counts.totalPatients}</p>
-            <p className="text-xs text-slate-500">Pacientes únicos desde seu credenciamento</p>
+      {/* Card Destaque: Total de Pacientes */}
+      <Card className="border-emerald-200 bg-gradient-to-r from-emerald-50 via-teal-50 to-white shadow-sm">
+        <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-600 flex items-center justify-center flex-shrink-0 shadow-sm text-white">
+              <Users className="w-7 h-7" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
+                Total de Pacientes
+              </p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl md:text-4xl font-extrabold text-slate-900">
+                  {counts.total}
+                </span>
+                <span className="text-xs font-medium text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                  100% ativos na base
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Pacientes atendidos desde o licenciamento do ortodontista no Ecossistema Magic Wire
+                System.
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Casos EM ANDAMENTO */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-blue-600" />
-          Casos EM ANDAMENTO
-        </h2>
-
-        {/* 3 cards de status de planejamento/tratamento */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card className="border-amber-200">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <FileText className="w-4 h-4 text-amber-600" />
-                <span className="text-sm font-medium text-amber-700">EM PLANEJAMENTO</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">
-                {counts.emAndamento.emPlanejamento}
-              </p>
-              <p className="text-xs text-slate-500">Enviados ao lab, sem resposta</p>
-            </CardContent>
-          </Card>
-          <Card className="border-blue-200">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-700">PLANEJADOS</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{counts.emAndamento.planejados}</p>
-              <p className="text-xs text-slate-500">Resposta do lab recebida</p>
-            </CardContent>
-          </Card>
-          <Card className="border-purple-200">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <Activity className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-700">EM TRATAMENTO</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{counts.emAndamento.emTratamento}</p>
-              <p className="text-xs text-slate-500">Paciente em atendimento</p>
-            </CardContent>
-          </Card>
+      {/* 4 Cards de Status Clicáveis: Em Planejamento · Planejados · Em Tratamento · Concluídos */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Layers className="w-4 h-4 text-emerald-600" />
+            Distribuição por Status do Caso
+          </h2>
+          <span className="text-xs text-slate-500">
+            Clique no card para filtrar pacientes pelo estado
+          </span>
         </div>
 
-        {/* Aparelho Colocado & Manutenções Programadas (agora dentro de EM ANDAMENTO) */}
-        <Card className="border-slate-200">
-          <CardContent className="p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <Wrench className="w-5 h-5 text-emerald-600" />
-                </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1: Em Planejamento */}
+          <Link
+            to="/dentist/patients/status/em-planejamento"
+            className="group block transition-transform duration-150 hover:-translate-y-0.5"
+          >
+            <Card
+              className={`h-full border-amber-200 transition-all ${STATUS_CONFIG['em-planejamento'].borderHoverColor} group-hover:shadow-md cursor-pointer`}
+            >
+              <CardContent className="p-5 flex flex-col justify-between h-full">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Aparelho Colocado</p>
-                  <p className="text-xs text-slate-500">Primeira consulta realizada</p>
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">
-                {counts.emAndamento.aparelhoColocado}
-              </p>
-            </div>
-
-            <div className="border-t border-slate-100 pt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Calendar className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium text-slate-700">Manutenções Programadas</span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                {MANUTENCAO_LABELS.map((label, i) => (
-                  <div key={label} className="rounded-lg bg-slate-50 p-3 text-center">
-                    <p className="text-xs text-slate-500 mb-1">{label}</p>
-                    <p className="text-xl font-bold text-slate-900">
-                      {counts.emAndamento.manutencoesProgramadas[i]}
-                    </p>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-700">
+                      <FileText className="w-4 h-4 text-amber-600" />
+                      Em Planejamento
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="border-amber-300 bg-amber-50 text-amber-800 text-xs font-bold"
+                    >
+                      {counts.emPlanejamento}
+                    </Badge>
                   </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                  <div className="text-3xl font-extrabold text-slate-900 mb-1">
+                    {counts.emPlanejamento}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Casos enviados ao laboratório, aguardando devolução do planejamento 3D.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-amber-700 group-hover:text-amber-800">
+                  <span>Ver {counts.emPlanejamento} casos</span>
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
-      {/* Casos CONCLUÍDOS */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-          Casos CONCLUÍDOS
-        </h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card className="border-emerald-200">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span className="text-sm font-medium text-emerald-700">CONCLUÍDO</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{counts.concluidos.total}</p>
-              <p className="text-xs text-slate-500">
-                Paciente já realizou a última consulta do tratamento
-              </p>
-            </CardContent>
-          </Card>
+          {/* Card 2: Planejados */}
+          <Link
+            to="/dentist/patients/status/planejados"
+            className="group block transition-transform duration-150 hover:-translate-y-0.5"
+          >
+            <Card
+              className={`h-full border-blue-200 transition-all ${STATUS_CONFIG['planejados'].borderHoverColor} group-hover:shadow-md cursor-pointer`}
+            >
+              <CardContent className="p-5 flex flex-col justify-between h-full">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-700">
+                      <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                      Planejados
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="border-blue-300 bg-blue-50 text-blue-800 text-xs font-bold"
+                    >
+                      {counts.planejados}
+                    </Badge>
+                  </div>
+                  <div className="text-3xl font-extrabold text-slate-900 mb-1">
+                    {counts.planejados}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Planejamento aprovado pelo ortodontista, aguardando início/instalação.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-700 group-hover:text-blue-800">
+                  <span>Ver {counts.planejados} casos</span>
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Card 3: Em Tratamento */}
+          <Link
+            to="/dentist/patients/status/em-tratamento"
+            className="group block transition-transform duration-150 hover:-translate-y-0.5"
+          >
+            <Card
+              className={`h-full border-purple-200 transition-all ${STATUS_CONFIG['em-tratamento'].borderHoverColor} group-hover:shadow-md cursor-pointer`}
+            >
+              <CardContent className="p-5 flex flex-col justify-between h-full">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-700">
+                      <Activity className="w-4 h-4 text-purple-600" />
+                      Em Tratamento
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="border-purple-300 bg-purple-50 text-purple-800 text-xs font-bold"
+                    >
+                      {counts.emTratamento}
+                    </Badge>
+                  </div>
+                  <div className="text-3xl font-extrabold text-slate-900 mb-1">
+                    {counts.emTratamento}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Aparelho lingual instalado, pacientes em ciclo ativo de manutenções.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-700 group-hover:text-purple-800">
+                  <span>Ver {counts.emTratamento} pacientes</span>
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Card 4: Concluídos */}
+          <Link
+            to="/dentist/patients/status/concluidos"
+            className="group block transition-transform duration-150 hover:-translate-y-0.5"
+          >
+            <Card
+              className={`h-full border-emerald-200 transition-all ${STATUS_CONFIG['concluidos'].borderHoverColor} group-hover:shadow-md cursor-pointer`}
+            >
+              <CardContent className="p-5 flex flex-col justify-between h-full">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Concluídos
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold"
+                    >
+                      {counts.concluidos}
+                    </Badge>
+                  </div>
+                  <div className="text-3xl font-extrabold text-slate-900 mb-1">
+                    {counts.concluidos}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Tratamento ortodôntico finalizado com alta clínica e contenção instalada.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-700 group-hover:text-emerald-800">
+                  <span>Ver {counts.concluidos} concluído</span>
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
+
+      {/* Tabela / Lista Geral com todos os 10 pacientes */}
+      <Card className="border-slate-200 shadow-sm">
+        <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Users className="w-5 h-5 text-emerald-600" />
+              Todos os Pacientes ({MOCK_DENTIST_PATIENTS.length})
+            </h2>
+            <p className="text-xs text-slate-500">
+              Relação completa de pacientes atendidos pelo ortodontista no ecossistema
+            </p>
+          </div>
+
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Buscar por paciente ou protocolo..."
+              className="pl-9 text-xs h-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <CardContent className="p-0 divide-y divide-slate-100">
+          {filteredPatients.length === 0 ? (
+            <div className="p-8 text-center text-sm text-slate-500">
+              Nenhum paciente encontrado para a busca informada.
+            </div>
+          ) : (
+            filteredPatients.map((patient: DentistPatient) => {
+              const statusCfg = STATUS_CONFIG[patient.status]
+
+              return (
+                <div
+                  key={patient.id}
+                  className="p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/70 transition-colors"
+                >
+                  <div className="flex items-start sm:items-center gap-3">
+                    <Avatar className="h-11 w-11 border border-slate-200 flex-shrink-0">
+                      <AvatarFallback className="bg-emerald-100 text-emerald-800 font-bold text-sm">
+                        {patient.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Link
+                          to={`/dentist/patients/${patient.id}`}
+                          className="font-bold text-slate-900 hover:text-emerald-700 text-sm md:text-base transition-colors"
+                        >
+                          {patient.name}
+                        </Link>
+                        <Badge
+                          variant="outline"
+                          className={`text-[11px] font-semibold ${statusCfg.badgeColor}`}
+                        >
+                          {statusCfg.label}
+                        </Badge>
+                        {patient.currentMaintenanceLabel && (
+                          <Badge className="bg-slate-900 text-white hover:bg-slate-800 text-[11px] font-semibold flex items-center gap-1">
+                            <Wrench className="w-3 h-3 text-emerald-400" />
+                            {patient.currentMaintenanceLabel}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {patient.protocol} • {patient.age} anos
+                      </p>
+                      <div className="flex items-center gap-4 text-[11px] text-slate-400 mt-1 flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3" /> {patient.phone}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" /> Início: {patient.startDate}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end md:self-center">
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="border-slate-200 hover:border-emerald-400 hover:text-emerald-700 text-xs font-semibold"
+                    >
+                      <Link to={`/dentist/patients/${patient.id}`}>
+                        Abrir Pasta
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
