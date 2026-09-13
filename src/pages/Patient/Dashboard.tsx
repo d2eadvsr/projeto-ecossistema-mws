@@ -364,39 +364,64 @@ export default function PatientDashboard() {
           />
 
           <div className="grid grid-cols-5 gap-1 sm:gap-2 pt-2">
-            {treatmentPhases.map((phase, i) => (
-              <div key={i} className="flex flex-col items-center gap-1.5 text-center">
+            {treatmentPhases.map((phase, i) => {
+              const isMaintenance = phase.name === 'Manutenções'
+              const content = (
                 <div
                   className={cn(
-                    'w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all',
-                    phase.completed
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : phase.current
-                        ? 'bg-emerald-500 text-white ring-4 ring-emerald-200 font-bold'
-                        : 'bg-slate-200 text-slate-400',
+                    'flex flex-col items-center gap-1.5 text-center w-full transition-all rounded-lg p-1',
+                    isMaintenance &&
+                      'hover:bg-emerald-100/70 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500',
                   )}
                 >
-                  {phase.completed ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
-                </div>
-                <span
-                  className={cn(
-                    'text-[10px] sm:text-xs leading-tight font-medium',
-                    phase.current
-                      ? 'font-bold text-emerald-800'
-                      : phase.completed
-                        ? 'text-emerald-700'
-                        : 'text-slate-500',
-                  )}
-                >
-                  {phase.name}
-                </span>
-                {phase.current && (
-                  <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-100 px-1.5 py-0.2 rounded hidden sm:inline-block">
-                    Atual
+                  <div
+                    className={cn(
+                      'w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all',
+                      phase.completed
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : phase.current
+                          ? 'bg-emerald-500 text-white ring-4 ring-emerald-200 font-bold group-hover:scale-105 group-hover:ring-emerald-300'
+                          : 'bg-slate-200 text-slate-400',
+                    )}
+                  >
+                    {phase.completed ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                  </div>
+                  <span
+                    className={cn(
+                      'text-[10px] sm:text-xs leading-tight font-medium flex items-center gap-0.5 justify-center',
+                      phase.current
+                        ? 'font-bold text-emerald-800 group-hover:text-emerald-900 group-hover:underline'
+                        : phase.completed
+                          ? 'text-emerald-700'
+                          : 'text-slate-500',
+                    )}
+                  >
+                    {phase.name}
                   </span>
-                )}
-              </div>
-            ))}
+                  {phase.current && (
+                    <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-100 px-1.5 py-0.2 rounded hidden sm:inline-block group-hover:bg-emerald-200">
+                      Atual
+                    </span>
+                  )}
+                </div>
+              )
+
+              if (isMaintenance) {
+                return (
+                  <Link
+                    key={i}
+                    to="/patient/treatment"
+                    title="Ver histórico completo de manutenções em Meu Tratamento"
+                    aria-label="Ir para Meu Tratamento (Manutenções)"
+                    className="block"
+                  >
+                    {content}
+                  </Link>
+                )
+              }
+
+              return <div key={i}>{content}</div>
+            })}
           </div>
 
           {/* Detalhamento das 8 consultas pós-aquisição que compõem o percentual */}
