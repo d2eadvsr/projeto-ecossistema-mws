@@ -155,7 +155,7 @@ export default function Login() {
           <p className="font-bold text-gray-700 mb-3">Contas de Teste:</p>
           <ul className="space-y-2 mb-4">
             <li>Admin: daniel.elias@d2eadvisory.com.br</li>
-            <li>Dentista: dentist@magicwire.com</li>
+            <li>Ortodontista: ortodontista@magicwire.com</li>
             <li>Paciente: patient@magicwire.com</li>
             <li>Lab: lab@magicwire.com</li>
             <li className="font-semibold text-emerald-700">
