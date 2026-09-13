@@ -26,11 +26,15 @@ export interface PatientConsultationSurvey {
 
 // 8 consultas pós-aquisição correspondentes à jornada do paciente:
 // 1 Instalação + 6 Manutenções (1ª a 6ª) + 1 Conclusão
-// No estado mock inicial de Maria Eduarda, para manter conformidade com a validação da sponsor
-// e o exemplo citado (5/8 respondidas), mockamos as 5 primeiras com resposta e 3 pendentes.
-const STORAGE_KEY = 'mws_patient_surveys_v1'
+// Regra de consistência:
+// O número de pesquisas respondidas deve ser derivado e coincidir exatamente com as consultas
+// pós-aquisição já realizadas pelo paciente que foram avaliadas.
+// Perfil Maria Eduarda (pat-01): 3 realizadas (Instalação + 1ª e 2ª Manutenções), todas as 3 avaliadas.
+// Consultas futuras (3ª a 6ª Manutenções + Conclusão): 5 pendentes/agendadas, ainda não passíveis de avaliação.
+// Perfil Lucas Ferreira (pat-02): 4 realizadas (Instalação + 1ª, 2ª e 3ª Manutenções), 4 avaliadas e 4 pendentes.
+const STORAGE_PREFIX = 'mws_patient_surveys_v2_'
 
-export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = [
+export const INITIAL_PATIENT_SURVEYS_PAT1: PatientConsultationSurvey[] = [
   {
     id: 'srv-1',
     consultationId: 'c-1',
@@ -90,16 +94,9 @@ export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = [
     consultationOrder: 4,
     consultationTitle: '3ª Manutenção (Checagem de Alinhamento)',
     consultationType: 'manutencao',
-    consultationDate: '25/04/2026',
-    consultationStatus: 'completed',
-    isAnswered: true,
-    response: {
-      rating: 5,
-      comfortRating: 5,
-      npsScore: 10,
-      comments: 'Excelente consulta e pontualidade na Clínica OrthoDesign.',
-      answeredAt: '26/04/2026',
-    },
+    consultationDate: '18/07/2026',
+    consultationStatus: 'scheduled',
+    isAnswered: false,
   },
   {
     id: 'srv-5',
@@ -107,16 +104,9 @@ export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = [
     consultationOrder: 5,
     consultationTitle: '4ª Manutenção (Ajuste de Torque Lingual)',
     consultationType: 'manutencao',
-    consultationDate: '30/05/2026',
-    consultationStatus: 'completed',
-    isAnswered: true,
-    response: {
-      rating: 4,
-      comfortRating: 4,
-      npsScore: 9,
-      comments: 'Ativação do fio lingual sem dor excessiva, mastigação preservada.',
-      answeredAt: '01/06/2026',
-    },
+    consultationDate: 'Previsão: Agosto/2026',
+    consultationStatus: 'pending',
+    isAnswered: false,
   },
   {
     id: 'srv-6',
@@ -124,8 +114,8 @@ export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = [
     consultationOrder: 6,
     consultationTitle: '5ª Manutenção',
     consultationType: 'manutencao',
-    consultationDate: '18/07/2026',
-    consultationStatus: 'scheduled',
+    consultationDate: 'Previsão: Setembro/2026',
+    consultationStatus: 'pending',
     isAnswered: false,
   },
   {
@@ -134,7 +124,7 @@ export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = [
     consultationOrder: 7,
     consultationTitle: '6ª Manutenção',
     consultationType: 'manutencao',
-    consultationDate: 'Previsão: Agosto/2026',
+    consultationDate: 'Previsão: Outubro/2026',
     consultationStatus: 'pending',
     isAnswered: false,
   },
@@ -150,9 +140,147 @@ export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = [
   },
 ]
 
-export function loadPatientSurveys(): PatientConsultationSurvey[] {
+export const INITIAL_PATIENT_SURVEYS_PAT2: PatientConsultationSurvey[] = [
+  {
+    id: 'srv-201',
+    consultationId: 'c-201',
+    consultationOrder: 1,
+    consultationTitle: 'Instalação do Fio Lingual',
+    consultationType: 'instalacao',
+    consultationDate: '10/02/2026',
+    consultationStatus: 'completed',
+    isAnswered: true,
+    response: {
+      rating: 5,
+      comfortRating: 5,
+      npsScore: 10,
+      comments: 'Excelente instalação, muito discreta e profissional.',
+      answeredAt: '11/02/2026',
+    },
+  },
+  {
+    id: 'srv-202',
+    consultationId: 'c-202',
+    consultationOrder: 2,
+    consultationTitle: '1ª Manutenção',
+    consultationType: 'manutencao',
+    consultationDate: '15/03/2026',
+    consultationStatus: 'completed',
+    isAnswered: true,
+    response: {
+      rating: 5,
+      comfortRating: 4,
+      npsScore: 9,
+      comments: 'Ativação rápida e precisa com a Dra. Aline.',
+      answeredAt: '16/03/2026',
+    },
+  },
+  {
+    id: 'srv-203',
+    consultationId: 'c-203',
+    consultationOrder: 3,
+    consultationTitle: '2ª Manutenção',
+    consultationType: 'manutencao',
+    consultationDate: '22/04/2026',
+    consultationStatus: 'completed',
+    isAnswered: true,
+    response: {
+      rating: 5,
+      comfortRating: 5,
+      npsScore: 10,
+      comments: 'Ótima evolução dos arcos linguais.',
+      answeredAt: '23/04/2026',
+    },
+  },
+  {
+    id: 'srv-204',
+    consultationId: 'c-204',
+    consultationOrder: 4,
+    consultationTitle: '3ª Manutenção',
+    consultationType: 'manutencao',
+    consultationDate: '30/05/2026',
+    consultationStatus: 'completed',
+    isAnswered: true,
+    response: {
+      rating: 5,
+      comfortRating: 5,
+      npsScore: 10,
+      comments: 'Alinhamento avançando perfeitamente e sem desconforto.',
+      answeredAt: '31/05/2026',
+    },
+  },
+  {
+    id: 'srv-205',
+    consultationId: 'c-205',
+    consultationOrder: 5,
+    consultationTitle: '4ª Manutenção (Ajuste de Torque Lingual)',
+    consultationType: 'manutencao',
+    consultationDate: '25/07/2026',
+    consultationStatus: 'scheduled',
+    isAnswered: false,
+  },
+  {
+    id: 'srv-206',
+    consultationId: 'c-206',
+    consultationOrder: 6,
+    consultationTitle: '5ª Manutenção',
+    consultationType: 'manutencao',
+    consultationDate: 'Previsão: Agosto/2026',
+    consultationStatus: 'pending',
+    isAnswered: false,
+  },
+  {
+    id: 'srv-207',
+    consultationId: 'c-207',
+    consultationOrder: 7,
+    consultationTitle: '6ª Manutenção',
+    consultationType: 'manutencao',
+    consultationDate: 'Previsão: Setembro/2026',
+    consultationStatus: 'pending',
+    isAnswered: false,
+  },
+  {
+    id: 'srv-208',
+    consultationId: 'c-208',
+    consultationOrder: 8,
+    consultationTitle: 'Conclusão & Contenção Fixa',
+    consultationType: 'conclusao',
+    consultationDate: 'Previsão: Outubro/2026',
+    consultationStatus: 'pending',
+    isAnswered: false,
+  },
+]
+
+// Compatibilidade direta com o mock principal (Maria Eduarda - 3 de 8 respondidas)
+export const INITIAL_PATIENT_SURVEYS: PatientConsultationSurvey[] = INITIAL_PATIENT_SURVEYS_PAT1
+
+const ACTIVE_PATIENT_KEY = 'mws_active_patient_id'
+
+export function getActivePatientId(): string {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    return localStorage.getItem(ACTIVE_PATIENT_KEY) || 'pat-01'
+  } catch {
+    return 'pat-01'
+  }
+}
+
+export function setActivePatientId(patientId: string): void {
+  try {
+    localStorage.setItem(ACTIVE_PATIENT_KEY, patientId)
+    window.dispatchEvent(new CustomEvent('mws-patient-changed', { detail: { patientId } }))
+  } catch {
+    // ignore
+  }
+}
+
+export function loadPatientSurveys(patientId?: string): PatientConsultationSurvey[] {
+  const effectiveId = patientId || getActivePatientId()
+  const storageKey = `${STORAGE_PREFIX}${effectiveId}`
+  const initialData =
+    effectiveId === 'pat-02' ? INITIAL_PATIENT_SURVEYS_PAT2 : INITIAL_PATIENT_SURVEYS_PAT1
+
+  try {
+    const raw = localStorage.getItem(storageKey)
     if (raw) {
       const parsed = JSON.parse(raw)
       if (Array.isArray(parsed) && parsed.length === 8) {
@@ -162,12 +290,14 @@ export function loadPatientSurveys(): PatientConsultationSurvey[] {
   } catch {
     // fallback to initial
   }
-  return INITIAL_PATIENT_SURVEYS
+  return initialData
 }
 
-export function savePatientSurveys(surveys: PatientConsultationSurvey[]): void {
+export function savePatientSurveys(surveys: PatientConsultationSurvey[], patientId?: string): void {
+  const effectiveId = patientId || getActivePatientId()
+  const storageKey = `${STORAGE_PREFIX}${effectiveId}`
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(surveys))
+    localStorage.setItem(storageKey, JSON.stringify(surveys))
     window.dispatchEvent(new Event('mws-surveys-updated'))
   } catch {
     // ignore

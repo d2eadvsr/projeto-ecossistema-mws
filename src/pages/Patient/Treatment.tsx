@@ -49,6 +49,7 @@ import {
   PatientSurveyResponse,
   loadPatientSurveys,
   savePatientSurveys,
+  getActivePatientId,
 } from './surveyData'
 import { SurveyModal } from './SurveyModal'
 
@@ -679,23 +680,37 @@ const MOCK_TREATMENT_DATA = {
 }
 
 export default function PatientTreatment() {
+  const [patientId, setPatientId] = useState<string>(getActivePatientId)
   const [activeTab, setActiveTab] = useState<
     'manutencoes' | 'pesquisas' | 'fases' | 'status-fios' | 'equipe'
   >('manutencoes')
   const [selectedSessionId, setSelectedSessionId] = useState<string>('ms-man-2')
   const [selectedPhaseId, setSelectedPhaseId] = useState<number>(3)
   const [previewPhoto, setPreviewPhoto] = useState<PatientPhoto | null>(null)
-  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(loadPatientSurveys)
+  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(() =>
+    loadPatientSurveys(patientId),
+  )
   const [activeSurvey, setActiveSurvey] = useState<PatientConsultationSurvey | null>(null)
   const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
     const handleUpdate = () => {
-      setSurveys(loadPatientSurveys())
+      const pId = getActivePatientId()
+      setSurveys(loadPatientSurveys(pId))
+    }
+    const handlePatientChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ patientId: string }>
+      const pId = customEvent.detail?.patientId || getActivePatientId()
+      setPatientId(pId)
+      setSurveys(loadPatientSurveys(pId))
     }
     window.addEventListener('mws-surveys-updated', handleUpdate)
-    return () => window.removeEventListener('mws-surveys-updated', handleUpdate)
+    window.addEventListener('mws-patient-changed', handlePatientChange)
+    return () => {
+      window.removeEventListener('mws-surveys-updated', handleUpdate)
+      window.removeEventListener('mws-patient-changed', handlePatientChange)
+    }
   }, [])
 
   const answeredSurveysCount = surveys.filter((s) => s.isAnswered).length
@@ -708,11 +723,12 @@ export default function PatientTreatment() {
   }
 
   const handleSubmitSurvey = (surveyId: string, response: PatientSurveyResponse) => {
+    const currentId = getActivePatientId()
     const updated = surveys.map((s) =>
       s.id === surveyId ? { ...s, isAnswered: true, response } : s,
     )
     setSurveys(updated)
-    savePatientSurveys(updated)
+    savePatientSurveys(updated, currentId)
     toast({
       title: 'Pesquisa Registrada!',
       description: 'Sua avaliação foi salva no prontuário do tratamento Magic Wire.',

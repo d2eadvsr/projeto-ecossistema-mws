@@ -43,6 +43,7 @@ import {
   PatientSurveyResponse,
   loadPatientSurveys,
   savePatientSurveys,
+  getActivePatientId,
 } from './surveyData'
 import { SurveyModal } from './SurveyModal'
 
@@ -62,7 +63,8 @@ interface Appointment {
   preparationTips?: string[]
 }
 
-const MOCK_UPCOMING_APPOINTMENTS: Appointment[] = [
+// Consultas para o cenário Maria Eduarda (pat-01): 3 realizadas (todas avaliadas) + consultas futuras
+const MOCK_UPCOMING_APPOINTMENTS_PAT1: Appointment[] = [
   {
     id: 'apt-001',
     date: '18 de Julho de 2026',
@@ -73,7 +75,7 @@ const MOCK_UPCOMING_APPOINTMENTS: Appointment[] = [
     doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
     clinicName: 'Clínica OrthoDesign Jardins',
     address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
-    type: 'Manutenção & Ativação de Fio Lingual',
+    type: '3ª Manutenção (Checagem de Alinhamento)',
     status: 'confirmed',
     notes: 'Avaliação da conformação do arco inferior e ativação de torque anterior.',
     preparationTips: [
@@ -91,9 +93,9 @@ const MOCK_UPCOMING_APPOINTMENTS: Appointment[] = [
     doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
     clinicName: 'Clínica OrthoDesign Jardins',
     address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
-    type: 'Troca Programada para Fio Lingual MWS 0.016"',
+    type: '4ª Manutenção (Ajuste de Torque Lingual)',
     status: 'pending_confirmation',
-    notes: 'Substituição do arco de NiTi pelo fio lingual rígido de nivelamento avançado.',
+    notes: 'Substituição do arco de NiTi pelo fio lingual de nivelamento avançado.',
     preparationTips: [
       'Sessão com duração estimada de 45 minutos',
       'Trazer dúvidas anotadas sobre a adaptação da mordida',
@@ -101,50 +103,126 @@ const MOCK_UPCOMING_APPOINTMENTS: Appointment[] = [
   },
 ]
 
-const MOCK_PAST_APPOINTMENTS: Appointment[] = [
+// Histórico de 3 consultas pós-aquisição realizadas da Maria Eduarda (Instalação + 1ª e 2ª Manutenções)
+const MOCK_PAST_APPOINTMENTS_PAT1: Appointment[] = [
   {
-    id: 'apt-003',
-    date: '10 de Fevereiro de 2026',
-    rawDate: '2026-02-10',
-    time: '15:00',
-    doctorName: 'Dra. Aline Costa',
-    doctorRole: 'Ortodontista Especialista MWS',
-    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
-    clinicName: 'Clínica OrthoDesign Jardins',
-    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
-    type: 'Instalação do Fio Lingual MWS Customizado 0.014"',
-    status: 'completed',
-    notes:
-      'Fios superior e inferior instalados com sucesso. Adaptação lingual perfeita sem desconforto.',
-  },
-  {
-    id: 'apt-004',
-    date: '27 de Janeiro de 2026',
-    rawDate: '2026-01-27',
+    id: 'apt-c3',
+    date: '28 de Março de 2026',
+    rawDate: '2026-03-28',
     time: '11:00',
     doctorName: 'Dra. Aline Costa',
     doctorRole: 'Ortodontista Especialista MWS',
     doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
     clinicName: 'Clínica OrthoDesign Jardins',
     address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
-    type: 'Colagem Indireta dos Dispositivos Linguais MWS',
+    type: '2ª Manutenção (Refinamento Biomecânico)',
     status: 'completed',
-    notes: 'Colagem de precisão realizada com guia laboratorial transferido do modelo 3D.',
+    notes: 'Desrotacionamento favorável dos incisivos superiores com arco lingual termoativado.',
   },
   {
-    id: 'apt-005',
-    date: '12 de Janeiro de 2026',
-    rawDate: '2026-01-12',
-    time: '09:30',
+    id: 'apt-c2',
+    date: '20 de Fevereiro de 2026',
+    rawDate: '2026-02-20',
+    time: '14:30',
     doctorName: 'Dra. Aline Costa',
     doctorRole: 'Ortodontista Especialista MWS',
     doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
     clinicName: 'Clínica OrthoDesign Jardins',
     address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
-    type: 'Escaneamento Intraoral 3D & Planejamento Inicial',
+    type: '1ª Manutenção (Ativação Lingual Inicial)',
     status: 'completed',
-    notes:
-      'Geração dos arquivos digitais STL e envio direto para o laboratório central Magic Wire.',
+    notes: 'Ativação e checagem de alinhamento lingual. Excelente resposta tecidual.',
+  },
+  {
+    id: 'apt-c1',
+    date: '15 de Janeiro de 2026',
+    rawDate: '2026-01-15',
+    time: '09:00',
+    doctorName: 'Dra. Aline Costa',
+    doctorRole: 'Ortodontista Especialista MWS',
+    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    clinicName: 'Clínica OrthoDesign Jardins',
+    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
+    type: 'Instalação do Fio Lingual Magic Wire',
+    status: 'completed',
+    notes: 'Colagem de precisão lingual e instalação dos arcos superior e inferior.',
+  },
+]
+
+// Consultas para o segundo cenário (Lucas Ferreira - 4 realizadas)
+const MOCK_UPCOMING_APPOINTMENTS_PAT2: Appointment[] = [
+  {
+    id: 'apt-201',
+    date: '25 de Julho de 2026',
+    rawDate: '2026-07-25',
+    time: '15:00',
+    doctorName: 'Dra. Aline Costa',
+    doctorRole: 'Ortodontista Especialista MWS',
+    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    clinicName: 'Clínica OrthoDesign Jardins',
+    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
+    type: '4ª Manutenção (Ajuste de Torque Lingual)',
+    status: 'confirmed',
+    notes: 'Ajuste de torque lingual e conferência de alinhamento.',
+  },
+]
+
+const MOCK_PAST_APPOINTMENTS_PAT2: Appointment[] = [
+  {
+    id: 'apt-p2-c4',
+    date: '30 de Maio de 2026',
+    rawDate: '2026-05-30',
+    time: '11:00',
+    doctorName: 'Dra. Aline Costa',
+    doctorRole: 'Ortodontista Especialista MWS',
+    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    clinicName: 'Clínica OrthoDesign Jardins',
+    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
+    type: '3ª Manutenção (Acompanhamento da Evolução)',
+    status: 'completed',
+    notes: 'Evolução consistente dos movimentos sem interferências.',
+  },
+  {
+    id: 'apt-p2-c3',
+    date: '22 de Abril de 2026',
+    rawDate: '2026-04-22',
+    time: '14:00',
+    doctorName: 'Dra. Aline Costa',
+    doctorRole: 'Ortodontista Especialista MWS',
+    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    clinicName: 'Clínica OrthoDesign Jardins',
+    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
+    type: '2ª Manutenção (Refinamento Biomecânico)',
+    status: 'completed',
+    notes: 'Troca de ligaduras linguais e conferência de oclusão.',
+  },
+  {
+    id: 'apt-p2-c2',
+    date: '15 de Março de 2026',
+    rawDate: '2026-03-15',
+    time: '10:00',
+    doctorName: 'Dra. Aline Costa',
+    doctorRole: 'Ortodontista Especialista MWS',
+    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    clinicName: 'Clínica OrthoDesign Jardins',
+    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
+    type: '1ª Manutenção (Ativação Lingual Inicial)',
+    status: 'completed',
+    notes: 'Primeira checagem após instalação com adaptação excelente.',
+  },
+  {
+    id: 'apt-p2-c1',
+    date: '10 de Fevereiro de 2026',
+    rawDate: '2026-02-10',
+    time: '09:00',
+    doctorName: 'Dra. Aline Costa',
+    doctorRole: 'Ortodontista Especialista MWS',
+    doctorAvatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    clinicName: 'Clínica OrthoDesign Jardins',
+    address: 'Av. Paulista, 1842 - Cj 112, Bela Vista - São Paulo/SP',
+    type: 'Instalação do Fio Lingual Magic Wire',
+    status: 'completed',
+    notes: 'Instalação completa do sistema lingual com guia de precisão.',
   },
 ]
 
@@ -168,9 +246,18 @@ const statusConfig = {
 }
 
 export default function PatientAppointments() {
-  const [upcoming, setUpcoming] = useState<Appointment[]>(MOCK_UPCOMING_APPOINTMENTS)
-  const [past, setPast] = useState<Appointment[]>(MOCK_PAST_APPOINTMENTS)
-  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(loadPatientSurveys)
+  const currentPatientId = getActivePatientId()
+  const isPat2 = currentPatientId === 'pat-02'
+
+  const [upcoming, setUpcoming] = useState<Appointment[]>(
+    isPat2 ? MOCK_UPCOMING_APPOINTMENTS_PAT2 : MOCK_UPCOMING_APPOINTMENTS_PAT1,
+  )
+  const [past, setPast] = useState<Appointment[]>(
+    isPat2 ? MOCK_PAST_APPOINTMENTS_PAT2 : MOCK_PAST_APPOINTMENTS_PAT1,
+  )
+  const [surveys, setSurveys] = useState<PatientConsultationSurvey[]>(() =>
+    loadPatientSurveys(currentPatientId),
+  )
   const [activeSurvey, setActiveSurvey] = useState<PatientConsultationSurvey | null>(null)
   const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -182,10 +269,27 @@ export default function PatientAppointments() {
 
   useEffect(() => {
     const handleUpdate = () => {
-      setSurveys(loadPatientSurveys())
+      const pId = getActivePatientId()
+      setSurveys(loadPatientSurveys(pId))
+    }
+    const handlePatientChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ patientId: string }>
+      const pId = customEvent.detail?.patientId || getActivePatientId()
+      if (pId === 'pat-02') {
+        setUpcoming(MOCK_UPCOMING_APPOINTMENTS_PAT2)
+        setPast(MOCK_PAST_APPOINTMENTS_PAT2)
+      } else {
+        setUpcoming(MOCK_UPCOMING_APPOINTMENTS_PAT1)
+        setPast(MOCK_PAST_APPOINTMENTS_PAT1)
+      }
+      setSurveys(loadPatientSurveys(pId))
     }
     window.addEventListener('mws-surveys-updated', handleUpdate)
-    return () => window.removeEventListener('mws-surveys-updated', handleUpdate)
+    window.addEventListener('mws-patient-changed', handlePatientChange)
+    return () => {
+      window.removeEventListener('mws-surveys-updated', handleUpdate)
+      window.removeEventListener('mws-patient-changed', handlePatientChange)
+    }
   }, [])
 
   const answeredSurveysCount = surveys.filter((s) => s.isAnswered).length
@@ -200,11 +304,12 @@ export default function PatientAppointments() {
   }
 
   const handleSubmitSurvey = (surveyId: string, response: PatientSurveyResponse) => {
+    const pId = getActivePatientId()
     const updated = surveys.map((s) =>
       s.id === surveyId ? { ...s, isAnswered: true, response } : s,
     )
     setSurveys(updated)
-    savePatientSurveys(updated)
+    savePatientSurveys(updated, pId)
     toast({
       title: 'Pesquisa Enviada com Sucesso!',
       description:
@@ -212,25 +317,31 @@ export default function PatientAppointments() {
     })
   }
 
-  // Mapeamento de pesquisa para cada consulta da lista
+  // Mapeamento consistente de pesquisa para cada consulta da lista:
+  // As consultas passadas (histórico) correspondem exatamente às consultas realizadas
   const getSurveyForUpcoming = (apt: Appointment, idx: number) => {
-    // Upcoming appointments correspondem às consultas 5ª e 6ª da jornada (ou ordem 6 e 7)
-    // apt-001 (18/07) -> srv-6 (5ª manutenção)
-    // apt-002 (22/08) -> srv-7 (6ª manutenção)
-    if (apt.id === 'apt-001') return surveys.find((s) => s.id === 'srv-6')
-    if (apt.id === 'apt-002') return surveys.find((s) => s.id === 'srv-7')
-    return surveys[Math.min(5 + idx, surveys.length - 1)]
+    // Para consultas futuras (3ª manutenção em diante no pat-01 ou 4ª no pat-02)
+    if (apt.id === 'apt-001') return surveys.find((s) => s.consultationOrder === 4) // 3ª Manutenção
+    if (apt.id === 'apt-002') return surveys.find((s) => s.consultationOrder === 5) // 4ª Manutenção
+    if (apt.id === 'apt-201') return surveys.find((s) => s.consultationOrder === 5) // 4ª Manutenção (pat-02)
+    return surveys[Math.min(past.length + idx, surveys.length - 1)]
   }
 
   const getSurveyForPast = (apt: Appointment, idx: number) => {
-    // Past appointments no mock:
-    // apt-003 (10/02/2026 - Instalação) -> srv-1
-    // apt-004 (27/01/2026) -> srv-2
-    // apt-005 (12/01/2026) -> srv-3
-    if (apt.id === 'apt-003') return surveys.find((s) => s.id === 'srv-1')
-    if (apt.id === 'apt-004') return surveys.find((s) => s.id === 'srv-2')
-    if (apt.id === 'apt-005') return surveys.find((s) => s.id === 'srv-3')
-    return surveys[idx]
+    // Mapeamento das consultas já realizadas para as pesquisas correspondentes:
+    // apt-c3 (2ª manutenção) -> srv-3 (ordem 3)
+    // apt-c2 (1ª manutenção) -> srv-2 (ordem 2)
+    // apt-c1 (instalação) -> srv-1 (ordem 1)
+    if (apt.id === 'apt-c3' || apt.id === 'apt-p2-c3')
+      return surveys.find((s) => s.consultationOrder === 3)
+    if (apt.id === 'apt-c2' || apt.id === 'apt-p2-c2')
+      return surveys.find((s) => s.consultationOrder === 2)
+    if (apt.id === 'apt-c1' || apt.id === 'apt-p2-c1')
+      return surveys.find((s) => s.consultationOrder === 1)
+    if (apt.id === 'apt-p2-c4') return surveys.find((s) => s.consultationOrder === 4)
+    // fallback por índice invertido se a lista vier em ordem decrescente de data
+    const order = past.length - idx
+    return surveys.find((s) => s.consultationOrder === order) || surveys[idx]
   }
 
   const handleRequestAppointment = (e: React.FormEvent) => {
