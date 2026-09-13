@@ -9,13 +9,29 @@ import {
   CreditCard,
   Activity,
   CheckCircle2,
-  ShieldCheck,
+  Clock,
+  CircleDashed,
+  ChevronDown,
+  ChevronUp,
   Banknote,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 export type PaymentMethod = 'mws' | 'particular'
+
+export type PostAcquisitionConsultationType = 'instalacao' | 'manutencao' | 'conclusao'
+
+export interface PostAcquisitionConsultation {
+  id: string
+  order: number
+  type: PostAcquisitionConsultationType
+  title: string
+  description: string
+  date?: string
+  status: 'completed' | 'scheduled' | 'pending'
+}
 
 export interface PatientProfileMock {
   id: string
@@ -24,7 +40,153 @@ export interface PatientProfileMock {
   paymentMethodLabel: string
   planName: string
   currentPhaseIndex: number
+  postAcquisitionConsultations: PostAcquisitionConsultation[]
 }
+
+// 8 consultas pós-aquisição do protocolo Magic Wire:
+// 1 Instalação + 6 Manutenções programadas (1ª a 6ª) + 1 Conclusão
+export const DEFAULT_POST_ACQUISITION_CONSULTATIONS_PAT1: PostAcquisitionConsultation[] = [
+  {
+    id: 'c-1',
+    order: 1,
+    type: 'instalacao',
+    title: 'Instalação',
+    description: 'Instalação do fio Magic Wire lingual',
+    date: '15/01/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-2',
+    order: 2,
+    type: 'manutencao',
+    title: '1ª Manutenção',
+    description: 'Ativação e checagem de alinhamento lingual',
+    date: '20/02/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-3',
+    order: 3,
+    type: 'manutencao',
+    title: '2ª Manutenção',
+    description: 'Troca de segmento / refinamento biomecânico',
+    date: '28/03/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-4',
+    order: 4,
+    type: 'manutencao',
+    title: '3ª Manutenção',
+    description: 'Acompanhamento da evolução dos movimentos',
+    date: '18/07/2026',
+    status: 'scheduled',
+  },
+  {
+    id: 'c-5',
+    order: 5,
+    type: 'manutencao',
+    title: '4ª Manutenção',
+    description: 'Ajuste de torque e nivelamento lingual',
+    status: 'pending',
+  },
+  {
+    id: 'c-6',
+    order: 6,
+    type: 'manutencao',
+    title: '5ª Manutenção',
+    description: 'Fechamento de espaços e alinhamento',
+    status: 'pending',
+  },
+  {
+    id: 'c-7',
+    order: 7,
+    type: 'manutencao',
+    title: '6ª Manutenção',
+    description: 'Detalhamento oclusal e intercuspidação',
+    status: 'pending',
+  },
+  {
+    id: 'c-8',
+    order: 8,
+    type: 'conclusao',
+    title: 'Conclusão',
+    description: 'Finalização do caso e instalação da contenção fixa',
+    status: 'pending',
+  },
+]
+
+export const DEFAULT_POST_ACQUISITION_CONSULTATIONS_PAT2: PostAcquisitionConsultation[] = [
+  {
+    id: 'c-201',
+    order: 1,
+    type: 'instalacao',
+    title: 'Instalação',
+    description: 'Instalação do fio Magic Wire lingual',
+    date: '10/02/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-202',
+    order: 2,
+    type: 'manutencao',
+    title: '1ª Manutenção',
+    description: 'Ativação e checagem de alinhamento lingual',
+    date: '15/03/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-203',
+    order: 3,
+    type: 'manutencao',
+    title: '2ª Manutenção',
+    description: 'Troca de segmento / refinamento biomecânico',
+    date: '22/04/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-204',
+    order: 4,
+    type: 'manutencao',
+    title: '3ª Manutenção',
+    description: 'Acompanhamento da evolução dos movimentos',
+    date: '30/05/2026',
+    status: 'completed',
+  },
+  {
+    id: 'c-205',
+    order: 5,
+    type: 'manutencao',
+    title: '4ª Manutenção',
+    description: 'Ajuste de torque e nivelamento lingual',
+    date: '25/07/2026',
+    status: 'scheduled',
+  },
+  {
+    id: 'c-206',
+    order: 6,
+    type: 'manutencao',
+    title: '5ª Manutenção',
+    description: 'Fechamento de espaços e alinhamento',
+    status: 'pending',
+  },
+  {
+    id: 'c-207',
+    order: 7,
+    type: 'manutencao',
+    title: '6ª Manutenção',
+    description: 'Detalhamento oclusal e intercuspidação',
+    status: 'pending',
+  },
+  {
+    id: 'c-208',
+    order: 8,
+    type: 'conclusao',
+    title: 'Conclusão',
+    description: 'Finalização do caso e instalação da contenção fixa',
+    status: 'pending',
+  },
+]
 
 export const MOCK_PATIENTS_LIST: PatientProfileMock[] = [
   {
@@ -34,6 +196,7 @@ export const MOCK_PATIENTS_LIST: PatientProfileMock[] = [
     paymentMethodLabel: 'MWS / Fintech (Parcelamento em 10x)',
     planName: 'MWS Pay Direto',
     currentPhaseIndex: 3, // Manutenções (0-indexed: 0 Consulta de Avaliação, 1 Planejamento, 2 Instalação, 3 Manutenções, 4 Conclusão)
+    postAcquisitionConsultations: DEFAULT_POST_ACQUISITION_CONSULTATIONS_PAT1,
   },
   {
     id: 'pat-02',
@@ -42,6 +205,7 @@ export const MOCK_PATIENTS_LIST: PatientProfileMock[] = [
     paymentMethodLabel: 'Particular / Direto no Consultório',
     planName: 'Particular',
     currentPhaseIndex: 3,
+    postAcquisitionConsultations: DEFAULT_POST_ACQUISITION_CONSULTATIONS_PAT2,
   },
 ]
 
@@ -89,9 +253,20 @@ export default function PatientDashboard() {
     ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/${user.collectionId || '_pb_users_auth_'}/${user.id}/${user.avatar}`
     : undefined
 
+  const [showConsultationsList, setShowConsultationsList] = useState(false)
+
   const pendingPayments = mockInstallments.filter((i) => i.status === 'pending').length
   const totalPaid = mockInstallments.filter((i) => i.status === 'paid').length
-  const progress = 65
+
+  // Regra de cálculo do percentual de progresso do tratamento solicitada:
+  // Considera APENAS as consultas pós-aquisição do tratamento:
+  // 1 Instalação + 6 Manutenções programadas (1ª a 6ª) + 1 Conclusão = 8 consultas no total.
+  // Percentual = consultas já realizadas ÷ 8.
+  // Consulta de Avaliação e Planejamento (etapas pré-aquisição) NÃO entram no cálculo.
+  const consultations = currentPatient.postAcquisitionConsultations
+  const totalConsultations = consultations.length // 8
+  const completedConsultations = consultations.filter((c) => c.status === 'completed').length
+  const progressPercentage = Math.round((completedConsultations / totalConsultations) * 100)
 
   // Bloco "Resumo Financeiro" deve ser exibido APENAS para pacientes cuja forma de pagamento seja via MWS/Fintech.
   // Pacientes particulares NÃO devem ver esse bloco no dashboard.
@@ -153,7 +328,8 @@ export default function PatientDashboard() {
       </div>
 
       {/* 1. Barra de progresso do tratamento:
-          Consulta de Avaliação → Planejamento → Instalação → Manutenções → Conclusão */}
+          Consulta de Avaliação → Planejamento → Instalação → Manutenções → Conclusão
+          O percentual calcula APENAS as consultas pós-aquisição (1 instalação + 6 manutenções + 1 conclusão = 8 consultas). */}
       <Card className="border-emerald-200 bg-emerald-50/50 shadow-xs">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -167,11 +343,26 @@ export default function PatientDashboard() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex justify-between text-sm font-medium text-emerald-900">
-            <span>Fase 4 de 5: Manutenções</span>
-            <span className="font-bold">{progress}%</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-sm font-medium text-emerald-900">
+            <div className="flex items-center gap-2">
+              <span>Fase 4 de 5: Manutenções</span>
+              <span className="text-xs text-emerald-700 font-normal">
+                ({completedConsultations} de {totalConsultations} consultas realizadas)
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl sm:text-2xl font-extrabold text-emerald-800">
+                {progressPercentage}%
+              </span>
+              <span className="text-xs text-emerald-600 font-medium">concluído</span>
+            </div>
           </div>
-          <Progress value={progress} className="h-3 bg-emerald-200 [&>div]:bg-emerald-600" />
+
+          <Progress
+            value={progressPercentage}
+            className="h-3 bg-emerald-200 [&>div]:bg-emerald-600 transition-all duration-500"
+          />
+
           <div className="grid grid-cols-5 gap-1 sm:gap-2 pt-2">
             {treatmentPhases.map((phase, i) => (
               <div key={i} className="flex flex-col items-center gap-1.5 text-center">
@@ -206,6 +397,94 @@ export default function PatientDashboard() {
                 )}
               </div>
             ))}
+          </div>
+
+          {/* Detalhamento das 8 consultas pós-aquisição que compõem o percentual */}
+          <div className="pt-2 border-t border-emerald-200/70">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-emerald-800/80">
+                Cálculo do percentual:{' '}
+                <strong className="text-emerald-950 font-semibold">
+                  {completedConsultations} de {totalConsultations} consultas pós-aquisição
+                </strong>{' '}
+                realizadas (1 Instalação + 6 Manutenções + 1 Conclusão).
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowConsultationsList(!showConsultationsList)}
+                className="text-xs text-emerald-800 hover:text-emerald-950 hover:bg-emerald-100/60 h-7 px-2 shrink-0 ml-2"
+              >
+                {showConsultationsList ? (
+                  <>
+                    <span>Ocultar consultas</span>
+                    <ChevronUp className="w-3.5 h-3.5 ml-1" />
+                  </>
+                ) : (
+                  <>
+                    <span>Ver as {totalConsultations} consultas</span>
+                    <ChevronDown className="w-3.5 h-3.5 ml-1" />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {showConsultationsList && (
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white/70 p-3 rounded-lg border border-emerald-200/60 animate-in fade-in duration-200">
+                {consultations.map((c) => {
+                  const isCompleted = c.status === 'completed'
+                  const isScheduled = c.status === 'scheduled'
+                  return (
+                    <div
+                      key={c.id}
+                      className={cn(
+                        'flex items-center justify-between p-2 rounded-md border text-xs',
+                        isCompleted
+                          ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
+                          : isScheduled
+                            ? 'bg-blue-50/70 border-blue-200 text-blue-900'
+                            : 'bg-slate-50 border-slate-200 text-slate-600',
+                      )}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        {isCompleted ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        ) : isScheduled ? (
+                          <Clock className="w-4 h-4 text-blue-600 shrink-0" />
+                        ) : (
+                          <CircleDashed className="w-4 h-4 text-slate-400 shrink-0" />
+                        )}
+                        <div className="truncate">
+                          <p className="font-semibold truncate">
+                            {c.order}. {c.title}
+                          </p>
+                          <p className="text-[11px] opacity-75 truncate">{c.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0 ml-2">
+                        <span
+                          className={cn(
+                            'inline-block px-1.5 py-0.5 rounded text-[10px] font-medium',
+                            isCompleted
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : isScheduled
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-slate-200/70 text-slate-600',
+                          )}
+                        >
+                          {isCompleted
+                            ? `Realizada${c.date ? ` • ${c.date}` : ''}`
+                            : isScheduled
+                              ? `Agendada${c.date ? ` • ${c.date}` : ''}`
+                              : 'Pendente'}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
