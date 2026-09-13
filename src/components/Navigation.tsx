@@ -39,6 +39,7 @@ const getLinksForRole = (role: string) => {
       { href: '/dentist/school', label: 'Escola MWS', icon: GraduationCap },
       { href: '/dentist/community', label: 'Comunidade', icon: MessagesSquare },
       { href: '/dentist/quality', label: 'Qualidade', icon: ShieldCheck },
+      { href: '/dentist/slas', label: 'SLAs & Resultados', icon: Activity },
       { href: '/dentist/programs', label: 'Programas', icon: Megaphone },
       { href: '/dentist/referrals', label: 'Indicação de Pacientes', icon: UserCheck },
       { href: '/dentist/public-profile', label: 'Perfil Público', icon: UserCircle },
