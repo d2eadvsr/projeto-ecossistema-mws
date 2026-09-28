@@ -284,44 +284,47 @@ export default function MentorDashboard() {
       </div>
 
       {/* 4 Caixas de Status Oficiais do Kanban */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
         {/* 1. Aguardando Análise */}
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-600 uppercase tracking-wide">
+        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-slate-700 uppercase tracking-wide">
                 1. Aguardando Análise
               </span>
-              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
                 <Clock className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-3 flex items-baseline justify-between">
+            <div className="my-3 flex items-baseline justify-between gap-2">
               <span className="text-3xl font-extrabold text-slate-900">
                 {aguardandoCases.length}
               </span>
-              <Badge variant="outline" className="text-[11px] bg-slate-50 text-slate-600">
+              <Badge
+                variant="outline"
+                className="text-[11px] bg-slate-50 text-slate-600 border-slate-200"
+              >
                 Fila Geral Aberta
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className="text-xs text-slate-500">
               Casos recém-abertos que nenhum mentor absorveu ainda
             </p>
           </CardContent>
         </Card>
 
         {/* 2. Em Análise */}
-        <Card className="border-amber-200 bg-amber-50/30 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-amber-800 uppercase tracking-wide">
+        <Card className="border-amber-200 bg-amber-50/30 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-amber-900 uppercase tracking-wide">
                 2. Em Análise
               </span>
-              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
                 <FlaskConical className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-3 flex items-baseline justify-between">
+            <div className="my-3 flex items-baseline justify-between gap-2">
               <span className="text-3xl font-extrabold text-amber-950">
                 {emAnaliseCases.length}
               </span>
@@ -332,24 +335,24 @@ export default function MentorDashboard() {
                 Sob Avaliação
               </Badge>
             </div>
-            <p className="text-xs text-amber-900/80 mt-2">
+            <p className="text-xs text-amber-900/80">
               Casos aceitos pelo mentor para triagem clínica e STL
             </p>
           </CardContent>
         </Card>
 
         {/* 3. Em Planejamento */}
-        <Card className="border-purple-200 bg-purple-50/30 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-purple-800 uppercase tracking-wide">
+        <Card className="border-purple-200 bg-purple-50/30 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-purple-900 uppercase tracking-wide">
                 3. Em Planejamento
               </span>
-              <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-700">
+              <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
                 <Sparkles className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-3 flex items-baseline justify-between">
+            <div className="my-3 flex items-baseline justify-between gap-2">
               <span className="text-3xl font-extrabold text-purple-950">
                 {emPlanejamentoCases.length}
               </span>
@@ -360,24 +363,24 @@ export default function MentorDashboard() {
                 Elaboração Técnica
               </Badge>
             </div>
-            <p className="text-xs text-purple-900/80 mt-2">
+            <p className="text-xs text-purple-900/80">
               Mentor elaborando nota técnica, manutenções e valor sugerido
             </p>
           </CardContent>
         </Card>
 
         {/* 4. Planejamento Entregue */}
-        <Card className="border-emerald-200 bg-emerald-50/40 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-emerald-800 uppercase tracking-wide">
+        <Card className="border-emerald-200 bg-emerald-50/40 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-emerald-900 uppercase tracking-wide">
                 4. Planejamento Entregue
               </span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-3 flex items-baseline justify-between">
+            <div className="my-3 flex items-baseline justify-between gap-2">
               <span className="text-3xl font-extrabold text-emerald-950">
                 {entregueCases.length}
               </span>
@@ -388,7 +391,7 @@ export default function MentorDashboard() {
                 Devolvido p/ Aprovação
               </Badge>
             </div>
-            <p className="text-xs text-emerald-900/80 mt-2">
+            <p className="text-xs text-emerald-900/80">
               Devolvidos ao ortodontista para validação e início do caso
             </p>
           </CardContent>
@@ -430,61 +433,65 @@ export default function MentorDashboard() {
       </div>
 
       {/* ESTEIRA KANBAN (4 COLUNAS MWS) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
         {/* COLUNA 1: Aguardando Análise */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-100 border border-slate-200">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-slate-600" />
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+        <div className="flex flex-col space-y-3 min-w-0">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-100/90 border border-slate-200 shadow-xs min-h-[46px]">
+            <div className="flex items-center gap-2 min-w-0">
+              <Clock className="w-4 h-4 text-slate-600 shrink-0" />
+              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide truncate">
                 Aguardando Análise
               </h3>
             </div>
-            <Badge className="bg-slate-200 text-slate-800 text-[11px] font-bold">
+            <Badge className="bg-slate-200/90 text-slate-800 text-xs font-bold px-2 py-0.5 shrink-0 ml-2">
               {filterBySearch(aguardandoCases).length}
             </Badge>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {filterBySearch(aguardandoCases).map((c) => (
               <Card
                 key={c.id}
-                className="border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-sm transition-all"
+                className="border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
               >
-                <CardContent className="p-3.5 space-y-2.5">
-                  <div className="flex items-start justify-between gap-1.5">
-                    <div>
-                      <span className="font-mono text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-                        {c.id}
-                      </span>
-                      <h4 className="font-bold text-xs text-slate-900 mt-1">{c.patientName}</h4>
+                <CardContent className="p-3.5 flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <span className="font-mono text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                          {c.id}
+                        </span>
+                        <h4 className="font-bold text-xs text-slate-900 mt-1 truncate">
+                          {c.patientName}
+                        </h4>
+                      </div>
+                      {c.priority === 'urgente' && (
+                        <Badge className="bg-red-50 text-red-700 border border-red-200 text-[10px] shrink-0">
+                          Urgente
+                        </Badge>
+                      )}
                     </div>
-                    {c.priority === 'urgente' && (
-                      <Badge className="bg-red-50 text-red-700 border border-red-200 text-[10px]">
-                        Urgente
-                      </Badge>
-                    )}
+
+                    <p className="text-[11px] text-emerald-800 font-medium">
+                      Protocolo: {c.protocol}
+                    </p>
+                    <p className="text-[11px] text-slate-500 line-clamp-2">
+                      {c.dentistName} ({c.dentistCity})
+                    </p>
                   </div>
 
-                  <p className="text-[11px] text-emerald-800 font-medium">
-                    Protocolo: {c.protocol}
-                  </p>
-                  <p className="text-[11px] text-slate-500 line-clamp-2">
-                    {c.dentistName} ({c.dentistCity})
-                  </p>
-
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1">
+                  <div className="pt-2.5 border-t border-slate-100 flex items-center justify-end gap-2 flex-wrap">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-[11px] h-7 px-2"
+                      className="text-[11px] h-8 px-2.5 flex-1 sm:flex-initial"
                       onClick={() => handleOpenDetail(c)}
                     >
                       <Eye className="w-3 h-3 mr-1" /> Detalhe
                     </Button>
                     <Button
                       size="sm"
-                      className="bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] h-7 px-2"
+                      className="bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] h-8 px-2.5 flex-1 sm:flex-initial"
                       onClick={() => handleAcceptCase(c)}
                     >
                       <UserCheck className="w-3 h-3 mr-1" /> Assumir
@@ -503,73 +510,75 @@ export default function MentorDashboard() {
         </div>
 
         {/* COLUNA 2: Em Análise */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 border border-amber-200">
-            <div className="flex items-center gap-2">
-              <FlaskConical className="w-4 h-4 text-amber-700" />
-              <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wide">
+        <div className="flex flex-col space-y-3 min-w-0">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-amber-50 border border-amber-200 shadow-xs min-h-[46px]">
+            <div className="flex items-center gap-2 min-w-0">
+              <FlaskConical className="w-4 h-4 text-amber-700 shrink-0" />
+              <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wide truncate">
                 Em Análise
               </h3>
             </div>
-            <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[11px] font-bold">
+            <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-xs font-bold px-2 py-0.5 shrink-0 ml-2">
               {filterBySearch(emAnaliseCases).length}
             </Badge>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {filterBySearch(emAnaliseCases).map((c) => (
               <Card
                 key={c.id}
-                className="border-amber-200 bg-amber-50/20 hover:border-amber-300 shadow-xs hover:shadow-sm transition-all"
+                className="border-amber-200 bg-amber-50/20 hover:border-amber-300 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
               >
-                <CardContent className="p-3.5 space-y-2.5">
-                  <div className="flex items-start justify-between gap-1.5">
-                    <div>
-                      <span className="font-mono text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">
-                        {c.id}
-                      </span>
-                      <h4 className="font-bold text-xs text-slate-900 mt-1">{c.patientName}</h4>
+                <CardContent className="p-3.5 flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <span className="font-mono text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">
+                          {c.id}
+                        </span>
+                        <h4 className="font-bold text-xs text-slate-900 mt-1 truncate">
+                          {c.patientName}
+                        </h4>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-amber-800 border-amber-300 shrink-0 truncate max-w-[120px]"
+                      >
+                        {c.assignedMentorName || 'Sem mentor'}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] text-amber-800 border-amber-300"
-                    >
-                      {c.assignedMentorName || 'Sem mentor'}
-                    </Badge>
+
+                    <p className="text-[11px] text-emerald-800 font-medium">
+                      Protocolo: {c.protocol}
+                    </p>
+                    <p className="text-[11px] text-slate-500 line-clamp-2">{c.clinicalNotes}</p>
                   </div>
 
-                  <p className="text-[11px] text-emerald-800 font-medium">
-                    Protocolo: {c.protocol}
-                  </p>
-                  <p className="text-[11px] text-slate-500 line-clamp-2">{c.clinicalNotes}</p>
-
-                  <div className="pt-2 border-t border-amber-100 flex items-center justify-between gap-1 flex-wrap">
+                  <div className="pt-2.5 border-t border-amber-100 flex items-center justify-between gap-1.5 flex-wrap">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-[11px] h-7 px-2"
+                      className="text-[11px] h-8 px-2 flex-1 min-w-[70px]"
                       onClick={() => handleOpenDetail(c)}
                     >
                       <Eye className="w-3 h-3 mr-1" /> Detalhe
                     </Button>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-[11px] h-7 px-1.5 text-amber-800 hover:bg-amber-100"
-                        title="Redirecionar se estiver sobrecarregado"
-                        onClick={() => handleOpenRedirectModal(c)}
-                      >
-                        Repassar
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="bg-purple-700 hover:bg-purple-800 text-white text-[11px] h-7 px-2"
-                        onClick={() => handleStartPlanning(c)}
-                      >
-                        Planejar →
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-[11px] h-8 px-2 text-amber-800 hover:bg-amber-100 border border-amber-200/60"
+                      title="Redirecionar se estiver sobrecarregado"
+                      onClick={() => handleOpenRedirectModal(c)}
+                    >
+                      Repassar
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-purple-700 hover:bg-purple-800 text-white text-[11px] h-8 px-2 flex-1 min-w-[75px]"
+                      onClick={() => handleStartPlanning(c)}
+                    >
+                      Planejar →
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -584,80 +593,84 @@ export default function MentorDashboard() {
         </div>
 
         {/* COLUNA 3: Em Planejamento */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-2.5 rounded-lg bg-purple-50 border border-purple-200">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-700" />
-              <h3 className="text-xs font-bold text-purple-900 uppercase tracking-wide">
+        <div className="flex flex-col space-y-3 min-w-0">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-purple-50 border border-purple-200 shadow-xs min-h-[46px]">
+            <div className="flex items-center gap-2 min-w-0">
+              <Sparkles className="w-4 h-4 text-purple-700 shrink-0" />
+              <h3 className="text-xs font-bold text-purple-900 uppercase tracking-wide truncate">
                 Em Planejamento
               </h3>
             </div>
-            <Badge className="bg-purple-100 text-purple-900 border-purple-300 text-[11px] font-bold">
+            <Badge className="bg-purple-100 text-purple-900 border-purple-300 text-xs font-bold px-2 py-0.5 shrink-0 ml-2">
               {filterBySearch(emPlanejamentoCases).length}
             </Badge>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {filterBySearch(emPlanejamentoCases).map((c) => (
               <Card
                 key={c.id}
-                className="border-purple-200 bg-purple-50/20 hover:border-purple-300 shadow-xs hover:shadow-sm transition-all"
+                className="border-purple-200 bg-purple-50/20 hover:border-purple-300 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
               >
-                <CardContent className="p-3.5 space-y-2.5">
-                  <div className="flex items-start justify-between gap-1.5">
-                    <div>
-                      <span className="font-mono text-[10px] font-bold text-purple-800 bg-purple-100 px-1.5 py-0.5 rounded">
-                        {c.id}
-                      </span>
-                      <h4 className="font-bold text-xs text-slate-900 mt-1">{c.patientName}</h4>
+                <CardContent className="p-3.5 flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <span className="font-mono text-[10px] font-bold text-purple-800 bg-purple-100 px-1.5 py-0.5 rounded">
+                          {c.id}
+                        </span>
+                        <h4 className="font-bold text-xs text-slate-900 mt-1 truncate">
+                          {c.patientName}
+                        </h4>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-purple-800 border-purple-300 shrink-0 truncate max-w-[120px]"
+                      >
+                        {c.assignedMentorName}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] text-purple-800 border-purple-300"
-                    >
-                      {c.assignedMentorName}
-                    </Badge>
+
+                    <p className="text-[11px] text-emerald-800 font-medium">
+                      Protocolo: {c.protocol}
+                    </p>
+
+                    {/* Alerta de histórico de redirecionamento */}
+                    {c.redirectionHistory.length > 0 && (
+                      <div className="text-[10px] text-amber-800 bg-amber-50 p-1.5 rounded border border-amber-200 flex items-center gap-1">
+                        <History className="w-3 h-3 shrink-0" />
+                        <span className="truncate">
+                          Redirecionado de {c.redirectionHistory[0].fromMentorName}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <p className="text-[11px] text-emerald-800 font-medium">
-                    Protocolo: {c.protocol}
-                  </p>
-
-                  {/* Alerta de histórico de redirecionamento */}
-                  {c.redirectionHistory.length > 0 && (
-                    <div className="text-[10px] text-amber-800 bg-amber-50 p-1.5 rounded border border-amber-200 flex items-center gap-1">
-                      <History className="w-3 h-3 shrink-0" />
-                      <span>Redirecionado de {c.redirectionHistory[0].fromMentorName}</span>
-                    </div>
-                  )}
-
-                  <div className="pt-2 border-t border-purple-100 flex items-center justify-between gap-1">
+                  <div className="pt-2.5 border-t border-purple-100 flex items-center justify-between gap-1.5 flex-wrap">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-[11px] h-7 px-2"
+                      className="text-[11px] h-8 px-2 flex-1 min-w-[70px]"
                       onClick={() => handleOpenDetail(c)}
                     >
                       <Eye className="w-3 h-3 mr-1" /> Detalhe
                     </Button>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-[11px] h-7 px-1.5 text-purple-800 hover:bg-purple-100"
-                        title="Redirecionar se estiver sobrecarregado"
-                        onClick={() => handleOpenRedirectModal(c)}
-                      >
-                        Repassar
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="bg-purple-700 hover:bg-purple-800 text-white text-[11px] h-7 px-2"
-                        onClick={() => handleOpenPlanningModal(c)}
-                      >
-                        <FileText className="w-3 h-3 mr-1" /> Elaborar
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-[11px] h-8 px-2 text-purple-800 hover:bg-purple-100 border border-purple-200/60"
+                      title="Redirecionar se estiver sobrecarregado"
+                      onClick={() => handleOpenRedirectModal(c)}
+                    >
+                      Repassar
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-purple-700 hover:bg-purple-800 text-white text-[11px] h-8 px-2 flex-1 min-w-[75px]"
+                      onClick={() => handleOpenPlanningModal(c)}
+                    >
+                      <FileText className="w-3 h-3 mr-1" /> Elaborar
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -672,65 +685,69 @@ export default function MentorDashboard() {
         </div>
 
         {/* COLUNA 4: Planejamento Entregue */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-              <h3 className="text-xs font-bold text-emerald-900 uppercase tracking-wide">
+        <div className="flex flex-col space-y-3 min-w-0">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200 shadow-xs min-h-[46px]">
+            <div className="flex items-center gap-2 min-w-0">
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+              <h3 className="text-xs font-bold text-emerald-900 uppercase tracking-wide truncate">
                 Planejamento Entregue
               </h3>
             </div>
-            <Badge className="bg-emerald-100 text-emerald-900 border-emerald-300 text-[11px] font-bold">
+            <Badge className="bg-emerald-100 text-emerald-900 border-emerald-300 text-xs font-bold px-2 py-0.5 shrink-0 ml-2">
               {filterBySearch(entregueCases).length}
             </Badge>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {filterBySearch(entregueCases).map((c) => (
               <Card
                 key={c.id}
-                className="border-emerald-200 bg-emerald-50/20 hover:border-emerald-300 shadow-xs hover:shadow-sm transition-all"
+                className="border-emerald-200 bg-emerald-50/20 hover:border-emerald-300 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
               >
-                <CardContent className="p-3.5 space-y-2.5">
-                  <div className="flex items-start justify-between gap-1.5">
-                    <div>
-                      <span className="font-mono text-[10px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">
-                        {c.id}
-                      </span>
-                      <h4 className="font-bold text-xs text-slate-900 mt-1">{c.patientName}</h4>
+                <CardContent className="p-3.5 flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <span className="font-mono text-[10px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">
+                          {c.id}
+                        </span>
+                        <h4 className="font-bold text-xs text-slate-900 mt-1 truncate">
+                          {c.patientName}
+                        </h4>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-emerald-800 border-emerald-300 shrink-0"
+                      >
+                        Entregue
+                      </Badge>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] text-emerald-800 border-emerald-300"
-                    >
-                      Entregue
-                    </Badge>
+
+                    <p className="text-[11px] text-slate-600 truncate">
+                      Mentor: <strong>{c.assignedMentorName}</strong>
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px] bg-white p-2 rounded border border-emerald-100">
+                      <div>
+                        <span className="text-slate-400 block">Manutenções</span>
+                        <strong className="text-slate-800">
+                          {c.estimatedMaintenances || 8} sessões
+                        </strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Valor Sugerido</span>
+                        <strong className="text-emerald-700">
+                          R$ {(c.suggestedFee || 8900).toLocaleString('pt-BR')}
+                        </strong>
+                      </div>
+                    </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-600">
-                    Mentor: <strong>{c.assignedMentorName}</strong>
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-1.5 text-[10px] bg-white p-2 rounded border border-emerald-100">
-                    <div>
-                      <span className="text-slate-400 block">Manutenções</span>
-                      <strong className="text-slate-800">
-                        {c.estimatedMaintenances || 8} sessões
-                      </strong>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block">Valor Sugerido</span>
-                      <strong className="text-emerald-700">
-                        R$ {(c.suggestedFee || 8900).toLocaleString('pt-BR')}
-                      </strong>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-emerald-100 flex items-center justify-between">
+                  <div className="pt-2.5 border-t border-emerald-100 flex items-center justify-between">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-[11px] h-7 w-full border-emerald-200 text-emerald-800 hover:bg-emerald-50"
+                      className="text-[11px] h-8 w-full border-emerald-200 text-emerald-800 hover:bg-emerald-50"
                       onClick={() => handleOpenDetail(c)}
                     >
                       <Eye className="w-3 h-3 mr-1" /> Ver Detalhe e Planejamento
