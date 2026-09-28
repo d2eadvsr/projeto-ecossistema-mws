@@ -13,7 +13,7 @@ export default function Login() {
   const { isAuthenticated, signIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [email, setEmail] = useState('daniel.elias@d2eadvisory.com.br')
+  const [email, setEmail] = useState('adm_mws')
   const [password, setPassword] = useState('Skip@Pass')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -34,7 +34,8 @@ export default function Login() {
     setIsLoading(true)
     setError('')
 
-    const { error: signInError } = await signIn(email, password)
+    const credential = email.trim() === 'adm_mws' ? 'daniel.elias@d2eadvisory.com.br' : email
+    const { error: signInError } = await signIn(credential, password)
     setIsLoading(false)
 
     if (signInError) {
@@ -102,11 +103,11 @@ export default function Login() {
 
             <div className="space-y-1.5">
               <Label htmlFor="email" className="font-semibold text-slate-900 text-xs">
-                E-mail de Acesso
+                E-mail ou Identificador de Acesso
               </Label>
               <Input
                 id="email"
-                type="email"
+                type="text"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value)
@@ -222,7 +223,7 @@ export default function Login() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setEmail('daniel.elias@d2eadvisory.com.br')
+                  setEmail('adm_mws')
                   setPassword('Skip@Pass')
                 }}
                 className="text-[10px] h-6 px-2 text-slate-700"
@@ -238,8 +239,7 @@ export default function Login() {
                 <strong className="text-slate-800">Ortodontista:</strong> ortodontista@magicwire.com
               </li>
               <li>
-                <strong className="text-slate-800">Time ADM MWS:</strong>{' '}
-                daniel.elias@d2eadvisory.com.br
+                <strong className="text-slate-800">Time ADM MWS:</strong> adm_mws
               </li>
               <li>
                 <strong className="text-slate-800">Laboratório:</strong> lab@magicwire.com

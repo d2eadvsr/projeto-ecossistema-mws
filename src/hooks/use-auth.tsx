@@ -45,7 +45,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      await pb.collection('users').authWithPassword(email, password)
+      const normalizedEmail =
+        email.trim() === 'adm_mws' ? 'daniel.elias@d2eadvisory.com.br' : email.trim()
+      await pb.collection('users').authWithPassword(normalizedEmail, password)
       return { error: null }
     } catch (error) {
       return { error }
