@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 
 const profiles = [
   { role: 'Paciente', desc: 'App do Paciente', access: 'L' },
-  { role: 'Dentista', desc: 'App do Dentista + Portal', access: 'C/E' },
+  { role: 'Ortodontista', desc: 'App do Ortodontista + Portal Clínico', access: 'C/E' },
   { role: 'Assistente', desc: 'Apoio operacional', access: 'C/E' },
   { role: 'Gestor', desc: 'Visão executiva', access: 'L' },
   { role: 'Financeiro', desc: 'Cobranças, MRR', access: 'C/E' },

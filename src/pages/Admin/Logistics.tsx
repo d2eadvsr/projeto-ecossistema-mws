@@ -125,7 +125,7 @@ export default function AdminLogistics() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <Input
-            placeholder="Buscar por paciente, dentista, código de rastreio..."
+            placeholder="Buscar por paciente, ortodontista, código de rastreio..."
             className="pl-9"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

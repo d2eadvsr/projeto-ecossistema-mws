@@ -187,7 +187,7 @@ export default function AdminDashboard() {
                 </span>
                 <span className="text-2xl font-bold text-purple-900">14</span>
                 <span className="text-[10px] text-purple-600 block mt-0.5">
-                  Aguardando dentista
+                  Aguardando ortodontista
                 </span>
               </div>
               <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-3.5 text-center">

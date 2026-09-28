@@ -187,7 +187,7 @@ export default function LeadAppointmentPage() {
                     R$ {appointment.consultationValue},00
                   </span>
                   <span className="text-[11px] text-emerald-700">
-                    Split transparente (R$ 100 dentista / R$ 50 mkt / R$ 50 vendas)
+                    Split transparente (R$ 100 ortodontista / R$ 50 mkt / R$ 50 vendas)
                   </span>
                 </div>
               </div>

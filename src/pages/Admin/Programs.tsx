@@ -120,11 +120,11 @@ export default function AdminPrograms() {
             </h3>
             <p className="text-xs text-slate-300 max-w-3xl leading-relaxed">
               "A proposta inicial é oferecer para o licenciado um pacote de vendas por meio do qual
-              ele impulsione suas vendas localmente na região em que atende. Hoje é algo que o
-              dentista não faz, não sabe fazer e não sabe contratar. Dos R$ 200,00 da consulta: R$
-              100 para o licenciado e R$ 100 para marketing e vendas (R$ 50 para o time de MKT e R$
-              50 para o time de vendas local de SP). Murilo é o parceiro ref. ao time de MKT para
-              maximizar o resultado para os licenciados."
+              ele impulsione suas vendas localmente na região em que atende. Hoje é algo que o o
+              ortodontista não faz, não sabe fazer e não precisa contratar. Dos R$ 200,00 da
+              consulta: R$ 100 para o licenciado e R$ 100 para marketing e vendas (R$ 50 para o time
+              de MKT e R$ 50 para o time de vendas local de SP). Murilo é o parceiro ref. ao time de
+              MKT para maximizar o resultado para os licenciados."
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">

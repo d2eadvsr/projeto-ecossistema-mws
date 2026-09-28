@@ -239,7 +239,7 @@ export default function LabCases() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <Input
-            placeholder="Buscar por código (CAS-2026-...), paciente, dentista, cidade..."
+            placeholder="Buscar por código (CAS-2026-...), paciente, ortodontista, cidade..."
             className="pl-9 h-9 text-xs"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -326,7 +326,7 @@ export default function LabCases() {
                             {c.patientName} ({c.patientAge} anos)
                           </h4>
                           <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
-                            <strong>Dentista:</strong> {c.dentistName}
+                            <strong>Ortodontista:</strong> {c.dentistName}
                           </p>
                           <p className="text-[10px] text-slate-400">{c.dentistCity}</p>
                         </div>

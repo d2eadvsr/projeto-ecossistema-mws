@@ -67,7 +67,7 @@ export default function AdminFinancial() {
           </h1>
           <p className="text-slate-500 mt-1">
             Gestão de licenciamentos (R$ 24k), emissão de boletos, conciliação e automação de split
-            (Dentista x MWS x MKT/Vendas).
+            (Ortodontista x MWS x MKT/Vendas).
           </p>
         </div>
 
@@ -154,7 +154,7 @@ export default function AdminFinancial() {
         </Card>
       </div>
 
-      {/* Box Didático da Regra de Split da Planilha (R$ 200: R$ 100 Dentista / R$ 50 MKT / R$ 50 Vendas) */}
+      {/* Box Didático da Regra de Split da Planilha (R$ 200: R$ 100 Ortodontista / R$ 50 MKT / R$ 50 Vendas) */}
       <Card className="border-slate-200 shadow-sm bg-gradient-to-r from-slate-50 via-white to-emerald-50/30">
         <CardHeader className="pb-3 border-b border-slate-100">
           <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">

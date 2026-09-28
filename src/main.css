@@ -15,48 +15,60 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 160 84% 39%; /* Emerald 600 #059669 */
-    --primary-foreground: 210 40% 98%;
+    /* Institucional Magic Wire System: Verde Profundo (#0d3b2e / #09261e) */
+    --primary: 164 64% 14%; /* #0d3b2e Verde Escuro Institucional MWS */
+    --primary-foreground: 45 40% 98%;
 
-    --secondary: 215 28% 17%; /* Slate 800 #1e293b */
-    --secondary-foreground: 210 40% 98%;
+    /* Sidebars e Testeiras: Verde Escuro Noturno (#082019) */
+    --secondary: 164 60% 8%; /* #082019 Verde Escuro Noturno para barras e sidebars */
+    --secondary-foreground: 45 40% 98%;
+
+    /* Dourado Oficial MWS: tom ouro metálico nobre (#c5a059 / bronze #9e7d3b) */
+    --gold: 40 48% 56%; /* #c5a059 Dourado MWS */
+    --gold-foreground: 164 60% 8%;
+    --gold-light: 42 62% 70%; /* #dfc282 Dourado Claro */
+    --gold-dark: 38 46% 42%; /* #9e7d3b Dourado Bronze */
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 42 60% 96%; /* Destaque sutil com calor do dourado claro */
+    --accent-foreground: 164 64% 14%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 160 84% 39%;
+    --ring: 40 48% 56%; /* Dourado MWS em anéis de foco */
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 160 84% 39%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 164 60% 8%;
+    --foreground: 45 40% 98%;
+    --card: 164 64% 11%;
+    --card-foreground: 45 40% 98%;
+    --popover: 164 64% 11%;
+    --popover-foreground: 45 40% 98%;
+    --primary: 40 48% 56%;
+    --primary-foreground: 164 60% 8%;
+    --secondary: 164 64% 14%;
+    --secondary-foreground: 45 40% 98%;
+    --gold: 40 48% 56%;
+    --gold-foreground: 164 60% 8%;
+    --gold-light: 42 62% 70%;
+    --gold-dark: 38 46% 42%;
+    --muted: 164 30% 18%;
+    --muted-foreground: 42 20% 75%;
+    --accent: 164 40% 20%;
+    --accent-foreground: 45 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 160 84% 39%;
+    --border: 164 30% 20%;
+    --input: 164 30% 20%;
+    --ring: 40 48% 56%;
   }
 
   * {
@@ -67,10 +79,25 @@
   }
 }
 
+/* Gradientes e utilitários da Identidade MWS (Verde Escuro + Dourado) */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #dfc282 0%, #c5a059 45%, #9e7d3b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #dfc282 0%, #c5a059 50%, #9e7d3b 100%);
+}
+
+.mws-header-gradient {
+  background: linear-gradient(135deg, #061a14 0%, #0d3b2e 60%, #124d3d 100%);
+}
+
 /* Custom visible scrollbar for dark sidebars and general scrollable areas */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: rgba(197, 160, 89, 0.3) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

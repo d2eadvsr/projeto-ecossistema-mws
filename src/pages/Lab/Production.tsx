@@ -172,7 +172,7 @@ export default function LabProduction() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <Input
-            placeholder="Buscar por lote (ROB-2026-...), caso, paciente, dentista ou célula robótica..."
+            placeholder="Buscar por lote (ROB-2026-...), caso, paciente, ortodontista ou célula robótica..."
             className="pl-9 h-9 text-xs"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

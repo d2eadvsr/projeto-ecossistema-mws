@@ -330,7 +330,7 @@ export default function AdminPatientsLeads() {
               O paciente pode solicitar manutenções periódicas ou transferência definitiva em outra
               localidade (ex: viagens de trabalho). O Time ADM MWS é o responsável por: agendar na
               outra cidade, liberar acesso pontual ao prontuário digital, e pós-consulta creditar o
-              dentista receptor e debitar o ortodontista de origem (R$ 250), finalizando com a
+              ortodontista receptor e debitar o ortodontista de origem (R$ 250), finalizando com a
               revogação do acesso.
             </p>
           </div>

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
+import { MWSLogo } from '@/components/MWSLogo'
 
 const getLinksForRole = (role: string) => {
   if (role === 'dentist') {
@@ -107,16 +108,11 @@ export function Sidebar({ role }: { role: string }) {
   const { signOut } = useAuth()
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-secondary text-secondary-foreground h-screen border-r border-secondary-foreground/10 flex-shrink-0">
-      <div className="p-6 pb-4 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-primary-foreground flex items-center gap-2">
-          <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-bold text-white shadow-sm">
-            M
-          </div>
-          Magic Wire
-        </h1>
+    <div className="hidden md:flex flex-col w-64 bg-secondary text-secondary-foreground h-screen border-r border-[#153e32] flex-shrink-0 shadow-lg">
+      <div className="p-5 pb-4 flex-shrink-0 border-b border-[#12382d]">
+        <MWSLogo symbolSize={34} variant="gold-gradient" />
       </div>
-      <nav className="flex-1 min-h-0 px-3 space-y-0.5 overflow-y-auto py-2 custom-scrollbar focus:outline-none">
+      <nav className="flex-1 min-h-0 px-3 space-y-1 overflow-y-auto py-3 custom-scrollbar focus:outline-none">
         {links.map((link) => {
           const Icon = link.icon
           const isActive = location.pathname === link.href
@@ -126,16 +122,16 @@ export function Sidebar({ role }: { role: string }) {
               to={link.href}
               title={link.label}
               className={cn(
-                'flex items-center gap-2.5 px-3 py-1.5 rounded-md transition-colors text-xs font-medium group',
+                'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-xs font-medium group',
                 isActive
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                  : 'hover:bg-white/10 text-slate-300 hover:text-white',
+                  ? 'bg-gradient-to-r from-[#0f4435] to-[#145341] text-gold-light font-semibold shadow-md border-l-4 border-gold'
+                  : 'hover:bg-white/5 text-slate-300 hover:text-white',
               )}
             >
               <Icon
                 className={cn(
-                  'w-4 h-4 flex-shrink-0',
-                  isActive ? 'text-primary-foreground' : 'text-slate-400 group-hover:text-white',
+                  'w-4 h-4 flex-shrink-0 transition-colors',
+                  isActive ? 'text-gold' : 'text-slate-400 group-hover:text-gold-light',
                 )}
               />
               <span className="truncate">{link.label}</span>
@@ -143,13 +139,13 @@ export function Sidebar({ role }: { role: string }) {
           )
         })}
       </nav>
-      <div className="p-4 border-t border-secondary-foreground/10 flex-shrink-0">
+      <div className="p-4 border-t border-[#12382d] flex-shrink-0 bg-[#061712]">
         <Button
           variant="ghost"
-          className="w-full justify-start text-slate-400 hover:text-white hover:bg-white/5 text-xs font-medium"
+          className="w-full justify-start text-slate-300 hover:text-gold hover:bg-white/5 text-xs font-medium transition-colors"
           onClick={signOut}
         >
-          <LogOut className="w-4 h-4 mr-3" /> Sair
+          <LogOut className="w-4 h-4 mr-3" /> Sair da Plataforma
         </Button>
       </div>
     </div>
@@ -161,7 +157,7 @@ export function BottomNav({ role }: { role: string }) {
   const location = useLocation()
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around p-1.5 z-50 shadow-lg">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#082019] border-t border-[#1a4a3c] flex justify-around p-1.5 z-50 shadow-2xl">
       {links.slice(0, 7).map((link) => {
         const Icon = link.icon
         const isActive = location.pathname === link.href
@@ -171,11 +167,11 @@ export function BottomNav({ role }: { role: string }) {
             to={link.href}
             className={cn(
               'flex flex-col items-center p-1.5 text-[10px] font-medium transition-colors',
-              isActive ? 'text-primary font-bold' : 'text-muted-foreground hover:text-slate-900',
+              isActive ? 'text-gold font-bold scale-105' : 'text-slate-300 hover:text-white',
             )}
           >
-            <Icon className="w-5 h-5 mb-0.5" />
-            <span className="truncate max-w-[52px]">{link.label}</span>
+            <Icon className={cn('w-5 h-5 mb-0.5', isActive ? 'text-gold' : 'text-slate-400')} />
+            <span className="truncate max-w-[54px]">{link.label}</span>
           </Link>
         )
       })}

@@ -296,7 +296,7 @@ export default function LabPlanning() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-                      <Clock className="w-3.5 h-3.5" /> Aguardando Avaliação do Dentista
+                      <Clock className="w-3.5 h-3.5" /> Aguardando Avaliação do Ortodontista
                     </div>
                   )}
                   {c.dentistFeedbackNotes && (
