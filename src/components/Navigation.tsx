@@ -71,6 +71,7 @@ const getLinksForRole = (role: string) => {
     return [
       { href: '/admin/dashboard', label: 'Visão Executiva', icon: LayoutDashboard },
       { href: '/admin/ortodontistas', label: 'Ortodontistas (Adesão)', icon: Users },
+      { href: '/admin/mentores', label: 'Mentores MWS', icon: UserCheck2 },
       { href: '/admin/pacientes-leads', label: 'Pacientes & Leads', icon: UserCheck },
       { href: '/admin/mobilidade', label: 'Mobilidade Geográfica', icon: Activity },
       { href: '/admin/casos', label: 'Casos & Laboratório', icon: FolderOpen },
@@ -80,6 +81,13 @@ const getLinksForRole = (role: string) => {
       { href: '/admin/programas', label: 'Programas MKT/Gestão', icon: Megaphone },
       { href: '/admin/escola', label: 'Escola MWS & Fórum', icon: GraduationCap },
       { href: '/admin/rbac', label: 'Console RBAC', icon: Settings },
+    ]
+  }
+  if (role === 'mentor') {
+    return [
+      { href: '/mentor/dashboard', label: 'Dashboard Mentor', icon: LayoutDashboard },
+      { href: '/mentor/disponibilidade', label: 'Disponibilidade / Agenda', icon: Calendar },
+      { href: '/mentor/perfil', label: 'Meu Perfil Mentor', icon: UserCircle },
     ]
   }
   if (role === 'lab') {

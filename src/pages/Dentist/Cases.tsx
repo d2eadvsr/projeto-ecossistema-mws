@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,17 +40,29 @@ export type CaseStage =
 
 export type MWSProtocol = 'Classe I' | 'Classe II' | 'Classe III' | 'Classe IV' | 'Classe V'
 
-interface ClinicalCase {
+import {
+  getAvailableMentorsForDate,
+  loadMentorSettings,
+  loadMentors,
+  loadUnavailablePeriods,
+  MentorProfile,
+} from '@/pages/Mentor/mockData'
+
+export interface ClinicalCase {
   id: string
   patientName: string
   protocol: MWSProtocol
   stage: CaseStage
   slaDeadline: string
   submissionDate: string
+  mentorName?: string // Nome do mentor real/final do caso
+  mentorId?: string
+  preferredMentorName?: string
   notes?: string // (a) Nota clínica do ortodontista (abertura)
   labFeedback?: string // (b) Nota técnica do laboratório (planejamento)
   mentorClinicalNote?: string // (c) Recomendação do mentor
   currentStep?: string
+  redirectionNote?: string
 }
 
 const MOCK_CLINICAL_CASES: ClinicalCase[] = [
@@ -61,6 +73,7 @@ const MOCK_CLINICAL_CASES: ClinicalCase[] = [
     stage: 'planejamento_elaborado',
     slaDeadline: '28/02/2026',
     submissionDate: '15/02/2026',
+    mentorName: 'Dr. Breno',
     notes:
       'Prioridade no fechamento de diastema superior e correção de sobremordida com biomecânica lingual contínua.',
     labFeedback:
@@ -76,6 +89,7 @@ const MOCK_CLINICAL_CASES: ClinicalCase[] = [
     stage: 'planejamento_elaborado',
     slaDeadline: '01/03/2026',
     submissionDate: '20/02/2026',
+    mentorName: 'Dr. Flávio',
     notes:
       'Leve apinhamento ântero-inferior com queixa estética. Paciente optou por Magic Wire pela discrição interna.',
     labFeedback:
@@ -91,6 +105,10 @@ const MOCK_CLINICAL_CASES: ClinicalCase[] = [
     stage: 'planejamento_entregue',
     slaDeadline: '24/02/2026',
     submissionDate: '08/02/2026',
+    mentorName: 'Dr. Aldir',
+    preferredMentorName: 'Dr. Breno',
+    redirectionNote:
+      'Caso originalmente preferido para Dr. Breno e redirecionado para Dr. Aldir por sobrecarga de fila do mentor.',
     notes: 'Mordida cruzada anterior compensada com mecânica lingual.',
     labFeedback:
       'Planejamento concluído e entregue com orientações completas de instalação do sistema de fios linguais customizados MWS.',
@@ -174,6 +192,21 @@ export default function DentistCases() {
   const [newPatientName, setNewPatientName] = useState('')
   const [newProtocol, setNewProtocol] = useState<MWSProtocol>('Classe I')
   const [newNotes, setNewNotes] = useState('')
+  const [chosenMentorId, setChosenMentorId] = useState<string>('')
+
+  // Estado das configurações ADM e lista de mentores disponíveis
+  const [mentorSettings, setMentorSettings] = useState(() => loadMentorSettings())
+  const [availableMentors, setAvailableMentors] = useState<MentorProfile[]>([])
+
+  useEffect(() => {
+    const settings = loadMentorSettings()
+    setMentorSettings(settings)
+    const available = getAvailableMentorsForDate()
+    setAvailableMentors(available)
+    if (available.length > 0) {
+      setChosenMentorId(available[0].id)
+    }
+  }, [isDialogOpen])
 
   // Modal de Detalhe do Caso Selecionado
   const [selectedCase, setSelectedCase] = useState<ClinicalCase | null>(null)
@@ -219,6 +252,9 @@ export default function DentistCases() {
     e.preventDefault()
     if (!newPatientName.trim()) return
 
+    const selectedMentor = availableMentors.find((m) => m.id === chosenMentorId)
+    const mentorRealName = selectedMentor ? selectedMentor.name : 'Dr. Breno'
+
     const newCase: ClinicalCase = {
       id: `CAS-2026-00${cases.length + 1}`,
       patientName: newPatientName,
@@ -226,10 +262,13 @@ export default function DentistCases() {
       stage: 'aguardando_analise_tecnica',
       slaDeadline: '06/03/2026',
       submissionDate: new Date().toLocaleDateString('pt-BR'),
+      mentorName: mentorRealName,
+      mentorId: selectedMentor?.id,
+      preferredMentorName: selectedMentor?.name,
       notes: newNotes,
       labFeedback:
-        'Caso recebido com sucesso na esteira do laboratório MWS. Em breve o técnico responsável anexará a nota técnica de planejamento.',
-      mentorClinicalNote: 'Nota clínica do mentor será adicionada durante a análise do caso.',
+        'Caso recebido com sucesso na esteira do laboratório MWS. Em breve o mentor responsável anexará a nota técnica de planejamento.',
+      mentorClinicalNote: `Nota clínica do mentor ${mentorRealName} será elaborada na esteira de planejamento.`,
       currentStep: 'Na fila de triagem técnica inicial',
     }
 
@@ -323,6 +362,42 @@ export default function DentistCases() {
                     ))}
                   </select>
                 </div>
+                {/* Campo Escolher Mentor (visível quando ativado no ADM) */}
+                {mentorSettings.allowDentistMentorChoice && (
+                  <div className="space-y-2 p-3 rounded-lg bg-amber-50/70 border border-amber-200">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="case-mentor" className="text-xs font-bold text-slate-800">
+                        Escolher Mentor (Preferência)
+                      </Label>
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] bg-white text-amber-800 border-amber-300"
+                      >
+                        {availableMentors.length} disponível(is) hoje
+                      </Badge>
+                    </div>
+
+                    <select
+                      id="case-mentor"
+                      value={chosenMentorId}
+                      onChange={(e) => setChosenMentorId(e.target.value)}
+                      className="flex h-9 w-full rounded-md border border-input bg-white px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                    >
+                      {availableMentors.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name} ({m.specialties[0]} • {m.location})
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Observação textual obrigatória conforme ata de reunião */}
+                    <p className="text-[11px] text-amber-900 leading-snug italic bg-amber-100/60 p-2 rounded">
+                      “A escolha do mentor é uma preferência e não garante que o caso será atendido
+                      por ele.”
+                    </p>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="case-notes">
                     Nota Clínica do Ortodontista (Abertura do Caso & Queixa)
@@ -540,7 +615,6 @@ export default function DentistCases() {
                       Fluxo bidirecional: Ortodontista ↔ Laboratório
                     </span>
                   </div>
-
                   {/* (a) Nota clínica do ortodontista (abertura) */}
                   {c.notes && (
                     <div className="text-xs text-slate-700 bg-slate-100/80 p-2.5 rounded border border-slate-200/60 space-y-0.5">
@@ -551,7 +625,6 @@ export default function DentistCases() {
                       <p className="text-slate-600 text-[11px] leading-relaxed pl-5">{c.notes}</p>
                     </div>
                   )}
-
                   {/* (b) Nota técnica do laboratório (planejamento) - Somente leitura */}
                   {c.labFeedback && (
                     <div className="text-xs text-slate-700 bg-white p-2.5 rounded border border-blue-100 shadow-xs space-y-1">
@@ -566,19 +639,30 @@ export default function DentistCases() {
                       <p className="text-slate-600 leading-relaxed text-xs">{c.labFeedback}</p>
                     </div>
                   )}
-
-                  {/* (c) Recomendação do mentor */}
+                  {/* (c) Recomendação do mentor com Nome Real do Mentor */}
                   {c.mentorClinicalNote && (
-                    <div className="text-xs text-purple-900 bg-purple-50/70 border border-purple-100 p-2.5 rounded leading-relaxed space-y-0.5">
-                      <div className="flex items-center gap-1.5 font-semibold text-purple-950 text-[11px]">
-                        <span>🧑‍⚕️</span>
-                        <span>3. Recomendação do mentor:</span>
+                    <div className="text-xs text-purple-900 bg-purple-50/70 border border-purple-100 p-2.5 rounded leading-relaxed space-y-1">
+                      <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                        <div className="flex items-center gap-1.5 font-semibold text-purple-950 text-[11px]">
+                          <span>🧑‍⚕️</span>
+                          <span>
+                            3. Recomendação do mentor:{' '}
+                            <strong className="text-purple-950 underline decoration-gold">
+                              {c.mentorName || 'Dr. Breno'}
+                            </strong>
+                          </span>
+                        </div>
+                        {c.redirectionNote && (
+                          <span className="text-[10px] text-amber-800 bg-amber-100/70 px-1.5 py-0.5 rounded">
+                            Redirecionado
+                          </span>
+                        )}
                       </div>
                       <p className="text-purple-900/90 text-[11px] leading-relaxed pl-5">
                         {c.mentorClinicalNote}
                       </p>
                     </div>
-                  )}
+                  )}{' '}
                 </div>
               </CardContent>
             </Card>
@@ -661,7 +745,6 @@ export default function DentistCases() {
                   </h4>
                   <span className="text-[11px] text-slate-500">Sequência lógica cronológica</span>
                 </div>
-
                 {/* (a) Nota clínica do ortodontista (abertura) */}
                 <div className="p-3.5 rounded-lg border border-slate-200 bg-white space-y-1.5 shadow-2xs">
                   <div className="flex items-center justify-between text-xs">
@@ -682,7 +765,6 @@ export default function DentistCases() {
                     {selectedCase.notes || 'Nenhuma nota clínica cadastrada na abertura.'}
                   </p>
                 </div>
-
                 {/* (b) Nota técnica do laboratório (planejamento) - SOMENTE LEITURA */}
                 <div className="p-3.5 rounded-lg border border-blue-200 bg-blue-50/30 space-y-2 shadow-2xs">
                   <div className="flex items-center justify-between text-xs">
@@ -716,28 +798,37 @@ export default function DentistCases() {
                     </div>
                   </div>
                 </div>
-
-                {/* (c) Recomendação do mentor */}
-                <div className="p-3.5 rounded-lg border border-purple-200 bg-purple-50/40 space-y-1.5 shadow-2xs">
-                  <div className="flex items-center justify-between text-xs">
+                {/* (c) Recomendação do mentor com Nome Real do Mentor */}
+                <div className="p-3.5 rounded-lg border border-purple-200 bg-purple-50/40 space-y-2 shadow-2xs">
+                  <div className="flex items-center justify-between text-xs flex-wrap gap-1">
                     <span className="font-bold text-purple-950 flex items-center gap-1.5">
                       <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-800 text-[11px] font-bold flex items-center justify-center">
                         C
                       </span>
-                      (c) Recomendação do mentor
+                      (c) Recomendação do mentor:
+                      <span className="text-purple-900 font-extrabold ml-1">
+                        {selectedCase.mentorName || 'Dr. Breno'}
+                      </span>
                     </span>
                     <Badge
                       variant="outline"
                       className="text-[10px] text-purple-700 border-purple-200 bg-purple-50"
                     >
-                      Mentoria Clínica MWS
+                      Mentor do Caso: {selectedCase.mentorName || 'Dr. Breno'}
                     </Badge>
                   </div>
+
+                  {selectedCase.redirectionNote && (
+                    <div className="p-2 rounded bg-amber-50 border border-amber-200 text-[11px] text-amber-900">
+                      <strong>Histórico de Repasse:</strong> {selectedCase.redirectionNote}
+                    </div>
+                  )}
+
                   <p className="text-xs text-purple-950 leading-relaxed bg-white p-2.5 rounded border border-purple-100">
                     {selectedCase.mentorClinicalNote ||
                       'Aguardando recomendação do mentor designado.'}
                   </p>
-                </div>
+                </div>{' '}
               </div>
 
               {/* Botões de Ação Contextualizados no Rodapé do Modal */}

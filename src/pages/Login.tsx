@@ -61,6 +61,8 @@ export default function Login() {
       navigate('/lab/dashboard', { replace: true })
     } else if (role === 'lead') {
       navigate('/lead/dashboard', { replace: true })
+    } else if (role === 'mentor') {
+      navigate('/mentor/dashboard', { replace: true })
     } else {
       navigate(from, { replace: true })
     }
@@ -175,22 +177,75 @@ export default function Login() {
             <p className="font-bold text-slate-800 mb-2 flex items-center justify-between">
               <span>Perfis do Ecossistema:</span>
               <span className="text-[10px] text-primary font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10">
-                5 Perfis
+                6 Perfis
               </span>
             </p>
+            <div className="flex flex-wrap gap-1 mb-2.5">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('mentor@magicwire.com')
+                  setPassword('Skip@Pass')
+                }}
+                className="text-[10px] h-6 px-2 bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 font-semibold"
+              >
+                Preencher Mentor
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('ortodontista@magicwire.com')
+                  setPassword('Skip@Pass')
+                }}
+                className="text-[10px] h-6 px-2 text-slate-700"
+              >
+                Ortodontista
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('lab@magicwire.com')
+                  setPassword('Skip@Pass')
+                }}
+                className="text-[10px] h-6 px-2 text-slate-700"
+              >
+                Laboratório
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('daniel.elias@d2eadvisory.com.br')
+                  setPassword('Skip@Pass')
+                }}
+                className="text-[10px] h-6 px-2 text-slate-700"
+              >
+                ADM
+              </Button>
+            </div>
             <ul className="space-y-1.5 text-[11px]">
-              <li>
-                <strong className="text-slate-800">Time ADM MWS:</strong>{' '}
-                daniel.elias@d2eadvisory.com.br
+              <li className="font-semibold text-emerald-900 bg-emerald-50/80 p-1 rounded border border-emerald-200">
+                <strong className="text-emerald-950">Mentor:</strong> mentor@magicwire.com
               </li>
               <li>
                 <strong className="text-slate-800">Ortodontista:</strong> ortodontista@magicwire.com
               </li>
               <li>
-                <strong className="text-slate-800">Paciente:</strong> patient@magicwire.com
+                <strong className="text-slate-800">Time ADM MWS:</strong>{' '}
+                daniel.elias@d2eadvisory.com.br
               </li>
               <li>
                 <strong className="text-slate-800">Laboratório:</strong> lab@magicwire.com
+              </li>
+              <li>
+                <strong className="text-slate-800">Paciente:</strong> patient@magicwire.com
               </li>
               <li className="font-semibold text-[#0d3b2e]">
                 <strong>Lead Qualificado:</strong> lead.teste@mws.com.br

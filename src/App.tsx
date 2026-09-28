@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import AdminDashboard from './pages/Admin/Dashboard'
 import AdminDentists from './pages/Admin/Dentists'
+import AdminMentors from './pages/Admin/Mentors'
 import AdminPatientsLeads from './pages/Admin/PatientsLeads'
 import AdminCases from './pages/Admin/Cases'
 import AdminFinancial from './pages/Admin/Financial'
@@ -66,6 +67,10 @@ import LeadAppointment from './pages/Lead/Appointment'
 import LeadBudget from './pages/Lead/Budget'
 import LeadTechnology from './pages/Lead/Technology'
 
+import MentorDashboard from './pages/Mentor/Dashboard'
+import MentorAvailability from './pages/Mentor/Availability'
+import MentorProfilePage from './pages/Mentor/Profile'
+
 const App = () => (
   <AuthProvider>
     <BrowserRouter>
@@ -103,6 +108,7 @@ const App = () => (
             <Route element={<Layout />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/ortodontistas" element={<AdminDentists />} />
+              <Route path="/admin/mentores" element={<AdminMentors />} />
               <Route path="/admin/pacientes-leads" element={<AdminPatientsLeads />} />
               <Route path="/admin/mobilidade" element={<AdminPatientsLeads />} />
               <Route path="/admin/casos" element={<AdminCases />} />
@@ -112,6 +118,14 @@ const App = () => (
               <Route path="/admin/programas" element={<AdminPrograms />} />
               <Route path="/admin/escola" element={<AdminSchoolCommunity />} />
               <Route path="/admin/rbac" element={<AdminRBAC />} />
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['mentor']} />}>
+            <Route element={<Layout />}>
+              <Route path="/mentor/dashboard" element={<MentorDashboard />} />
+              <Route path="/mentor/disponibilidade" element={<MentorAvailability />} />
+              <Route path="/mentor/perfil" element={<MentorProfilePage />} />
             </Route>
           </Route>
 

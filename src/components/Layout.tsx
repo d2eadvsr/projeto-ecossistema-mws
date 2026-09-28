@@ -11,6 +11,7 @@ const ROLE_DISPLAY_NAMES: Record<string, string> = {
   admin: 'Time ADM MWS',
   lab: 'Laboratório MWS',
   lead: 'Lead Qualificado',
+  mentor: 'Mentor MWS',
 }
 
 export default function Layout() {
