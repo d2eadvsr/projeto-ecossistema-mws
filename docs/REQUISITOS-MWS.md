@@ -1,9 +1,22 @@
 # Especificação de Requisitos do Sistema — Ecossistema MWS (Magic Wire System)
 
 > **Documento de Engenharia Reversa e Especificação Técnica Fiel**  
-> **Versão do Código:** v0.0.44  
-> **Data:** Setembro de 2026  
+> **Versão do Código:** v0.0.46+  
+> **Data:** 03/03/2026 (Atualizado conforme estado real do código)  
 > **Finalidade:** Servir como especificação exaustiva para replicação _ipsis litteris_ de todo o produto, perfis, regras de negócio, telas, fluxos, componentes visuais e backend em outra conta ou projeto Skip.
+
+---
+
+### Documentação Detalhada por Perfil (`docs/perfis/`)
+
+O ecossistema conta com documentações técnicas exaustivas geradas por engenharia reversa para cada um dos 6 perfis da plataforma:
+
+1. **[Perfil Ortodontista](perfis/ORTODONTISTA.md)** (`docs/perfis/ORTODONTISTA.md`): 17 telas, prontuário digital com diagrama lingual, demonstrativo financeiro de manutenções, chat técnico com laboratório, escola EAD, fórum de comunidade e kanban de casos clínicos.
+2. **[Perfil Laboratório MWS](perfis/LABORATORIO.md)** (`docs/perfis/LABORATORIO.md`): 7 telas, esteira técnica em 4 status, manufatura robótica CNC (4 etapas), gestão de equipe/mentores e monitoramento analítico de SLA.
+3. **[Perfil Mentor](perfis/MENTOR.md)** (`docs/perfis/MENTOR.md`): 3 telas principais, kanban de mentoria, nota técnica/clínica, redirecionamento com auditoria imutável, booking de indisponibilidade e governança de alocação de casos.
+4. **[Perfil Paciente](perfis/PACIENTE.md)** (`docs/perfis/PACIENTE.md`): 6 telas, timeline das 8 sessões pós-aquisição, status individual dos arcos linguais superior e inferior, gestão de parcelas/boletos, programa de pontos e pesquisa contínua NPS.
+5. **[Perfil Lead Qualificado](perfis/LEAD-QUALIFICADO.md)** (`docs/perfis/LEAD-QUALIFICADO.md`): 5 telas, funil comercial de 5 etapas, confirmação/reagendamento da 1ª consulta (R$ 200), proposta comercial/orçamento, perfil do especialista e seção tecnológica da 3ª geração.
+6. **[Perfil Time ADM MWS](perfis/TIME-ADM.md)** (`docs/perfis/TIME-ADM.md`): 10 telas, credenciamento dos 182 licenciados, supervisão dos 54 casos, conciliação de boletos e split da 1ª consulta (R$ 100/50/50), expedição de fios com rastreio, mobilidade geográfica com liberação temporária e split de R$ 250, marketing Murilo, API de gestão, cadastro de mentores e toggle global de escolha de mentor.
 
 ---
 
