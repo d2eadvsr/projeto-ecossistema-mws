@@ -7,9 +7,11 @@
 
 ---
 
-### Documentação Detalhada por Perfil (`docs/perfis/`)
+### Documentação Detalhada por Perfil (`docs/perfis/`) e Padrão Visual (`docs/PADRAO-VISUAL-MWS.md`)
 
-O ecossistema conta com documentações técnicas exaustivas geradas por engenharia reversa para cada um dos 6 perfis da plataforma:
+O ecossistema conta com documentações técnicas exaustivas geradas por engenharia reversa para cada um dos 6 perfis da plataforma e para a identidade visual corporativa:
+
+- **[Padrão Visual MWS](PADRAO-VISUAL-MWS.md)** (`docs/PADRAO-VISUAL-MWS.md`): Guia completo da identidade visual da marca — logotipo oficial `MWSLogo` (arcos em "V" em gradiente dourado metálico, wordmark "MAGIC WIRE SYSTEM"), tabela de tokens e cores reais (fundo de telas estritamente CLARO; verde escuro `#0d3b2e` restrito a barras, rodapés e botões primários), testeira oficial com avatar em degradê, rodapé institucional, tipografia Inter/SF Pro Display, estados dos menus e botões, anatomia ilustrada do `AdminDashboard` e checklist de replicação.
 
 1. **[Perfil Ortodontista](perfis/ORTODONTISTA.md)** (`docs/perfis/ORTODONTISTA.md`): 17 telas, prontuário digital com diagrama lingual, demonstrativo financeiro de manutenções, chat técnico com laboratório, escola EAD, fórum de comunidade e kanban de casos clínicos.
 2. **[Perfil Laboratório MWS](perfis/LABORATORIO.md)** (`docs/perfis/LABORATORIO.md`): 7 telas, esteira técnica em 4 status, manufatura robótica CNC (4 etapas), gestão de equipe/mentores e monitoramento analítico de SLA.
@@ -528,6 +530,8 @@ O backend Skip Cloud do ecossistema possui 17 migrações sequenciais em `pocket
 ---
 
 ## 9. Requisitos Não Funcionais e Identidade Visual (v0.0.41+)
+
+> **Guia Completo e Detalhado:** Consulte o documento dedicado **[Padrão Visual MWS](PADRAO-VISUAL-MWS.md)** (`docs/PADRAO-VISUAL-MWS.md`) para o detalhamento exaustivo de todos os tokens CSS, gradientes, estados de menu e checklist para replicação visual.
 
 O design system e o padrão visual do Ecossistema MWS seguem estritamente as diretrizes da versão institucional vigente:
 
